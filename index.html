@@ -464,6 +464,61 @@
     let text = `🏛 *صرافی عدالت*%0Aرسید حواله: *${r.code}*%0Aمبلغ: ${r.sent} ${r.currSent}`;
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   }
+  function sendWhatsApp(remId, target) {
+  let c = customers.find(x => x.id === currentCustId);
+  let r = remittances.find(x => x.id === remId);
+  if(!c || !r) return alert('اطلاعات حواله یا مشتری یافت نشد!');
+
+  let phoneNum = '';
+  let text = '';
+
+  if (target === 'customer') {
+    // پیام تأیید ثبت/تکمیل حواله برای مشتری
+    phoneNum = c.phone.replace(/[^0-9]/g, '');
+    text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+           `----------------------------------%0A` +
+           `✅ *تأییدیه ثبت حواله*%0A%0A` +
+           `مشتری گرامی *${c.name}*، حواله شما با موفقیت ثبت شد.%0A%0A` +
+           `🆔 *کد حواله:* ${r.code}%0A` +
+           `📅 *تاریخ:* ${r.date}%0A` +
+           `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
+           `👤 *گیرنده:* ${r.receiver} (${r.destination || 'مقصد'})%0A` +
+           `💵 *مبلغ دریافتی:* ${r.received} ${r.currReceived}%0A` +
+           `💰 *کارمزد:* ${r.fee} ${r.currFee}%0A` +
+           `✨ *خالص پرداختی در مقصد:* *${r.sent} ${r.currSent}*%0A` +
+           `📌 *وضعیت:* ${r.status}%0A` +
+           `----------------------------------%0A` +
+           `🙏 با تشکر از اعتماد شما - صرافی عدالت (دکتر روح مرادی)`;
+
+  } else if (target === 'agent') {
+    // پیام دستور پرداخت / تأییدیه به نمایندگی مقصد
+    phoneNum = (r.destPhone || '').replace(/[^0-9]/g, '');
+    if (!phoneNum) {
+      alert('شماره واتساپ نمایندگی برای این حواله وارد نشده است! لطفا حواله را ویرایش کنید.');
+      return;
+    }
+    text = `🏛 *صرافی عدالت - دستور پرداخت حواله*%0A` +
+           `----------------------------------%0A` +
+           `همکار گرامی، لطفاً حواله زیر را پرداخت نمایید:%0A%0A` +
+           `🆔 *کد حواله:* ${r.code}%0A` +
+           `📅 *تاریخ:* ${r.date}%0A` +
+           `👤 *نام گیرنده:* *${r.receiver}*%0A` +
+           `📍 *شهر مقصد:* ${r.destination || 'تعیین نشده'}%0A` +
+           `💵 *مبلغ قابل پرداخت:* *${r.sent} ${r.currSent}*%0A` +
+           `👤 *فرستنده:* ${r.sender}%0A` +
+           `📌 *نوع پرداخت مشتری:* ${r.paymentType}%0A` +
+           `----------------------------------%0A` +
+           `لطفاً پس از پرداخت، رسید را ارسال کنید. با تشکر!`;
+  }
+
+  if (!phoneNum) {
+    alert('شماره تلفن معتبر یافت نشد!');
+    return;
+  }
+
+  window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+}
+
 </script>
 </body>
 </html>
