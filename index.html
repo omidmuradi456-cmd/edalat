@@ -17,6 +17,8 @@
     .btn-whatsapp-agent { background-color: #0288d1; color: white; border: none; }
     .btn-whatsapp-debt { background-color: #6f42c1; color: white; border: none; }
     .phone-input { direction: ltr !important; text-align: left !important; }
+    .rate-badge { cursor: pointer; transition: transform 0.1s; }
+    .rate-badge:hover { transform: scale(1.05); }
   </style>
 </head>
 <body>
@@ -39,7 +41,7 @@
 
   <!-- کادر نرخ روزانه -->
   <div class="card p-3">
-    <h6>⚙ نرخ روزانه ارزها</h6>
+    <h6>⚙ نرخ روزانه ارزها <small class="text-muted fs-7">(جهت حذف روی نرخ کلیک کنید)</small></h6>
     <div class="row g-2 my-1">
       <div class="col-6 col-md-3">
         <select id="rateFromCurr" class="form-select form-select-sm">
@@ -79,8 +81,11 @@
 
   <!-- بخش اطلاعات مشتری و حواله‌ها -->
   <div id="customerDetailsSection" style="display: none;">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <button class="btn btn-success btn-custom" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div class="d-flex gap-2">
+        <button class="btn btn-success btn-custom" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
+        <button class="btn btn-whatsapp-debt btn-custom" onclick="sendBalanceStatement()">📊 رسید باقی‌مانده حساب</button>
+      </div>
       <div>
         <button class="btn btn-sm btn-warning" onclick="editCustomer()">ویرایش مشتری</button>
         <button class="btn btn-sm btn-danger" onclick="deleteCustomer()">حذف مشتری</button>
@@ -294,8 +299,8 @@
             <div class="d-flex gap-1 justify-content-center">
               <button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')" title="ویرایش">✏️</button>
               <button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')" title="حذف">🗑</button>
-              <button class="btn btn-sm btn-whatsapp" onclick="sendWhatsApp('${r.id}', 'customer')" title="تأییدیه به مشتری">📱 رسید</button>
-              <button class="btn btn-sm btn-whatsapp-agent" onclick="sendWhatsApp('${r.id}', 'agent')" title="دستور به نمایندگی">🏢 نمایندگی</button>
+              <button class="btn btn-sm btn-whatsapp" onclick="sendWhatsApp('${r.id}', 'customer')" title="رسید مشتری">📱 رسید</button>
+              <button class="btn btn-sm btn-whatsapp-agent" onclick="sendWhatsApp('${r.id}', 'agent')" title="دستور به نمایندگی">🏢 اجرای حواله</button>
             </div>
           </td>
         </tr>
@@ -437,11 +442,21 @@
     renderRates();
   }
 
+  // حذف نرخ ثبت شده با کلیک
+  function deleteRate(index) {
+    let r = exchangeRates[index];
+    if (confirm(`آیا از حذف نرخ تبدیل "${r.from} به ${r.to}" اطمینان دارید؟`)) {
+      exchangeRates.splice(index, 1);
+      localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
+      renderRates();
+    }
+  }
+
   function renderRates() {
     let box = document.getElementById('activeRatesList');
     box.innerHTML = '';
     exchangeRates.forEach((r, i) => {
-      box.innerHTML += `<span class="badge bg-info text-dark p-1">1 ${r.from} = ${r.rate} ${r.to}</span>`;
+      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})" title="برای حذف کلیک کنید">1 ${r.from} = ${r.rate} ${r.to} ✖</span>`;
     });
   }
 
@@ -484,46 +499,102 @@
     let text = '';
 
     if (target === 'customer') {
+      // رسید حواله برای مشتری
       phoneNum = c.phone.replace(/[^0-9]/g, '');
       text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
              `----------------------------------%0A` +
-             `✅ *تأییدیه ثبت حواله*%0A%0A` +
-             `مشتری گرامی *${c.name}*، حواله شما با موفقیت ثبت شد.%0A%0A` +
+             `🧾 *رسید حواله*%0A%0A` +
+             `مشتری گرامی *${c.name}*، رسید حواله شما به شرح زیر است:%0A%0A` +
              `🆔 *کد حواله:* ${r.code}%0A` +
              `📅 *تاریخ:* ${r.date}%0A` +
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `👤 *گیرنده:* ${r.receiver} (${r.destination || 'مقصد'})%0A` +
              `💵 *مبلغ دریافتی:* ${r.received} ${r.currReceived}%0A` +
              `💰 *کارمزد:* ${r.fee} ${r.currFee}%0A` +
-             `✨ *خالص پرداختی در مقصد:* *${r.sent} ${r.currSent}*%0A` +
+             `✨ *خالص تحویلی در مقصد:* *${r.sent} ${r.currSent}*%0A` +
+             `📌 *نوع پرداخت:* ${r.paymentType}%0A` +
              `📌 *وضعیت:* ${r.status}%0A` +
              `----------------------------------%0A` +
              `🙏 با تشکر از اعتماد شما - صرافی عدالت (دکتر روح مرادی)`;
 
     } else if (target === 'agent') {
+      // پیام اجرا و دستور پرداخت اختصاصی نمایندگی
       phoneNum = (r.destPhone || '').replace(/[^0-9]/g, '');
       if (!phoneNum) {
-        alert('شماره واتساپ نمایندگی برای این حواله وارد نشده است! لطفاً حواله را ویرایش کرده و شماره نمایندگی را وارد کنید.');
+        alert('شماره واتساپ نمایندگی وارد نشده است! لطفاً حواله را ویرایش کرده و شماره نمایندگی را وارد کنید.');
         return;
       }
-      text = `🏛 *صرافی عدالت - دستور پرداخت حواله*%0A` +
+      text = `🏛 *صرافی عدالت - دستور اجرای حواله*%0A` +
              `----------------------------------%0A` +
-             `همکار گرامی، لطفاً حواله زیر را پرداخت نمایید:%0A%0A` +
+             `🏢 *همکار گرامی نمایندگی مقصد*%0A` +
+             `لطفاً حواله زیر را فوراً اجرا و به گیرنده پرداخت نمایید:%0A%0A` +
              `🆔 *کد حواله:* ${r.code}%0A` +
              `📅 *تاریخ:* ${r.date}%0A` +
-             `👤 *نام گیرنده:* *${r.receiver}*%0A` +
+             `👤 *نام کامل گیرنده:* *${r.receiver}*%0A` +
              `📍 *شهر مقصد:* ${r.destination || 'تعیین نشده'}%0A` +
              `💵 *مبلغ قابل پرداخت:* *${r.sent} ${r.currSent}*%0A` +
-             `👤 *فرستنده:* ${r.sender}%0A` +
-             `📌 *نوع پرداخت مشتری:* ${r.paymentType}%0A` +
+             `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
+             `📌 *تسویه:* ${r.paymentType}%0A` +
              `----------------------------------%0A` +
-             `لطفاً پس از پرداخت، رسید را ارسال کنید. با تشکر!`;
+             `لطفاً پس از اجرا، تاییدیه یا رسید پرداخت را ارسال نمایید.`;
     }
 
     if (!phoneNum) {
       alert('شماره تلفن معتبر یافت نشد!');
       return;
     }
+
+    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+  }
+
+  // محاسبه و ارسال رسید باقی‌مانده حساب مشتری
+  function sendBalanceStatement() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+
+    let list = remittances.filter(r => r.custId === c.id);
+    if (list.length === 0) return alert('هیچ حواله‌ای برای این مشتری یافت نشد!');
+
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    if (!phoneNum) return alert('شماره تلفن مشتری معتبر نیست!');
+
+    // خلاصه‌سازی وضعیت بر اساس ارزهای مختلف
+    let totals = {};
+    let unpaidListText = '';
+
+    list.forEach(r => {
+      let curr = r.currReceived;
+      if (!totals[curr]) {
+        totals[curr] = { totalReceived: 0, debt: 0, cash: 0 };
+      }
+      let amt = parseFloat(r.received) || 0;
+      totals[curr].totalReceived += amt;
+
+      if (r.paymentType === 'قرض') {
+        totals[curr].debt += amt;
+        unpaidListText += `• ${r.code} (${r.date}): ${r.received} ${r.currReceived} [قرض]%0A`;
+      } else {
+        totals[curr].cash += amt;
+      }
+    });
+
+    let summaryText = '';
+    for (let curr in totals) {
+      summaryText += `🔹 *مجموع حواله‌ها (${curr}):* ${totals[curr].totalReceived} ${curr}%0A`;
+      summaryText += `✅ *پرداخت نقدی:* ${totals[curr].cash} ${curr}%0A`;
+      summaryText += `❌ *باقی‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
+    }
+
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `📊 *صورت‌حساب و باقی‌مانده حساب مشتری*%0A%0A` +
+               `👤 *نام مشتری:* ${c.name}%0A` +
+               `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
+               `----------------------------------%0A` +
+               summaryText +
+               (unpaidListText ? `📋 *ریز حواله‌های بدهکار/قرض:*%0A${unpaidListText}----------------------------------%0A` : '') +
+               `🙏 جهت تسویه باقی‌مانده حساب با ما در تماس باشید.%0A` +
+               `صرافی عدالت - دکتر روح مرادی`;
 
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
