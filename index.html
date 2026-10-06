@@ -26,7 +26,7 @@
 <div class="container my-2">
   <div class="header-box text-center">
     <h4 class="m-0">🏛 صرافی و حواله‌داری عدالت</h4>
-    <p class="mb-1 small">دکتر روح مرادی – پشتیبانی: <span dir="ltr">+989962671189</span></p>
+    <p class="mb-1 small">دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی – پشتیبانی: <span dir="ltr">+989962671189</span></p>
     <span class="badge bg-success" id="syncStatus">🟢 متصل به تلگرام</span>
   </div>
 
@@ -48,7 +48,9 @@
           <option value="یورو">یورو</option>
           <option value="تومان">تومان (میلیون)</option>
           <option value="دلار">دلار</option>
+
           <option value="افغانی">افغانی (هزار)</option>
+          <option value="لیر">لیر (ترکیه)</option>
         </select>
       </div>
       <div class="col-6 col-md-3">
@@ -57,6 +59,8 @@
           <option value="تومان">تومان</option>
           <option value="یورو">یورو</option>
           <option value="دلار">دلار</option>
+
+          <option value="لیر">لیر (ترکیه)</option>
         </select>
       </div>
       <div class="col-8 col-md-4">
@@ -173,6 +177,7 @@
                 <option value="تومان">تومان</option>
                 <option value="افغانی">افغانی</option>
                 <option value="دلار">دلار</option>
+                <option value="لیر">لیر (ترکیه)</option>
               </select>
             </div>
           </div>
@@ -185,6 +190,7 @@
                 <option value="تومان">تومان</option>
                 <option value="افغانی">افغانی</option>
                 <option value="دلار">دلار</option>
+                <option value="لیر">لیر (ترکیه)</option>
               </select>
             </div>
           </div>
@@ -197,6 +203,7 @@
                 <option value="تومان">تومان</option>
                 <option value="یورو">یورو</option>
                 <option value="دلار">دلار</option>
+                <option value="لیر">لیر (ترکیه)</option>
               </select>
             </div>
           </div>
@@ -442,7 +449,6 @@
     renderRates();
   }
 
-  // حذف نرخ ثبت شده با کلیک
   function deleteRate(index) {
     let r = exchangeRates[index];
     if (confirm(`آیا از حذف نرخ تبدیل "${r.from} به ${r.to}" اطمینان دارید؟`)) {
@@ -499,7 +505,6 @@
     let text = '';
 
     if (target === 'customer') {
-      // رسید حواله برای مشتری
       phoneNum = c.phone.replace(/[^0-9]/g, '');
       text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
              `----------------------------------%0A` +
@@ -515,10 +520,12 @@
              `📌 *نوع پرداخت:* ${r.paymentType}%0A` +
              `📌 *وضعیت:* ${r.status}%0A` +
              `----------------------------------%0A` +
-             `🙏 با تشکر از اعتماد شما - صرافی عدالت (دکتر روح مرادی)`;
+             `⚠️ *توصیه مهم:* گیرنده محترم هنگام تحویل گرفتن پول، حتماً تذکره یا کارت شناسایی (آیدی کارت) معتبر همراه داشته باشد.%0A` +
+             `----------------------------------%0A` +
+             `🙏 با تشکر از اعتماد شما - صرافی عدالت%0A` +
+             `دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی`;
 
     } else if (target === 'agent') {
-      // پیام اجرا و دستور پرداخت اختصاصی نمایندگی
       phoneNum = (r.destPhone || '').replace(/[^0-9]/g, '');
       if (!phoneNum) {
         alert('شماره واتساپ نمایندگی وارد نشده است! لطفاً حواله را ویرایش کرده و شماره نمایندگی را وارد کنید.');
@@ -536,7 +543,7 @@
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `📌 *تسویه:* ${r.paymentType}%0A` +
              `----------------------------------%0A` +
-             `لطفاً پس از اجرا، تاییدیه یا رسید پرداخت را ارسال نمایید.`;
+             `لطفاً پس از اخذ تذکره/کارت شناسایی، تسویه کرده و تاییدیه پرداخت را ارسال نمایید.`;
     }
 
     if (!phoneNum) {
@@ -547,7 +554,6 @@
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
 
-  // محاسبه و ارسال رسید باقی‌مانده حساب مشتری
   function sendBalanceStatement() {
     let c = customers.find(x => x.id === currentCustId);
     if (!c) return alert('مشتری انتخاب نشده است!');
@@ -558,7 +564,6 @@
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     if (!phoneNum) return alert('شماره تلفن مشتری معتبر نیست!');
 
-    // خلاصه‌سازی وضعیت بر اساس ارزهای مختلف
     let totals = {};
     let unpaidListText = '';
 
@@ -582,7 +587,7 @@
     for (let curr in totals) {
       summaryText += `🔹 *مجموع حواله‌ها (${curr}):* ${totals[curr].totalReceived} ${curr}%0A`;
       summaryText += `✅ *پرداخت نقدی:* ${totals[curr].cash} ${curr}%0A`;
-      summaryText += `❌ *باقی‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
+      summaryText += `❌ *باقی‌‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
     }
 
     let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
@@ -594,7 +599,7 @@
                summaryText +
                (unpaidListText ? `📋 *ریز حواله‌های بدهکار/قرض:*%0A${unpaidListText}----------------------------------%0A` : '') +
                `🙏 جهت تسویه باقی‌مانده حساب با ما در تماس باشید.%0A` +
-               `صرافی عدالت - دکتر روح مرادی`;
+               `صرافی عدالت - دکتر روح‌الله مرادی (مسئول حواله‌داری عمومی)`;
 
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
