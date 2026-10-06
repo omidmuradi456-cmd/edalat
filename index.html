@@ -48,7 +48,6 @@
           <option value="یورو">یورو</option>
           <option value="تومان">تومان (میلیون)</option>
           <option value="دلار">دلار</option>
-
           <option value="افغانی">افغانی (هزار)</option>
           <option value="لیر">لیر (ترکیه)</option>
         </select>
@@ -59,7 +58,6 @@
           <option value="تومان">تومان</option>
           <option value="یورو">یورو</option>
           <option value="دلار">دلار</option>
-
           <option value="لیر">لیر (ترکیه)</option>
         </select>
       </div>
@@ -223,9 +221,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // آماده‌سازی WebApp تلگرام
   const tg = window.Telegram?.WebApp;
   if(tg) { tg.expand(); }
+
+  const SUPPORT_PHONE = "989962671189"; // شماره پشتیبانی جهت دریافت تاییدیه تک‌کلیکی
 
   let customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
   let remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
@@ -506,6 +505,10 @@
 
     if (target === 'customer') {
       phoneNum = c.phone.replace(/[^0-9]/g, '');
+      // لینک تایید تک کلیکی دریافت پول توسط مشتری برای ارسال به پشتیبانی
+      let clientConfirmMsg = encodeURIComponent(`👍 تایید دریافت: اینجانب ${c.name} مبلغ ${r.sent} ${r.currSent} مربوط به حواله کد ${r.code} را تحویل گرفتم.`);
+      let clientConfirmLink = `https://wa.me/${SUPPORT_PHONE}?text=${clientConfirmMsg}`;
+
       text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
              `----------------------------------%0A` +
              `🧾 *رسید حواله*%0A%0A` +
@@ -522,6 +525,10 @@
              `----------------------------------%0A` +
              `⚠️ *توصیه مهم:* گیرنده محترم هنگام تحویل گرفتن پول، حتماً تذکره یا کارت شناسایی (آیدی کارت) معتبر همراه داشته باشد.%0A` +
              `----------------------------------%0A` +
+             `👇 *تایید دریافت پول توسط مشتری (بدون نیاز به تایپ):*%0A` +
+             `پس از تحویل پول، فقط روی لینک زیر ضربه بزنید:%0A` +
+             `👉 ${clientConfirmLink}%0A` +
+             `----------------------------------%0A` +
              `🙏 با تشکر از اعتماد شما - صرافی عدالت%0A` +
              `دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی`;
 
@@ -531,6 +538,11 @@
         alert('شماره واتساپ نمایندگی وارد نشده است! لطفاً حواله را ویرایش کرده و شماره نمایندگی را وارد کنید.');
         return;
       }
+      
+      // لینک تایید تک کلیکی نمایندگی پس از پرداخت وجه به پشتیبانی
+      let agentConfirmMsg = encodeURIComponent(`✅ تایید پرداخت نمایندگی: حواله با کد ${r.code} به مبلغ ${r.sent} ${r.currSent} به گیرنده (${r.receiver}) تحویل داده شد.`);
+      let agentConfirmLink = `https://wa.me/${SUPPORT_PHONE}?text=${agentConfirmMsg}`;
+
       text = `🏛 *صرافی عدالت - دستور اجرای حواله*%0A` +
              `----------------------------------%0A` +
              `🏢 *همکار گرامی نمایندگی مقصد*%0A` +
@@ -543,7 +555,9 @@
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `📌 *تسویه:* ${r.paymentType}%0A` +
              `----------------------------------%0A` +
-             `لطفاً پس از اخذ تذکره/کارت شناسایی، تسویه کرده و تاییدیه پرداخت را ارسال نمایید.`;
+             `👇 *اعلام تایید پرداخت به پشتیبانی (بدون نیاز به تایپ):*%0A` +
+             `پس از تحویل پول به گیرنده، فقط روی لینک زیر ضربه بزنید:%0A` +
+             `👉 ${agentConfirmLink}`;
     }
 
     if (!phoneNum) {
@@ -587,7 +601,7 @@
     for (let curr in totals) {
       summaryText += `🔹 *مجموع حواله‌ها (${curr}):* ${totals[curr].totalReceived} ${curr}%0A`;
       summaryText += `✅ *پرداخت نقدی:* ${totals[curr].cash} ${curr}%0A`;
-      summaryText += `❌ *باقی‌‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
+      summaryText += `❌ *باقی‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
     }
 
     let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
