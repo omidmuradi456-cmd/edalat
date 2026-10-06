@@ -51,12 +51,12 @@
 
   <!-- هدر اصلی -->
   <div class="header-box">
-    <h5 class="m-0">🏛️ صرافی و حواله‌داری عدالت</h5>
+    <h5 class="m-0">🏛️ صرافی و حواله‌‌داری عدالت</h5>
     <p class="mb-1 small">دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی - پشتیبانی: <span dir="ltr">+989962671189</span></p>
     <span class="badge bg-success">متصل به تلگرام 🟢</span>
   </div>
 
-  <!-- کادر نرخ روزانه -->
+  <!-- نرخ روزانه -->
   <div class="card-box">
     <h6>⚙️ نرخ روزانه ارزها</h6>
     <div class="row g-2 my-1">
@@ -92,18 +92,18 @@
     <h6>🔍 جستجوی مشتری</h6>
     <div class="input-group mb-2">
       <input type="text" id="searchKey" class="form-control form-control-sm" placeholder="نام یا شماره تلفن...">
-      <button class="btn btn-primary btn-sm" onclick="doSearch()">جستجو</button>
-      <button class="btn btn-success btn-sm" onclick="addCustomer()">مشتری جدید</button>
+      <button class="btn btn-primary btn-sm">جستجو</button>
+      <button class="btn btn-success btn-sm">مشتری جدید</button>
     </div>
   </div>
 
   <!-- مدیریت مشتری و عملیات حواله -->
   <div class="card-box">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <button class="btn btn-success btn-sm" onclick="openRemittanceModal()">+ افزودن حواله جدید</button>
+      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#newRemittanceModal">+ افزودن حواله جدید</button>
       <div>
-        <button class="btn btn-warning btn-sm" onclick="editCustomer()">ویرایش مشتری</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteCustomer()">حذف مشتری</button>
+        <button class="btn btn-warning btn-sm">ویرایش مشتری</button>
+        <button class="btn btn-danger btn-sm">حذف مشتری</button>
       </div>
     </div>
 
@@ -129,15 +129,15 @@
         </thead>
         <tbody>
           <tr>
-            <td>2000 یورو</td>
-            <td>200 یورو</td>
-            <td>131400.00 افغانی</td>
+            <td id="remAmount">2000 یورو</td>
+            <td id="remFee">200 یورو</td>
+            <td id="remNet">131400.00 افغانی</td>
             <td><span class="badge bg-success">تکمیل شده</span></td>
             <td>
               <button class="btn btn-warning btn-action" onclick="editRemittance()">✏️ ویرایش</button>
-              <button class="btn btn-info btn-action text-white" onclick="sendToCustomer()">📱 پیام به مشتری</button>
-              <button class="btn btn-secondary btn-action" onclick="sendToAgent()">🏢 پیام به نمایندگی</button>
-              <button class="btn btn-dark btn-action" onclick="sendLoanMsg()">💰 پیام قرض/بدهی</button>
+              <button class="btn btn-info btn-action text-white" onclick="sendToCustomer()">📱 پیام مشتری</button>
+              <button class="btn btn-secondary btn-action" onclick="sendToAgent()">🏢 پیام نمایندگی</button>
+              <button class="btn btn-dark btn-action" onclick="sendLoanMsg()">💰 پیام قرض</button>
             </td>
           </tr>
         </tbody>
@@ -145,6 +145,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
@@ -153,41 +154,29 @@
       const v = document.getElementById('rateVal').value;
       if(v) {
         document.getElementById('currentRateDisplay').innerText = `1 یورو = ${v} افغانی`;
-        alert("نرخ جدید ثبت شد.");
       }
     }
 
-    function doSearch() { alert("در حال جستجو..."); }
-    function addCustomer() { alert("فرم مشتری جدید باز شد."); }
-    function editCustomer() { alert("ویرایش اطلاعات مشتری"); }
-    function deleteCustomer() { confirm("آیا از حذف این مشتری اطمینان دارید؟"); }
-    function openRemittanceModal() { alert("ثبت حواله جدید"); }
-
-    // ۱. ویرایش حواله
     function editRemittance() {
-      const newAmount = prompt("مبلغ جدید یا تغییرات حواله را وارد کنید:", "2000 یورو");
-      if(newAmount) alert("حواله با موفقیت ویرایش شد.");
+      const newAmount = prompt("مبلغ جدید دریافتی را وارد کنید:", "2000 یورو");
+      if(newAmount) {
+        document.getElementById('remAmount').innerText = newAmount;
+      }
     }
 
-    // ۲. پیام اجرای حواله برای مشتری
     function sendToCustomer() {
-      const msg = "مشتری گرامی، حواله شما به مبلغ 131400 افغانی با موفقیت اجرا شد. با تشکر، صرافی عدالت.";
-      tg.sendData(JSON.stringify({ type: "msg_customer", text: msg }));
-      alert("پیام به مشتری ارسال شد:\n\n" + msg);
+      const msg = "مشتری گرامی، حواله شما به مبلغ 131400 افغانی با موفقیت اجرا شد. صرافی عدالت.";
+      tg.sendData(JSON.stringify({ type: "customer_msg", text: msg }));
     }
 
-    // ۳. پیام اجرا برای نمایندگی (جهت تحویل)
     function sendToAgent() {
-      const msg = "نمایندگی محترم، حواله آقای احمد ناصری به مبلغ 131400 افغانی اجرا شد. لطفاً به مشتری تحویل دهید.";
-      tg.sendData(JSON.stringify({ type: "msg_agent", text: msg }));
-      alert("پیام به نمایندگی ارسال شد:\n\n" + msg);
+      const msg = "نمایندگی محترم، حواله آقای احمد ناصری به مبلغ 131400 افغانی اجرا شد. لطفاً تحویل دهید.";
+      tg.sendData(JSON.stringify({ type: "agent_msg", text: msg }));
     }
 
-    // ۴. پیام کوتاه پول قرض/داده شده به مشتری
     function sendLoanMsg() {
-      const msg = "مشتری گرامی، مبلغ قرض/پرداختی شما ثبت گردید. جهت تسویه حساب اقدام فرمایید. صرافی عدالت.";
-      tg.sendData(JSON.stringify({ type: "msg_loan", text: msg }));
-      alert("پیام قرض/بدهی ارسال شد:\n\n" + msg);
+      const msg = "مشتری گرامی، مبلغ قرض/پرداختی شما ثبت گردید. صرافی عدالت.";
+      tg.sendData(JSON.stringify({ type: "loan_msg", text: msg }));
     }
   </script>
 </body>
