@@ -54,22 +54,26 @@
     <h6>⚙ نرخ روزانه ارزها <small class="text-muted fs-7">(جهت حذف روی نرخ کلیک کنید)</small></h6>
     <div class="row g-2 my-1">
       <div class="col-6 col-md-3">
-        <select id="rateFromCurr" class="form-select form-select-sm">
-          <option value="یورو">یورو</option>
-          <option value="تومان 1000000 ">تومان (1000000)</option>
-          <option value="دلار">دلار</option>
-          <option value="افغانی">افغانی (هزار)</option>
-          <option value="لیر">لیر (ترکیه)</option>
-        </select>
+        <select class="form-select" id="fromCurr">
+  <option value="1000000 تومان">1000000 تومان</option>
+  <option value="1 دلار">1 دلار ($)</option>
+  <option value="1 یورو">1 یورو (€)</option>
+  <option value="1 افغانی">1 افغانی</option>
+  <option value="1 کلدار">1 کلدار</option>
+  <option value="1 لیره">1 لیره</option>
+</select>
+
       </div>
       <div class="col-6 col-md-3">
-        <select id="rateToCurr" class="form-select form-select-sm">
-          <option value="افغانی">افغانی</option>
-          <option value="1000000 تومان 1000000 ">تومان</option>
-          <option value="یورو">یورو</option>
-          <option value="دلار">دلار</option>
-          <option value="لیر">لیر (ترکیه)</option>
-        </select>
+        <select class="form-select" id="fromCurr">
+  <option value="1000000 تومان">1000000 تومان</option>
+  <option value="1 دلار">1 دلار ($)</option>
+  <option value="1 یورو">1 یورو (€)</option>
+  <option value="1 افغانی">1 افغانی</option>
+  <option value="1 کلدار">1 کلدار</option>
+  <option value="1 لیره">1 لیره</option>
+</select>
+
       </div>
       <div class="col-8 col-md-4">
         <input type="number" id="rateValue" class="form-control form-control-sm" placeholder="نرخ تبدیل">
@@ -180,39 +184,45 @@
             <label>مبلغ کلی دریافتی</label>
             <div class="input-group">
               <input type="number" id="remReceived" class="form-control" value="2000" oninput="autoCalculate()">
-              <select id="remCurrReceived" class="form-select" onchange="autoCalculate()">
-                <option value="یورو ">یورو</option>
-                <option value="  1000000تومان 1000000 ">تومان</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دلار">دلار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select class="form-select" id="fromCurr">
+  <option value="1000000 تومان">1000000 تومان</option>
+  <option value="1 دلار">1 دلار ($)</option>
+  <option value="1 یورو">1 یورو (€)</option>
+  <option value="1 افغانی">1 افغانی</option>
+  <option value="1 کلدار">1 کلدار</option>
+  <option value="1 لیره">1 لیره</option>
+</select>
+
             </div>
           </div>
           <div class="col-md-6 mb-2">
             <label class="text-danger fw-bold">کارمزد</label>
             <div class="input-group">
               <input type="number" id="remFee" class="form-control" value="200" oninput="autoCalculate()">
-              <select id="remCurrFee" class="form-select" onchange="autoCalculate()">
-                <option value="یورو">یورو</option>
-                <option value=" 1000000 تومان 1000000 ">تومان</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دلار">دلار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select class="form-select" id="fromCurr">
+  <option value="1000000 تومان">1000000 تومان</option>
+  <option value="1 دلار">1 دلار ($)</option>
+  <option value="1 یورو">1 یورو (€)</option>
+  <option value="1 افغانی">1 افغانی</option>
+  <option value="1 کلدار">1 کلدار</option>
+  <option value="1 لیره">1 لیره</option>
+</select>
+
             </div>
           </div>
           <div class="col-md-12 mb-2">
             <label class="text-success fw-bold">مبلغ خالص ارسالی (محاسبه خودکار)</label>
             <div class="input-group">
               <input type="number" id="remSent" class="form-control bg-light fw-bold fs-5 text-success" readonly>
-              <select id="remCurrSent" class="form-select" onchange="autoCalculate()">
-                <option value="افغانی">افغانی</option>
-                <option value=" 1000000 تومان 1000000 ">تومان</option>
-                <option value="یورو">یورو</option>
-                <option value="دلار">دلار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select class="form-select" id="fromCurr">
+  <option value="1000000 تومان">1000000 تومان</option>
+  <option value="1 دلار">1 دلار ($)</option>
+  <option value="1 یورو">1 یورو (€)</option>
+  <option value="1 افغانی">1 افغانی</option>
+  <option value="1 کلدار">1 کلدار</option>
+  <option value="1 لیره">1 لیره</option>
+</select>
+
             </div>
           </div>
           <div class="col-md-12 mb-2">
