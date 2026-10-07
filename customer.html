@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSFiddle x3z8c1jd</title>
+
+  <style>
+    
+  </style>
+
+  
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ثبت آنلاین حواله - صرافی و حواله‌داری عدالت</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { background-color: #f4f6f9; font-family: Tahoma, Arial, sans-serif; padding-bottom: 40px; }
+    .header-box { background: linear-gradient(135deg, #0d3b66, #0077b6); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    .bank-box { background-color: #eef7ff; border: 2px dashed #0077b6; border-radius: 10px; padding: 15px; }
+    .phone-input { direction: ltr !important; text-align: left !important; }
+    .upload-success { display: none; color: #0d6efd; font-weight: bold; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container my-3" style="max-width: 650px;">
+  <!-- سربرگ -->
+  <div class="header-box text-center">
+    <h4 class="mb-1">🏛 صرافی و حواله‌داری عدالت</h4>
+    <p class="mb-0 small">فرم رسمی ثبت حواله آنلاین</p>
+    <small class="d-block mt-1 text-light">مدیریت: دکتر روح‌الله مرادی (مسئول حواله‌داری عمومی)</small>
+  </div>
+
+  <!-- کادر شماره حساب بانکی صرافی -->
+  <div class="card p-3">
+    <div class="bank-box text-center">
+      <h6 class="text-primary fw-bold mb-2">💳 شماره حساب / کارت صرافی عدالت</h6>
+      <p class="mb-1 fw-bold fs-5 text-dark" dir="ltr" id="bankCardNum">6037 - 9979 - 0000 - 0000</p>
+      <small class="text-muted">به نام: صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)</small>
+      <br>
+      <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyBankNum()">📋 کپی شماره کارت</button>
+    </div>
+  </div>
+
+  <!-- فرم ثبت اطلاعات حواله -->
+  <div class="card p-4">
+    <h6 class="fw-bold mb-3 text-secondary">📝 مشخصات حواله را با دقت وارد کنید:</h6>
+    
+    <form id="customerOrderForm" onsubmit="handleFormSubmit(event)">
+      
+      <!-- اطلاعات فرستنده -->
+      <div class="border-bottom pb-3 mb-3">
+        <h6 class="text-primary fs-7 fw-bold">👤 اطلاعات فرستنده</h6>
+        <div class="mb-2">
+          <label class="form-label small">نام و تخلص فرستنده <span class="text-danger">*</span></label>
+          <input type="text" id="senderName" class="form-control" required placeholder="مثال: احمد احمدی">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">شماره تماس فرستنده (واتساپ) <span class="text-danger">*</span></label>
+          <input type="text" id="senderPhone" class="form-control phone-input" required placeholder="+93...">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">مبدأ (کشور، شهر و آدرس) <span class="text-danger">*</span></label>
+          <input type="text" id="originAddress" class="form-control" required placeholder="مثال: فنلاند، هلسینکی...">
+        </div>
+      </div>
+
+      <!-- اطلاعات گیرنده -->
+      <div class="border-bottom pb-3 mb-3">
+        <h6 class="text-primary fs-7 fw-bold">🎯 اطلاعات گیرنده</h6>
+        <div class="mb-2">
+          <label class="form-label small">نام و تخلص کامل گیرنده <span class="text-danger">*</span></label>
+          <input type="text" id="receiverName" class="form-control" required placeholder="مثال: مسعود مرادی">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">شماره تماس گیرنده <span class="text-danger">*</span></label>
+          <input type="text" id="receiverPhone" class="form-control phone-input" required placeholder="+93...">
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">مقصد (کشور، شهر و آدرس) <span class="text-danger">*</span></label>
+          <input type="text" id="destAddress" class="form-control" required placeholder="مثال: افغانستان، کابل، دشت برچی...">
+        </div>
+      </div>
+
+      <!-- اطلاعات مالی -->
+      <div class="border-bottom pb-3 mb-3">
+        <h6 class="text-primary fs-7 fw-bold">💵 اطلاعات مبلغ و نوع پرداخت</h6>
+        <div class="row g-2 mb-2">
+          <div class="col-7">
+            <label class="form-label small">مبلغ حواله <span class="text-danger">*</span></label>
+            <input type="number" id="sendAmount" class="form-control" required placeholder="مثال: 1000">
+          </div>
+          <div class="col-5">
+            <label class="form-label small">واحد پول</label>
+            <select id="sendCurrency" class="form-select">
+              <option value="یورو">یورو</option>
+              <option value="دلار">دلار</option>
+              <option value="تومان">تومان</option>
+              <option value="افغانی">افغانی</option>
+              <option value="لیر">لیر (ترکیه)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-2">
+          <label class="form-label small">نوع پرداخت <span class="text-danger">*</span></label>
+          <select id="paymentType" class="form-select fw-bold border-primary">
+            <option value="نقدی">نقدی (پرداخت شده)</option>
+            <option value="قرض">قرض / دفتری</option>
+            <option value="عمده">عمده</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- بخش آپلود فیش بانکی -->
+      <div class="mb-4">
+        <h6 class="text-primary fs-7 fw-bold">📸 آپلود فیش واریزی</h6>
+        <label class="form-label small">عکس فیش واریز شده به کارت صرافی را انتخاب کنید:</label>
+        <input type="file" id="receiptFile" class="form-control" accept="image/*" onchange="checkUpload(event)">
+        
+        <!-- تیک آبی و تاییدیه آپلود عکس -->
+        <div id="uploadStatus" class="upload-success">
+          🔹 عکس فیش واریزی با موفقیت آپلود شد
+        </div>
+      </div>
+
+      <!-- دکمه ثبت -->
+      <button type="submit" class="btn btn-success btn-lg w-100 fw-bold">📤 ارسال و ثبت حواله</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  if(tg) { tg.expand(); }
+
+  const SUPPORT_WHATSAPP = "989962671189"; // شماره پشتیبانی جهت دریافت حواله
+
+  // نمایش تیک آبی پس از انتخاب فایل
+  function checkUpload(event) {
+    const file = event.target.files[0];
+    const statusDiv = document.getElementById('uploadStatus');
+    if (file) {
+      statusDiv.style.display = 'block';
+    } else {
+      statusDiv.style.display = 'none';
+    }
+  }
+
+  // کپی شماره کارت
+  function copyBankNum() {
+    const num = document.getElementById('bankCardNum').innerText.replace(/\s/g, '');
+    navigator.clipboard.writeText(num);
+    alert('شماره کارت صرافی کپی شد!');
+  }
+
+  // ثبت و ارسال اطلاعات
+  function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const senderName = document.getElementById('senderName').value;
+    const senderPhone = document.getElementById('senderPhone').value;
+    const originAddress = document.getElementById('originAddress').value;
+    
+    const receiverName = document.getElementById('receiverName').value;
+    const receiverPhone = document.getElementById('receiverPhone').value;
+    const destAddress = document.getElementById('destAddress').value;
+    
+    const sendAmount = document.getElementById('sendAmount').value;
+    const sendCurrency = document.getElementById('sendCurrency').value;
+    const paymentType = document.getElementById('paymentType').value;
+    const hasReceipt = document.getElementById('receiptFile').files.length > 0;
+
+    let receiptStatusText = hasReceipt ? "🔹 عکس فیش واریزی آپلود شده است" : "❌ فیش واریزی آپلود نشده است";
+
+    // ذخیره در LocalStorage برای انتقال به پنل صرافی
+    let pendingRemittances = JSON.parse(localStorage.getItem('edalat_pending_remittances')) || [];
+    let newOrder = {
+      id: Date.now().toString(),
+      code: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
+      senderName, senderPhone, originAddress,
+      receiverName, receiverPhone, destAddress,
+      sendAmount, sendCurrency, paymentType,
+      date: new Date().toLocaleDateString('fa-IR'),
+      hasReceipt
+    };
+    pendingRemittances.push(newOrder);
+    localStorage.setItem('edalat_pending_remittances', JSON.stringify(pendingRemittances));
+
+    // متن آماده جهت ارسال به واتساپ پشتیبانی صرافی
+    let waText = `🏛 *درخواست ثبت حواله جدید (از طرف مشتری)*%0A` +
+                 `----------------------------------%0A` +
+                 `👤 *فرستنده:* ${senderName}%0A` +
+                 `📞 *شماره فرستنده:* ${senderPhone}%0A` +
+                 `📍 *مبدأ:* ${originAddress}%0A%0A` +
+                 `👤 *گیرنده:* ${receiverName}%0A` +
+                 `📞 *شماره گیرنده:* ${receiverPhone}%0A` +
+                 `📍 *مقصد:* ${destAddress}%0A%0A` +
+                 `💵 *مبلغ حواله:* ${sendAmount} ${sendCurrency}%0A` +
+                 `📌 *نوع پرداخت:* ${paymentType}%0A` +
+                 `----------------------------------%0A` +
+                 `${receiptStatusText}%0A` +
+                 `----------------------------------%0A` +
+                 `جهت بررسی و تایید نهایی ارسال شد.`;
+
+    alert('اطلاعات حواله شما با موفقیت ثبت شد! جهت تایید نهایی به واتساپ پشتیبانی منتقل می‌شوید.');
+    window.open(`https://wa.me/${SUPPORT_WHATSAPP}?text=${waText}`, '_blank');
+  }
+</script>
+</body>
+</html>
+
+
+  <script>
+    
+  </script>
+</body>
+</html>
