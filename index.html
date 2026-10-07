@@ -1,13 +1,3 @@
-<script>
-  (function() {
-    var pass = prompt("🔐 لطفاً رمز عبور مدیریت صرافی را وارد کنید:");
-    if (pass !== "456250") { // رمز عبور دلخواه شما
-      alert("⛔️ رمز عبور اشتباه است! دسترسی مسدود شد.");
-      document.write("<h2 style='text-align:center;margin-top:50px;color:red;'>دسترسی غیرمجاز!</h2>");
-      window.stop();
-    }
-  })();
-</script>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -43,7 +33,7 @@
   <!-- دکمه‌های پشتیبان‌گیری و خروجی آنلاین -->
   <div class="card p-2 text-center bg-light">
     <div class="d-flex justify-content-center gap-2">
-      <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 دانلود فایل پشتیبان (بک‌آپ)</button>
+      <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 دانلود فایل پشتیبان (بک‌آب)</button>
       <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی پشتیبان</button>
       <input type="file" id="importFile" style="display:none;" onchange="importBackup(event)" accept=".json">
     </div>
@@ -54,29 +44,27 @@
     <h6>⚙ نرخ روزانه ارزها <small class="text-muted fs-7">(جهت حذف روی نرخ کلیک کنید)</small></h6>
     <div class="row g-2 my-1">
       <div class="col-6 col-md-3">
-        <select class="form-select" id="fromCurr">
-  <option value="1000000 تومان">1000000 تومان</option>
-  <option value="1 دلار">1 دلار ($)</option>
-  <option value="1 یورو">1 یورو (€)</option>
-  <option value="1 افغانی">1 افغانی</option>
-  <option value="1 کلدار">1 کلدار</option>
-  <option value="1 لیره">1 لیره</option>
-</select>
-
+        <select id="rateFromCurr" class="form-select form-select-sm">
+          <option value="1000000 تومان">1000000 تومان</option>
+          <option value="یورو">1 یورو</option>
+          <option value="دلار">1 دلار</option>
+          <option value="افغانی">1 افغانی</option>
+          <option value="کلدار">1 کلدار</option>
+          <option value="لیر">1 لیر (ترکیه)</option>
+        </select>
       </div>
       <div class="col-6 col-md-3">
-        <select class="form-select" id="fromCurr">
-  <option value="1000000 تومان">1000000 تومان</option>
-  <option value="1 دلار">1 دلار ($)</option>
-  <option value="1 یورو">1 یورو (€)</option>
-  <option value="1 افغانی">1 افغانی</option>
-  <option value="1 کلدار">1 کلدار</option>
-  <option value="1 لیره">1 لیره</option>
-</select>
-
+        <select id="rateToCurr" class="form-select form-select-sm">
+          <option value="افغانی">افغانی</option>
+          <option value="1000000 تومان">1000000 تومان</option>
+          <option value="یورو">یورو</option>
+          <option value="دلار">دلار</option>
+          <option value="کلدار">کلدار</option>
+          <option value="لیر">لیر (ترکیه)</option>
+        </select>
       </div>
       <div class="col-8 col-md-4">
-        <input type="number" id="rateValue" class="form-control form-control-sm" placeholder="نرخ تبدیل">
+        <input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="نرخ تبدیل">
       </div>
       <div class="col-4 col-md-2">
         <button class="btn btn-sm btn-primary w-100" onclick="addOrUpdateRate()">ثبت نرخ</button>
@@ -184,45 +172,42 @@
             <label>مبلغ کلی دریافتی</label>
             <div class="input-group">
               <input type="number" id="remReceived" class="form-control" value="2000" oninput="autoCalculate()">
-              <select class="form-select" id="fromCurr">
-  <option value="1000000 تومان">1000000 تومان</option>
-  <option value="1 دلار">1 دلار ($)</option>
-  <option value="1 یورو">1 یورو (€)</option>
-  <option value="1 افغانی">1 افغانی</option>
-  <option value="1 کلدار">1 کلدار</option>
-  <option value="1 لیره">1 لیره</option>
-</select>
-
+              <select id="remCurrReceived" class="form-select" onchange="autoCalculate()">
+                <option value="1000000 تومان">1000000 تومان</option>
+                <option value="یورو">یورو</option>
+                <option value="افغانی">افغانی</option>
+                <option value="دلار">دلار</option>
+                <option value="کلدار">کلدار</option>
+                <option value="لیر">لیر (ترکیه)</option>
+              </select>
             </div>
           </div>
           <div class="col-md-6 mb-2">
             <label class="text-danger fw-bold">کارمزد</label>
             <div class="input-group">
               <input type="number" id="remFee" class="form-control" value="200" oninput="autoCalculate()">
-              <select class="form-select" id="fromCurr">
-  <option value="1000000 تومان">1000000 تومان</option>
-  <option value="1 دلار">1 دلار ($)</option>
-  <option value="1 یورو">1 یورو (€)</option>
-  <option value="1 افغانی">1 افغانی</option>
-  <option value="1 کلدار">1 کلدار</option>
-  <option value="1 لیره">1 لیره</option>
-</select>
-
+              <select id="remCurrFee" class="form-select" onchange="autoCalculate()">
+                <option value="1000000 تومان">1000000 تومان</option>
+                <option value="یورو">یورو</option>
+                <option value="افغانی">افغانی</option>
+                <option value="دلار">دلار</option>
+                <option value="کلدار">کلدار</option>
+                <option value="لیر">لیر (ترکیه)</option>
+              </select>
             </div>
           </div>
           <div class="col-md-12 mb-2">
             <label class="text-success fw-bold">مبلغ خالص ارسالی (محاسبه خودکار)</label>
             <div class="input-group">
               <input type="number" id="remSent" class="form-control bg-light fw-bold fs-5 text-success" readonly>
-              <select class="form-select" id="fromCurr">
-  <option value="1000000 تومان">1000000 تومان</option>
-  <option value="1 دلار">1 دلار ($)</option>
-  <option value="1 یورو">1 یورو (€)</option>
-  <option value="1 افغانی">1 افغانی</option>
-  <option value="1 کلدار">1 کلدار</option>
-  <option value="1 لیره">1 لیره</option>
-</select>
-
+              <select id="remCurrSent" class="form-select" onchange="autoCalculate()">
+                <option value="افغانی">افغانی</option>
+                <option value="1000000 تومان">1000000 تومان</option>
+                <option value="یورو">یورو</option>
+                <option value="دلار">دلار</option>
+                <option value="کلدار">کلدار</option>
+                <option value="لیر">لیر (ترکیه)</option>
+              </select>
             </div>
           </div>
           <div class="col-md-12 mb-2">
@@ -275,7 +260,7 @@
 
     let match = exchangeRates.find(r => r.from === currRec && r.to === currSent);
     if (match) {
-      let factor = currRec === 'تومان' ? 1000000 : 1;
+      let factor = (currRec.includes('1000000') || currRec === 'تومان') ? 1000000 : 1;
       document.getElementById('remSent').value = ((netAmount / factor) * match.rate).toFixed(2);
     } else {
       document.getElementById('remSent').value = netAmount;
@@ -481,7 +466,7 @@
     let box = document.getElementById('activeRatesList');
     box.innerHTML = '';
     exchangeRates.forEach((r, i) => {
-      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})" title="برای حذف کلیک کنید">1 ${r.from} = ${r.rate} ${r.to} ✖</span>`;
+      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})" title="برای حذف کلیک کنید">${r.from} = ${r.rate} ${r.to} ✖</span>`;
     });
   }
 
@@ -526,7 +511,6 @@
     if (target === 'customer') {
       phoneNum = c.phone.replace(/[^0-9]/g, '');
 
-      // لینک کوتاه و تمیز بدون آدرس‌های طولانی
       let clientMsg = encodeURIComponent(`👍 تایید تحویل حواله ${r.code}`);
       let quickLink = `https://wa.me/${SUPPORT_PHONE}?text=${clientMsg}`;
 
