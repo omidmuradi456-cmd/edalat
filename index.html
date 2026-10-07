@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>حواله‌داری و صرافی عدالت (نسخه تلگرام)</title>
+  <title>حواله‌داری و صرافی عدالت (پنل مدیریت)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -18,111 +18,141 @@
     .phone-input { direction: ltr !important; text-align: left !important; }
     .rate-badge { cursor: pointer; transition: transform 0.1s; }
     .rate-badge:hover { transform: scale(1.05); }
+    
+    /* قفل صفحه ورود */
+    #loginScreen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 80vh;
+    }
+    #mainAppContent {
+      display: none;
+    }
   </style>
 </head>
 <body>
 
 <div class="container my-2">
-  <div class="header-box text-center">
-    <h4 class="m-0">🏛 صرافی و حواله‌داری عدالت</h4>
-    <p class="mb-1 small">دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی – پشتیبانی: <span dir="ltr">+989962671189</span></p>
-    <span class="badge bg-success" id="syncStatus">🟢 متصل به تلگرام</span>
-  </div>
 
-  <!-- دکمه‌های پشتیبان‌گیری -->
-  <div class="card p-2 text-center bg-light">
-    <div class="d-flex justify-content-center gap-2">
-      <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 دانلود فایل پشتیبان (بک‌آپ)</button>
-      <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی پشتیبان</button>
-      <input type="file" id="importFile" style="display:none;" onchange="importBackup(event)" accept=".json">
+  <!-- ۱. صفحه ورود رمز عبور -->
+  <div id="loginScreen">
+    <div class="card p-4 text-center shadow-lg w-100" style="max-width: 400px;">
+      <h4 class="fw-bold text-primary mb-3">🏛 صرافی عدالت</h4>
+      <p class="text-muted small">ورود به پنل مدیریت (دکتر روح‌الله مرادی)</p>
+      <div class="mb-3">
+        <input type="password" id="adminPasswordInput" class="form-control text-center fs-5" placeholder="رمز عبور را وارد کنید">
+      </div>
+      <button class="btn btn-primary w-100 fw-bold py-2" onclick="checkAdminPassword()">ورود به سیستم 🔒</button>
+      <p id="loginError" class="text-danger small mt-2 d-none">⛔️ رمز عبور اشتباه است!</p>
     </div>
   </div>
 
-  <!-- کادر نرخ روزانه -->
-  <div class="card p-3">
-    <h6>⚙ نرخ روزانه ارزها <small class="text-muted fs-7">(جهت حذف روی نرخ کلیک کنید)</small></h6>
-    <div class="row g-2 my-1">
-      <div class="col-6 col-md-3">
-        <select id="rateFromCurr" class="form-select form-select-sm">
-          <option value="1000000 تومان">1000000 تومان</option>
-          <option value="یورو">1 یورو</option>
-          <option value="دلار">1 دلار</option>
-          <option value="افغانی">1 افغانی</option>
-          <option value="کلدار">1 کلدار</option>
-          <option value="لیر">1 لیر (ترکیه)</option>
-        </select>
-      </div>
-      <div class="col-6 col-md-3">
-        <select id="rateToCurr" class="form-select form-select-sm">
-          <option value="افغانی">افغانی</option>
-          <option value="1000000 تومان">1000000 تومان</option>
-          <option value="یورو">یورو</option>
-          <option value="دلار">دلار</option>
-          <option value="کلدار">کلدار</option>
-          <option value="لیر">لیر (ترکیه)</option>
-        </select>
-      </div>
-      <div class="col-8 col-md-4">
-        <input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="نرخ تبدیل">
-      </div>
-      <div class="col-4 col-md-2">
-        <button class="btn btn-sm btn-primary w-100" onclick="addOrUpdateRate()">ثبت نرخ</button>
+  <!-- ۲. محتوای اصلی پنل مدیریت (فقط بعد از ورود رمز نشان داده می‌شود) -->
+  <div id="mainAppContent">
+    <div class="header-box text-center position-relative">
+      <button class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="logoutAdmin()">خروج 🔒</button>
+      <h4 class="m-0">🏛 صرافی و حواله‌داری عدالت</h4>
+      <p class="mb-1 small">دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی – پشتیبانی: <span dir="ltr">+989962671189</span></p>
+      <span class="badge bg-success" id="syncStatus">🟢 متصل به تلگرام</span>
+    </div>
+
+    <!-- دکمه‌های پشتیبان‌گیری -->
+    <div class="card p-2 text-center bg-light">
+      <div class="d-flex justify-content-center gap-2">
+        <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 دانلود فایل پشتیبان (بک‌آپ)</button>
+        <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی پشتیبان</button>
+        <input type="file" id="importFile" style="display:none;" onchange="importBackup(event)" accept=".json">
       </div>
     </div>
-    <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
+
+    <!-- کادر نرخ روزانه -->
+    <div class="card p-3">
+      <h6>⚙ نرخ روزانه ارزها <small class="text-muted fs-7">(جهت حذف روی نرخ کلیک کنید)</small></h6>
+      <div class="row g-2 my-1">
+        <div class="col-6 col-md-3">
+          <select id="rateFromCurr" class="form-select form-select-sm">
+            <option value="1000000 تومان">1000000 تومان</option>
+            <option value="یورو">1 یورو</option>
+            <option value="دلار">1 دلار</option>
+            <option value="افغانی">1 افغانی</option>
+            <option value="کلدار">1 کلدار</option>
+            <option value="لیر">1 لیر (ترکیه)</option>
+          </select>
+        </div>
+        <div class="col-6 col-md-3">
+          <select id="rateToCurr" class="form-select form-select-sm">
+            <option value="افغانی">افغانی</option>
+            <option value="1000000 تومان">1000000 تومان</option>
+            <option value="یورو">یورو</option>
+            <option value="دلار">دلار</option>
+            <option value="کلدار">کلدار</option>
+            <option value="لیر">لیر (ترکیه)</option>
+          </select>
+        </div>
+        <div class="col-8 col-md-4">
+          <input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="نرخ تبدیل">
+        </div>
+        <div class="col-4 col-md-2">
+          <button class="btn btn-sm btn-primary w-100" onclick="addOrUpdateRate()">ثبت نرخ</button>
+        </div>
+      </div>
+      <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
+    </div>
+
+    <!-- کادر جستجوی مشتری -->
+    <div class="card p-3">
+      <h6>🔍 جستجوی مشتری</h6>
+      <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="نام یا شماره تلفن..." onkeyup="if(event.key==='Enter') handleSearch()">
+        <button class="btn btn-primary" onclick="handleSearch()">جستجو</button>
+        <button class="btn btn-success" onclick="showCustomerModal()">مشتری جدید</button>
+      </div>
+    </div>
+
+    <!-- بخش اطلاعات مشتری و حواله‌ها -->
+    <div id="customerDetailsSection" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+        <div class="d-flex gap-2">
+          <button class="btn btn-success btn-custom" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
+          <button class="btn btn-whatsapp-debt btn-custom" onclick="sendBalanceStatement()">📊 رسید باقی‌مانده حساب</button>
+        </div>
+        <div>
+          <button class="btn btn-sm btn-warning" onclick="editCustomer()">ویرایش مشتری</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteCustomer()">حذف مشتری</button>
+        </div>
+      </div>
+
+      <div class="card p-3 bg-white">
+        <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
+        <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
+        <p class="mb-0 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
+      </div>
+
+      <!-- جدول حواله‌ها -->
+      <div class="card p-2">
+        <h6>📋 لیست حواله‌ها (<span id="sCount">0</span>)</h6>
+        <div class="table-responsive">
+          <table class="table table-sm table-striped text-center align-middle">
+            <thead class="table-dark">
+              <tr>
+                <th>کد</th>
+                <th>نوع</th>
+                <th>فرستنده / گیرنده</th>
+                <th>مبلغ دریافتی</th>
+                <th>کارمزد</th>
+                <th>خالص مقصد</th>
+                <th>وضعیت</th>
+                <th>عملیات</th>
+              </tr>
+            </thead>
+            <tbody id="remittancesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- کادر جستجوی مشتری -->
-  <div class="card p-3">
-    <h6>🔍 جستجوی مشتری</h6>
-    <div class="input-group">
-      <input type="text" id="searchInput" class="form-control" placeholder="نام یا شماره تلفن..." onkeyup="if(event.key==='Enter') handleSearch()">
-      <button class="btn btn-primary" onclick="handleSearch()">جستجو</button>
-      <button class="btn btn-success" onclick="showCustomerModal()">مشتری جدید</button>
-    </div>
-  </div>
-
-  <!-- بخش اطلاعات مشتری و حواله‌ها -->
-  <div id="customerDetailsSection" style="display: none;">
-    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-      <div class="d-flex gap-2">
-        <button class="btn btn-success btn-custom" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
-        <button class="btn btn-whatsapp-debt btn-custom" onclick="sendBalanceStatement()">📊 رسید باقی‌مانده حساب</button>
-      </div>
-      <div>
-        <button class="btn btn-sm btn-warning" onclick="editCustomer()">ویرایش مشتری</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteCustomer()">حذف مشتری</button>
-      </div>
-    </div>
-
-    <div class="card p-3 bg-white">
-      <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
-      <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
-      <p class="mb-0 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
-    </div>
-
-    <!-- جدول حواله‌ها -->
-    <div class="card p-2">
-      <h6>📋 لیست حواله‌ها (<span id="sCount">0</span>)</h6>
-      <div class="table-responsive">
-        <table class="table table-sm table-striped text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>کد</th>
-              <th>نوع</th>
-              <th>فرستنده / گیرنده</th>
-              <th>مبلغ دریافتی</th>
-              <th>کارمزد</th>
-              <th>خالص مقصد</th>
-              <th>وضعیت</th>
-              <th>عملیات</th>
-            </tr>
-          </thead>
-          <tbody id="remittancesTable"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- مدال مشتری -->
@@ -225,6 +255,33 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+  // رمز عبور ورود به پنل مدیریت
+  const ADMIN_PASSWORD = "123";
+
+  function checkAdminPassword() {
+    let pwd = document.getElementById('adminPasswordInput').value;
+    if (pwd === ADMIN_PASSWORD) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainAppContent').style.display = 'block';
+      sessionStorage.setItem('edalat_logged_in', 'true');
+    } else {
+      document.getElementById('loginError').classList.remove('d-none');
+    }
+  }
+
+  function logoutAdmin() {
+    sessionStorage.removeItem('edalat_logged_in');
+    document.getElementById('mainAppContent').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('adminPasswordInput').value = '';
+  }
+
+  // بررسی ورود قبلی در مرورگر
+  if (sessionStorage.getItem('edalat_logged_in') === 'true') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainAppContent').style.display = 'block';
+  }
+
   const tg = window.Telegram?.WebApp;
   if(tg) { tg.expand(); }
 
