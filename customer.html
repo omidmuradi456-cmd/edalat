@@ -11,6 +11,30 @@
     .header-box { background: linear-gradient(135deg, #0d6efd, #003f7f); color: white; padding: 20px; border-radius: 12px; }
     .card { border-radius: 10px; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; }
     .admin-section { display: none; }
+    
+    /* استایل اختصاصی برای دکمه اپلود عکس کاملا فارسی */
+    .custom-file-upload {
+      border: 1px solid #ced4da;
+      display: flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      background-color: #fff;
+    }
+    .custom-file-upload input[type="file"] {
+      display: none;
+    }
+    .upload-btn {
+      background-color: #e9ecef;
+      border: 1px solid #adb5bd;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #495057;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
@@ -84,10 +108,17 @@
             </select>
           </div>
         </div>
+
+        <!-- آپلود عکس فیش واریزی کاملاً فارسی -->
         <div class="mb-3">
           <label class="form-label small fw-bold">🧾 عکس فیش واریزی (رسید پرداخت) *</label>
-          <input type="file" class="form-control" id="receiptFile" accept="image/*" required>
+          <label class="custom-file-upload w-100">
+            <span class="upload-btn">انتخاب عکس 📁</span>
+            <span id="fileNameDisplay" class="small text-muted me-2">هیچ فایلی انتخاب نشده است</span>
+            <input type="file" id="receiptFile" accept="image/*" onchange="updateFileName(this)" required>
+          </label>
         </div>
+
         <button type="submit" class="btn btn-success w-100 fw-bold py-2">ارسال و ثبت حواله 🚀</button>
       </form>
     </div>
@@ -112,12 +143,12 @@
           <div class="col-6">
             <label class="form-label small text-muted">از واحد ارز (مبدأ):</label>
             <select class="form-select btn-sm" id="fromCurr">
-              <option value="دلار">1 دلار ($)</option>
-              <option value="یورو">1 یورو (€)</option>
-              <option value="تومان">تومان</option>
-              <option value="افغانی">افغانی</option>
-              <option value="کلدار">کلدار</option>
-              <option value="لیره">لیره</option>
+              <option value="1 دلار">1 دلار ($)</option>
+              <option value="1 یورو">1 یورو (€)</option>
+              <option value="1 میلیون تومان">1 میلیون تومان</option>
+              <option value="1 افغانی">1 افغانی</option>
+              <option value="1 کلدار">1 کلدار</option>
+              <option value="1 لیره">1 لیره</option>
             </select>
           </div>
           <div class="col-6">
@@ -125,6 +156,7 @@
             <select class="form-select btn-sm" id="toCurr">
               <option value="افغانی">افغانی</option>
               <option value="تومان">تومان</option>
+              <option value="میلیون تومان">میلیون تومان</option>
               <option value="دلار">دلار ($)</option>
               <option value="یورو">یورو (€)</option>
               <option value="کلدار">کلدار</option>
@@ -134,14 +166,14 @@
         </div>
 
         <div class="input-group mb-2">
-          <input type="number" step="0.01" class="form-control" id="rateInput" placeholder="مثلاً: 73.5">
+          <input type="number" step="0.01" class="form-control" id="rateInput" placeholder="مثلاً: 230">
           <button class="btn btn-primary fw-bold" type="button" onclick="updateRate()">ثبت و افزودن نرخ</button>
         </div>
 
         <!-- لیست نرخ‌های ثبت شده با امکان حذف -->
         <h6 class="fw-bold text-dark mt-3 mb-2 small">📊 نرخ‌های فعال روز (برای حذف روی دکمه حذف بزنید):</h6>
         <ul class="list-group small" id="ratesList">
-          <!-- نرخ‌های افزوده شده اینجا نمایش داده می‌شوند -->
+          <!-- نرخ‌ها اینجا اضافه می‌شوند -->
         </ul>
       </div>
 
@@ -182,6 +214,14 @@
     alert('شماره کارت صرافی کپی شد!');
   }
 
+  function updateFileName(input) {
+    if (input.files && input.files[0]) {
+      document.getElementById('fileNameDisplay').innerText = input.files[0].name;
+    } else {
+      document.getElementById('fileNameDisplay').innerText = 'هیچ فایلی انتخاب نشده است';
+    }
+  }
+
   function updateRate() {
     let from = document.getElementById('fromCurr').value;
     let to = document.getElementById('toCurr').value;
@@ -209,7 +249,7 @@
       rates.forEach(r => {
         listHTML += `
           <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span>1 ${r.from} = <strong>${r.rate}</strong> ${r.to}</span>
+            <span>${r.from} = <strong>${r.rate}</strong> ${r.to}</span>
             <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteRate(${r.id})">حذف ❌</button>
           </li>
         `;
