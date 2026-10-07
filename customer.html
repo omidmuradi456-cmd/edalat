@@ -25,7 +25,7 @@
     <button class="btn btn-sm btn-warning fw-bold mt-1" onclick="openAdminPanel()">🔒 ورود به پنل مدیریت (ویژه مسئول)</button>
   </div>
 
-  <!-- ۱. بخش مشتریان (برای همه قابل دیدن) -->
+  <!-- ۱. بخش مشتریان -->
   <div id="customerPanel" class="mt-3">
     <!-- کارت شماره حساب -->
     <div class="card p-3 text-center border-primary" style="border: 2px dashed #0d6efd !important; background-color: #f8faff;">
@@ -75,11 +75,12 @@
           <div class="col-5">
             <label class="form-label small fw-bold">واحد پول (ارز) *</label>
             <select class="form-select" id="currency">
-              <option value="یورو">یورو (€)</option>
               <option value="دلار">دلار ($)</option>
-              <option value="افغانی">افغانی</option>
+              <option value="یورو">یورو (€)</option>
               <option value="تومان">تومان</option>
+              <option value="افغانی">افغانی</option>
               <option value="کلدار">کلدار</option>
+              <option value="لیره">لیره</option>
             </select>
           </div>
         </div>
@@ -92,7 +93,7 @@
     </div>
   </div>
 
-  <!-- ۲. بخش مدیریت (مخصوص دکتر روح‌الله مرادی) -->
+  <!-- ۲. بخش مدیریت -->
   <div id="adminPanel" class="admin-section mt-3">
     <div class="alert alert-warning d-flex justify-content-between align-items-center">
       <span>🔐 **پنل مدیریت صرافی فعال است**</span>
@@ -101,18 +102,22 @@
     
     <div class="card p-3">
       <h5 class="fw-bold text-dark mb-3">📋 مدیریت و اجرای حواله‌ها</h5>
-      <p class="text-muted small">در این بخش می‌توانید نرخ روز ارزها را تنظیم کرده و لیست سفارشات مشتریان را تایید یا اجرا کنید.</p>
+      <p class="text-muted small">در این بخش می‌توانید نرخ روز ارزها را تنظیم کرده، نرخ‌های قبلی را حذف و حواله‌ها را مدیریت نمایید.</p>
       
-      <!-- تنظیم نرخ ارز با انتخاب واحد پول -->
+      <!-- تنظیم نرخ ارز -->
       <div class="mb-3 p-3 bg-light rounded border">
-        <label class="form-label fw-bold text-primary mb-2">⚙️ تنظیم نرخ روز ارزها:</label>
+        <label class="form-label fw-bold text-primary mb-2">⚙️ تنظیم نرخ جدید ارزها:</label>
         
         <div class="row g-2 mb-2">
           <div class="col-6">
             <label class="form-label small text-muted">از واحد ارز (مبدأ):</label>
             <select class="form-select btn-sm" id="fromCurr">
-              <option value="یورو">1 یورو (€)</option>
               <option value="دلار">1 دلار ($)</option>
+              <option value="یورو">1 یورو (€)</option>
+              <option value="تومان">تومان</option>
+              <option value="افغانی">افغانی</option>
+              <option value="کلدار">کلدار</option>
+              <option value="لیره">لیره</option>
             </select>
           </div>
           <div class="col-6">
@@ -120,16 +125,24 @@
             <select class="form-select btn-sm" id="toCurr">
               <option value="افغانی">افغانی</option>
               <option value="تومان">تومان</option>
+              <option value="دلار">دلار ($)</option>
+              <option value="یورو">یورو (€)</option>
               <option value="کلدار">کلدار</option>
+              <option value="لیره">لیره</option>
             </select>
           </div>
         </div>
 
-        <div class="input-group">
+        <div class="input-group mb-2">
           <input type="number" step="0.01" class="form-control" id="rateInput" placeholder="مثلاً: 73.5">
-          <button class="btn btn-primary fw-bold" type="button" onclick="updateRate()">بروزرسانی نرخ</button>
+          <button class="btn btn-primary fw-bold" type="button" onclick="updateRate()">ثبت و افزودن نرخ</button>
         </div>
-        <div id="rateStatus" class="form-text text-success mt-1 fw-bold"></div>
+
+        <!-- لیست نرخ‌های ثبت شده با امکان حذف -->
+        <h6 class="fw-bold text-dark mt-3 mb-2 small">📊 نرخ‌های فعال روز (برای حذف روی دکمه حذف بزنید):</h6>
+        <ul class="list-group small" id="ratesList">
+          <!-- نرخ‌های افزوده شده اینجا نمایش داده می‌شوند -->
+        </ul>
       </div>
 
       <hr>
@@ -143,17 +156,18 @@
 </div>
 
 <script>
-  // رمز عبور ورود به پنل مدیریت
   const ADMIN_PASSWORD = "123"; 
+  let rates = [];
 
   function openAdminPanel() {
     let password = prompt("لطفاً رمز عبور مدیریت را وارد کنید:");
     if (password === ADMIN_PASSWORD) {
       document.getElementById('adminPanel').style.display = 'block';
       document.getElementById('customerPanel').style.display = 'none';
+      renderRates();
       alert("خوش آمدید دکتر روح‌الله مرادی!");
     } else if (password !== null) {
-      alert("⛔️ رمز عبور اشتباه است! دسترسی غیرمجاز.");
+      alert("⛔️ رمز عبور اشتباه است!");
     }
   }
 
@@ -172,11 +186,36 @@
     let from = document.getElementById('fromCurr').value;
     let to = document.getElementById('toCurr').value;
     let rate = document.getElementById('rateInput').value;
+    
     if(rate) {
-      document.getElementById('rateStatus').innerText = `✅ نرخ جدید ثبت شد: 1 ${from} = ${rate} ${to}`;
+      rates.push({ id: Date.now(), from, to, rate });
+      document.getElementById('rateInput').value = '';
+      renderRates();
     } else {
       alert("لطفاً مقدار نرخ را وارد کنید.");
     }
+  }
+
+  function deleteRate(id) {
+    rates = rates.filter(r => r.id !== id);
+    renderRates();
+  }
+
+  function renderRates() {
+    let listHTML = '';
+    if (rates.length === 0) {
+      listHTML = '<li class="list-group-item text-muted text-center">هیچ نرخی ثبت نشده است.</li>';
+    } else {
+      rates.forEach(r => {
+        listHTML += `
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>1 ${r.from} = <strong>${r.rate}</strong> ${r.to}</span>
+            <button class="btn btn-sm btn-outline-danger py-0" onclick="deleteRate(${r.id})">حذف ❌</button>
+          </li>
+        `;
+      });
+    }
+    document.getElementById('ratesList').innerHTML = listHTML;
   }
 </script>
 
