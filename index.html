@@ -224,8 +224,6 @@
   const tg = window.Telegram?.WebApp;
   if(tg) { tg.expand(); }
 
-  const SUPPORT_PHONE = "989962671189"; // شماره پشتیبانی
-
   let customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
   let remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
   let exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [
@@ -505,8 +503,6 @@
 
     if (target === 'customer') {
       phoneNum = c.phone.replace(/[^0-9]/g, '');
-      let clientConfirmMsg = encodeURIComponent(`👍 تایید دریافت پول%0Aکد حواله: ${r.code}%0Aمبلغ: ${r.sent} ${r.currSent}%0Aگیرنده: ${r.receiver}%0Aبا تشکر، پول را تحویل گرفتم.`);
-      let clientConfirmLink = `https://wa.me/${SUPPORT_PHONE}?text=${clientConfirmMsg}`;
 
       text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
              `----------------------------------%0A` +
@@ -524,9 +520,8 @@
              `----------------------------------%0A` +
              `⚠️ *توجه:* همراه داشتن کارت شناسایی معتبر هنگام تحویل الزامی است.%0A` +
              `----------------------------------%0A` +
-             `✅ *تایید تحویل گرفتن پول (کلیک بر روی لینک زیر):*%0A` +
-             `[ 👍 تحویل گرفتم - اطلاع به پشتیبانی ]%0A` +
-             `${clientConfirmLink}%0A` +
+             `✅ *تایید تحویل حواله توسط گیرنده/مشتری:*%0A` +
+             `لطفاً پس از دریافت پول، این پیام را ریپلای کرده یا فقط علامت *✓* ارسال فرمایید.%0A` +
              `----------------------------------%0A` +
              `🙏 با تشکر - صرافی عدالت (دکتر روح‌الله مرادی)`;
 
@@ -536,9 +531,6 @@
         alert('شماره واتساپ نمایندگی وارد نشده است! لطفاً حواله را ویرایش کرده و شماره نمایندگی را وارد کنید.');
         return;
       }
-      
-      let agentConfirmMsg = encodeURIComponent(`✅ تایید پرداخت نمایندگی%0Aکد حواله: ${r.code}%0Aمبلغ: ${r.sent} ${r.currSent}%0Aبه گیرنده (${r.receiver}) تحویل داده شد.`);
-      let agentConfirmLink = `https://wa.me/${SUPPORT_PHONE}?text=${agentConfirmMsg}`;
 
       text = `🏛 *صرافی عدالت - دستور اجرای حواله*%0A` +
              `----------------------------------%0A` +
@@ -551,9 +543,8 @@
              `💵 *مبلغ پرداختی:* *${r.sent} ${r.currSent}*%0A` +
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `----------------------------------%0A` +
-             `✅ *تایید پرداخت و اطلاع به پشتیبانی (فقط روی لینک زیر کلیک کنید):*%0A` +
-             `[ ✅ پرداخت شد - اطلاع به پشتیبانی ]%0A` +
-             `${agentConfirmLink}`;
+             `✅ *تایید اجرا برای پشتیبانی:*%0A` +
+             `همکار گرامی پس از پرداخت وجه، لطفاً این پیام را ریپلای کرده یا علامت *✓* جهت تایید ارسال فرمایید.`;
     }
 
     if (!phoneNum) {
