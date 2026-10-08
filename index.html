@@ -314,10 +314,13 @@
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
               <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
               
-              <!-- کادر موجودی کیف پول / پیش‌پرداخت -->
-              <div class="deposit-box">
-                <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
-                <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
+              <!-- کادر موجودی کیف پول / پیش‌پرداخت همراه با دکمه حذف -->
+              <div class="deposit-box d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                  <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
+                  <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
+                </div>
+                <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن کیف پول</button>
               </div>
             </div>
 
@@ -372,11 +375,11 @@
       <div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی (امانت/سپرده)</h5></div>
       <div class="modal-body">
         <div class="mb-2">
-          <label class="fw-bold">مبلغ واریزی پیشکی</label>
-          <input type="number" id="depAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 50000000">
+          <label class="fw-bold">مبلغ واریزی پیشکی *</label>
+          <input type="number" id="depAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 10000000">
         </div>
         <div class="mb-2">
-          <label class="fw-bold">واحد ارز</label>
+          <label class="fw-bold">واحد ارز *</label>
           <select id="depCurr" class="form-select">
             <option value="1000000 تومان">1000000 تومان</option>
             <option value="دلار ($)">دلار ($)</option>
@@ -388,11 +391,11 @@
         </div>
         <div class="mb-2">
           <label>توضیحات / بابت</label>
-          <input type="text" id="depNotes" class="form-control" placeholder="مثلاً: واریزی امانتی جهت ارسال حواله‌ها">
+          <input type="text" id="depNotes" class="form-control" placeholder="مثلاً: واریزی امانتی پیشکی به حساب صرافی">
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت و کسر خودکار</button>
+        <button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت و ارسال رسید واتساپ 📱</button>
       </div>
     </div>
   </div>
@@ -743,6 +746,17 @@
     document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون سپرده پیشکی';
   }
 
+  function clearCustomerDeposits() {
+    if (!currentCustId) return alert('مشتری انتخاب نشده است!');
+    if (confirm('آیا مطمئن هستید که می‌خواهید تمام سپرده‌ها و موجودی پیشکی این مشتری را حذف و صفر کنید؟')) {
+      deposits = deposits.filter(d => d.custId !== currentCustId);
+      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+      let c = customers.find(x => x.id === currentCustId);
+      loadCustomerData(c);
+      alert('🗑️ موجودی کیف پول پیشکی مشتری با موفقیت پاک شد.');
+    }
+  }
+
   function showDepositModal() {
     document.getElementById('depAmount').value = '';
     document.getElementById('depNotes').value = '';
@@ -755,6 +769,9 @@
     let notes = document.getElementById('depNotes').value;
 
     if (!amt || amt <= 0) return alert('لطفاً مبلغ معتبر وارد کنید.');
+
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است.');
 
     let obj = {
       id: Date.now().toString(),
@@ -769,9 +786,36 @@
     localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
     if(depModal) depModal.hide();
 
-    let c = customers.find(x => x.id === currentCustId);
     loadCustomerData(c);
-    alert('✅ مبلغ پیشکی با موفقیت به حساب مشتری اضافه شد!');
+
+    // محاسبه موجودی جدید پیشکی
+    let custDeps = deposits.filter(d => d.custId === c.id);
+    let custRems = remittances.filter(r => r.custId === c.id && (r.paymentType === 'از پیشکی (سپرده)' || r.paymentType === 'امانت'));
+    let totalDeposit = 0, usedDeposit = 0;
+    custDeps.forEach(d => { if(d.curr === curr) totalDeposit += parseFloat(d.amount) || 0; });
+    custRems.forEach(r => { if(r.currReceived === curr) usedDeposit += parseFloat(r.received) || 0; });
+    let currentBalance = totalDeposit - usedDeposit;
+
+    // ارسال تاییدیه واتساپ به مشتری
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `🧾 *رسید دریافت واریزی پیشکی (سپرده)*%0A%0A` +
+               `مشتری گرامی *${c.name}*، واریزی پیشکی شما با موفقیت دریافت و در حساب شما ثبت گردید:%0A%0A` +
+               `💵 *مبلغ دریافت شده پیشکی:* *${amt.toLocaleString('fa-IR')} ${curr}*%0A` +
+               `📅 *تاریخ دریافت:* ${obj.date}%0A` +
+               (notes ? `📝 *بابت:* ${notes}%0A` : '') +
+               `----------------------------------%0A` +
+               `💼 *موجودی کل فعلی کیف پول شما:* *${currentBalance.toLocaleString('fa-IR')} ${curr}*%0A` +
+               `----------------------------------%0A` +
+               `🙏 با تشکر - صرافی و حواله‌داری عدالت%0A` +
+               `(دکتر روح‌الله مرادی - مسئول حواله‌داری عمومی)`;
+
+    if (phoneNum) {
+      window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+    } else {
+      alert('مبلغ ثبت شد اما شماره واتساپ مشتری یافت نشد!');
+    }
   }
 
   function saveCustomer() {
