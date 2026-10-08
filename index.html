@@ -323,13 +323,16 @@
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
               <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
               
-              <!-- کادر موجودی کیف پول / پیش‌پرداخت همراه با دکمه حذف -->
+              <!-- کادر موجودی کیف پول / پیش‌پرداخت همراه با دکمه ویرایش و حذف -->
               <div class="deposit-box d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div>
                   <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
                   <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
                 </div>
-                <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن کیف پول</button>
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editWalletBalance()" title="ویرایش مستقیم موجودی کیف پول">✏️ ویرایش کیف پول</button>
+                  <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن</button>
+                </div>
               </div>
 
               <!-- کادر چک‌های ثبت شده مشتری -->
@@ -383,12 +386,13 @@
   </div>
 </div>
 
-<!-- مدال ثبت چک جدید -->
+<!-- مدال ثبت / ویرایش چک -->
 <div class="modal fade" id="chequeModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید از مشتری</h5></div>
+      <div class="modal-header"><h5 class="modal-title" id="chequeModalTitle">🧾 ثبت چک جدید از مشتری</h5></div>
       <div class="modal-body">
+        <input type="hidden" id="editChequeId">
         <div class="mb-2">
           <label class="fw-bold">مبلغ چک *</label>
           <input type="number" id="chqAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 50000000">
@@ -418,7 +422,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-warning fw-bold text-dark" onclick="saveCheque()">ثبت چک و ارسال رسید 📱</button>
+        <button class="btn btn-warning fw-bold text-dark" onclick="saveCheque()">ذخیره اطلاعات چک 📱</button>
       </div>
     </div>
   </div>
@@ -826,15 +830,55 @@
     document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون سپرده پیشکی';
   }
 
+  function editWalletBalance() {
+    if (!currentCustId) return alert('مشتری انتخاب نشده است!');
+    let newBalance = prompt('لطفاً مبلغ جدید کیف پول پیشکی را وارد نمایید (تومان یا ارز مربوطه):');
+    if (newBalance !== null && newBalance.trim() !== '') {
+      let val = parseFloat(newBalance);
+      if (isNaN(val)) return alert('مبلغ وارد شده معتبر نیست!');
+      
+      // پاک کردن سپرده‌های قبلی و ثبت سپرده جدید ویرایش شده
+      deposits = deposits.filter(d => d.custId !== currentCustId);
+      deposits.push({
+        id: Date.now().toString(),
+        custId: currentCustId,
+        amount: val,
+        curr: '1000000 تومان',
+        notes: 'ویرایش دستی موجودی کیف پول',
+        date: new Date().toLocaleDateString('fa-IR')
+      });
+      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+      let c = customers.find(x => x.id === currentCustId);
+      if (c) loadCustomerData(c);
+      alert('✏️ موجودی کیف پول پیشکی با موفقیت به‌روزرسانی شد.');
+    }
+  }
+
   function showChequeModal() {
+    document.getElementById('editChequeId').value = '';
     document.getElementById('chqAmount').value = '';
     document.getElementById('chqNumber').value = '';
     document.getElementById('chqBank').value = '';
     document.getElementById('chqDueDate').value = '';
+    document.getElementById('chequeModalTitle').innerText = '🧾 ثبت چک جدید از مشتری';
+    if(chqModal) chqModal.show();
+  }
+
+  function editCheque(chequeId) {
+    let chq = cheques.find(x => x.id === chequeId);
+    if (!chq) return;
+    document.getElementById('editChequeId').value = chq.id;
+    document.getElementById('chqAmount').value = chq.amount;
+    document.getElementById('chqCurr').value = chq.curr;
+    document.getElementById('chqNumber').value = chq.number;
+    document.getElementById('chqBank').value = chq.bank;
+    document.getElementById('chqDueDate').value = chq.dueDate;
+    document.getElementById('chequeModalTitle').innerText = '✏️ ویرایش اطلاعات چک';
     if(chqModal) chqModal.show();
   }
 
   function saveCheque() {
+    let editId = document.getElementById('editChequeId').value;
     let amt = parseFloat(document.getElementById('chqAmount').value);
     let curr = document.getElementById('chqCurr').value;
     let number = document.getElementById('chqNumber').value.trim();
@@ -848,19 +892,30 @@
     let c = customers.find(x => x.id === currentCustId);
     if(!c) return alert('مشتری انتخاب نشده است!');
 
-    let obj = {
-      id: Date.now().toString(),
-      custId: currentCustId,
-      amount: amt,
-      curr,
-      number,
-      bank,
-      dueDate,
-      status: 'در انتظار وصول (نقد نشده)',
-      regDate: new Date().toLocaleDateString('fa-IR')
-    };
+    if (editId) {
+      let idx = cheques.findIndex(x => x.id === editId);
+      if (idx > -1) {
+        cheques[idx].amount = amt;
+        cheques[idx].curr = curr;
+        cheques[idx].number = number;
+        cheques[idx].bank = bank;
+        cheques[idx].dueDate = dueDate;
+      }
+    } else {
+      let obj = {
+        id: Date.now().toString(),
+        custId: currentCustId,
+        amount: amt,
+        curr,
+        number,
+        bank,
+        dueDate,
+        status: 'در انتظار وصول (نقد نشده)',
+        regDate: new Date().toLocaleDateString('fa-IR')
+      };
+      cheques.push(obj);
+    }
 
-    cheques.push(obj);
     localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
     if(chqModal) chqModal.hide();
 
@@ -870,13 +925,12 @@
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
                `----------------------------------%0A` +
-               `🧾 *رسید دریافت چک امانتی*%0A%0A` +
-               `جناب آقای / سرکار خانم *${c.name}*، چک شما با مشخصات زیر تحویل صرافی گردید:%0A%0A` +
+               `🧾 *رسید ثبت / ویرایش چک امانتی*%0A%0A` +
+               `جناب آقای / سرکار خانم *${c.name}*، مشخصات چک شما ثبت/به‌روزرسانی گردید:%0A%0A` +
                `💵 *مبلغ چک:* *${amt.toLocaleString('fa-IR')} ${curr}*%0A` +
                `📑 *شماره چک / صیادی:* ${number}%0A` +
                `🏦 *بانک عامل:* ${bank}%0A` +
                `📅 *تاریخ سررسید چک:* ${dueDate}%0A` +
-               `📌 *وضعیت فعلی:* در انتظار وصول (امانت)%0A` +
                `----------------------------------%0A` +
                `💡 *توجه:* پس از پاس شدن و وصول چک در بانک، مبلغ آن مستقیماً به کیف پول پیشکی شما اضافه خواهد شد.%0A` +
                `----------------------------------%0A` +
@@ -894,35 +948,29 @@
     let c = customers.find(x => x.id === chq.custId);
     if (!c) return alert('مشتری مربوطه یافت نشد!');
 
-    let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    if (!phoneNum) {
-      alert('شماره تلفن واتساپ مشتری یافت نشد!');
-      return;
-    }
-
     if (confirm(`آیا چک شماره ${chq.number} به مبلغ ${chq.amount.toLocaleString('fa-IR')} ${chq.curr} در بانک پاس و تبدیل به پول شد؟`)) {
       chq.status = 'پاس شده (نقد شد) 🏦';
       localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
 
-      // افزودن خودکار مبلغ چک به کیف پول پیشکی مشتری
-      let depObj = {
+      // انتقال خودکار و مستقیم مبلغ چک به موجودی کیف پول پیشکی مشتری
+      deposits.push({
         id: Date.now().toString(),
         custId: c.id,
         amount: chq.amount,
         curr: chq.curr,
         notes: `تبدیل چک شماره ${chq.number} (${chq.bank}) به پول نقد`,
         date: new Date().toLocaleDateString('fa-IR')
-      };
-      deposits.push(depObj);
+      });
       localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
 
       loadCustomerData(c);
 
       // ارسال پیام تاییدیه پاس شدن چک به شماره واتساپ مشتری
+      let phoneNum = c.phone.replace(/[^0-9]/g, '');
       let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
                  `----------------------------------%0A` +
                  `🏦 *اطلاعیه وصول و تبدیل چک به پول*%0A%0A` +
-                 `مشتری گرامی *${c.name}* (📱 ${c.phone})، چک شما با موفقیت در بانک پاس شد:%0A%0A` +
+                 `مشتری گرامی *${c.name}*، چک شما با موفقیت در بانک پاس شد:%0A%0A` +
                  `📑 *شماره چک:* ${chq.number}%0A` +
                  `💵 *مبلغ چک:* *${chq.amount.toLocaleString('fa-IR')} ${chq.curr}*%0A` +
                  `🏦 *بانک عامل:* ${chq.bank}%0A` +
@@ -931,7 +979,9 @@
                  `----------------------------------%0A` +
                  `با تشکر - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
 
-      window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+      if (phoneNum) {
+        window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+      }
     }
   }
 
@@ -978,7 +1028,8 @@
         <td>
           <div class="d-flex justify-content-center gap-1">
             ${!isDone ? `<button class="btn btn-sm btn-success fw-bold p-1" onclick="convertChequeToMoney('${ch.id}')" title="تبدیل چک به پول نقد">🏦 پاس شد</button>` : ''}
-            <button class="btn btn-sm btn-danger fw-bold p-1" onclick="deleteCheque('${ch.id}')" title="حذف چک">🗑️ حذف</button>
+            <button class="btn btn-sm btn-warning fw-bold p-1" onclick="editCheque('${ch.id}')" title="ویرایش چک">✏️</button>
+            <button class="btn btn-sm btn-danger fw-bold p-1" onclick="deleteCheque('${ch.id}')" title="حذف چک">🗑️</button>
           </div>
         </td>
       </tr>`;
@@ -1064,7 +1115,6 @@
     let c = customers.find(x => x.id === currentCustId);
     if (!c) return alert('مشتری انتخاب نشده است!');
     
-    // محاسبه ۲ هفته آینده به عنوان تاریخ پیش‌فرض
     let d = new Date();
     d.setDate(d.getDate() + 14);
     let defaultDueDate = d.toLocaleDateString('fa-IR');
