@@ -301,7 +301,7 @@
               <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-sm btn-success fw-bold" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
                 <button class="btn btn-sm btn-info text-white fw-bold" onclick="showDepositModal()">💰 ثبت واریزی پیشکی (سپرده)</button>
-                <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="sendBalanceStatement()">📊 رسید باقی‌مانده حساب</button>
+                <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="openBalanceModal()">📊 رسید باقی‌مانده حساب</button>
               </div>
               <div>
                 <button class="btn btn-sm btn-warning" onclick="editCustomer()">ویرایش</button>
@@ -351,7 +351,7 @@
   </div>
 </div>
 
-<!-- مدال‌های مشتری، حواله و واریزی پیشکی -->
+<!-- مدال‌های مشتری، حواله، واریزی پیشکی و تعیین مهلت تسویه -->
 <div class="modal fade" id="customerModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -364,6 +364,25 @@
         <div class="mb-2"><label>توضیحات</label><input type="text" id="custNotes" class="form-control"></div>
       </div>
       <div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره مشتری</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- مدال تعیین مهلت پرداخت واریزی باقی مانده -->
+<div class="modal fade" id="balanceModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="fw-bold mb-1">لطفاً تاریخ آخرین مهلت پرداخت تسویه حساب را وارد نمایید:</label>
+          <input type="text" id="dueDateInput" class="form-control text-center fs-5 fw-bold text-danger" placeholder="مثال: ۱۴۰۳/۰۸/۱۵ (سال/ماه/روز)">
+          <small class="text-muted d-block mt-1">فرمت تاریخ: سال/ماه/روز (مثلاً ۱۴۰۳/۰۸/۱۵)</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary fw-bold w-100 py-2" onclick="sendBalanceStatementWithDate()">📲 ارسال رسید احترام‌نامه به واتساپ مشتری</button>
+      </div>
     </div>
   </div>
 </div>
@@ -541,12 +560,13 @@
   }
 
   let currentCustId = null;
-  let custModal, remModal, depModal;
+  let custModal, remModal, depModal, balModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
     remModal = new bootstrap.Modal(document.getElementById('remittanceModal'));
     depModal = new bootstrap.Modal(document.getElementById('depositModal'));
+    balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
     renderRates();
     calculateClientNet();
   });
@@ -818,6 +838,81 @@
     }
   }
 
+  function openBalanceModal() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+    
+    // محاسبه ۲ هفته آینده به عنوان تاریخ پیش‌فرض
+    let d = new Date();
+    d.setDate(d.getDate() + 14);
+    let defaultDueDate = d.toLocaleDateString('fa-IR');
+    
+    document.getElementById('dueDateInput').value = defaultDueDate;
+    if(balModal) balModal.show();
+  }
+
+  function sendBalanceStatementWithDate() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    if (!phoneNum) return alert('شماره تلفن مشتری معتبر نیست!');
+
+    let dueDate = document.getElementById('dueDateInput').value.trim();
+    if (!dueDate) return alert('لطفاً تاریخ مهلت پرداخت را وارد کنید.');
+
+    let custDeps = deposits.filter(d => d.custId === c.id);
+    let custRems = remittances.filter(r => r.custId === c.id);
+
+    let totals = {};
+    custRems.forEach(r => {
+      let curr = r.currReceived;
+      if (!totals[curr]) totals[curr] = { totalReceived: 0, debt: 0, cash: 0, depositUsed: 0 };
+      let amt = parseFloat(r.received) || 0;
+      totals[curr].totalReceived += amt;
+      if (r.paymentType === 'قرض') totals[curr].debt += amt;
+      else if (r.paymentType === 'از پیشکی (سپرده)') totals[curr].depositUsed += amt;
+      else totals[curr].cash += amt;
+    });
+
+    let depSum = {};
+    custDeps.forEach(d => {
+      if(!depSum[d.curr]) depSum[d.curr] = 0;
+      depSum[d.curr] += parseFloat(d.amount) || 0;
+    });
+
+    let summaryText = '';
+    for (let curr in totals) {
+      summaryText += `🔹 *مجموع حواله‌ها:* ${totals[curr].totalReceived.toLocaleString('fa-IR')} ${curr}%0A`;
+      if (totals[curr].debt > 0) {
+        summaryText += `❌ *باقی‌مانده بدهی (قرض):* *${totals[curr].debt.toLocaleString('fa-IR')} ${curr}*%0A`;
+      }
+      if (depSum[curr] !== undefined) {
+        let netDep = depSum[curr] - totals[curr].depositUsed;
+        summaryText += `💼 *موجودی پیشکی:* ${netDep.toLocaleString('fa-IR')} ${curr}%0A`;
+      }
+      summaryText += `%0A`;
+    }
+
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `📜 *احترام‌نامه و صورت‌حساب رسمی*%0A%0A` +
+               `جناب آقای / سرکار خانم *${c.name}*، با سلام و احترام؛%0A%0A` +
+               `ضمن تشکر از حسن اعتماد و همکاری شایسته شما با صرافی عدالت، خلاصه وضعیت حساب و باقی‌مانده حساب شما به شرح زیر می‌باشد:%0A%0A` +
+               `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
+               `----------------------------------%0A` +
+               summaryText +
+               `⏰ *آخرین مهلت تسویه باقی‌مانده حساب:*%0A` +
+               `📅 *${dueDate}*%0A` +
+               `----------------------------------%0A` +
+               `خواهشمند است جهت تسویه حساب، تا تاریخ فوق اقدام فرموده یا با پشتیبانی صرافی هماهنگی لازم را به عمل آورید.%0A%0A` +
+               `با احترام و سپاس فراوان %0A` +
+               `صرافی و حواله‌داری عدالت - دکتر روح‌الله مرادی`;
+
+    if (balModal) balModal.hide();
+    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+  }
+
   function saveCustomer() {
     let id = document.getElementById('customerId').value || Date.now().toString();
     let name = document.getElementById('custName').value;
@@ -1078,41 +1173,6 @@
       alert('شماره تلفن معتبر یافت نشد!');
       return;
     }
-
-    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
-  }
-
-  function sendBalanceStatement() {
-    let c = customers.find(x => x.id === currentCustId);
-    if (!c) return alert('مشتری انتخاب نشده است!');
-
-    let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    if (!phoneNum) return alert('شماره تلفن مشتری معتبر نیست!');
-
-    let custDeps = deposits.filter(d => d.custId === c.id);
-    let custRems = remittances.filter(r => r.custId === c.id && (r.paymentType === 'از پیشکی (سپرده)' || r.paymentType === 'امانت'));
-
-    let totalDeposit = 0;
-    let usedDeposit = 0;
-    let curr = 'تومان';
-
-    custDeps.forEach(d => { totalDeposit += parseFloat(d.amount) || 0; curr = d.curr; });
-    custRems.forEach(r => { usedDeposit += parseFloat(r.received) || 0; });
-
-    let remBalance = totalDeposit - usedDeposit;
-
-    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
-               `----------------------------------%0A` +
-               `📊 *صورت‌حساب کیف پول و باقی‌مانده پیش‌پرداخت*%0A%0A` +
-               `👤 *نام مشتری:* ${c.name}%0A` +
-               `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
-               `----------------------------------%0A` +
-               `💰 *مجموع کل واریزی پیشکی:* ${totalDeposit.toLocaleString('fa-IR')} ${curr}%0A` +
-               `💸 *مجموع حواله‌های کسر شده:* ${usedDeposit.toLocaleString('fa-IR')} ${curr}%0A` +
-               `✨ *باقی‌مانده خالص موجودی پیشکی:* *${remBalance.toLocaleString('fa-IR')} ${curr}*%0A` +
-               `----------------------------------%0A` +
-               `🙏 جهت اطلاعات بیشتر یا برداشت موجودی با پشتیبانی در تماس باشید.%0A` +
-               `صرافی و حواله‌داری عدالت - دکتر روح‌الله مرادی`;
 
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
