@@ -305,7 +305,7 @@
           <div>
             <h6>🔍 جستجوی مشتری</h6>
             <div class="input-group">
-              <input type="text" id="searchInput" class="form-control" placeholder="نام یا شماره تلفن..." onkeyup="if(event.key==='Enter') handleSearch()">
+              <input type="text" id="searchInput" class="form-control" placeholder="نام یا شماره تلفن مشتری..." onkeyup="if(event.key==='Enter') handleSearch()">
               <button class="btn btn-primary" onclick="handleSearch()">جستجو</button>
               <button class="btn btn-success" onclick="showCustomerModal()">مشتری جدید</button>
             </div>
@@ -349,7 +349,7 @@
                 <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
 
-              <!-- کادر بدهی‌ها و قرض‌های مشتری همراه با شماره تماس و ارسال یادآوری -->
+              <!-- کادر بدهی‌ها و قرض‌های مشتری -->
               <div class="debt-box mt-2">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -794,20 +794,24 @@
     }
   }
 
+  // اصلاح دقیق جستجوگر فقط روی نام و شماره تلفن خود مشتری
   function handleSearch() {
     let q = document.getElementById('searchInput').value.trim().toLowerCase();
-    if(!q) return alert('لطفاً نام یا شماره تلفن را وارد کنید');
+    if(!q) return alert('لطفاً نام یا شماره تلفن مشتری را وارد کنید');
     
-    let c = customers.find(x => 
-      x.name.toLowerCase().includes(q) || 
-      x.phone.replace(/[^0-9]/g, '').includes(q.replace(/[^0-9]/g, ''))
-    );
-    
+    let cleanQ = q.replace(/[^0-9a-zA-Zآ-ی]/g, '');
+
+    let c = customers.find(x => {
+      let cName = (x.name || '').toLowerCase();
+      let cPhone = (x.phone || '').replace(/[^0-9]/g, '');
+      return cName.includes(q) || (cleanQ && cPhone.includes(cleanQ));
+    });
+
     if(c) { 
       currentCustId = c.id; 
       loadCustomerData(c); 
     } else { 
-      alert('مشتری با این مشخصات یافت نشد'); 
+      alert('مشتری با این مشخصات یافت نشد!'); 
     }
   }
 
