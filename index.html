@@ -75,6 +75,14 @@
       padding: 10px;
       margin-top: 10px;
     }
+
+    .cheque-box {
+      background-color: #fff3cd;
+      border: 1px solid #ffeba1;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -301,6 +309,7 @@
               <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-sm btn-success fw-bold" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
                 <button class="btn btn-sm btn-info text-white fw-bold" onclick="showDepositModal()">💰 ثبت واریزی پیشکی (سپرده)</button>
+                <button class="btn btn-sm btn-warning text-dark fw-bold" onclick="showChequeModal()">🧾 ثبت چک جدید از مشتری</button>
                 <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="openBalanceModal()">📊 رسید باقی‌مانده حساب</button>
               </div>
               <div>
@@ -321,6 +330,12 @@
                   <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
                 </div>
                 <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن کیف پول</button>
+              </div>
+
+              <!-- کادر چک‌های ثبت شده مشتری -->
+              <div class="cheque-box mt-2">
+                <h6 class="fw-bold text-dark mb-2">📑 چک‌های دریافتی امانتی از مشتری:</h6>
+                <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
             </div>
 
@@ -351,7 +366,7 @@
   </div>
 </div>
 
-<!-- مدال‌های مشتری، حواله، واریزی پیشکی و تعیین مهلت تسویه -->
+<!-- مدال‌های مشتری، حواله، واریزی پیشکی، چک و مهلت تسویه -->
 <div class="modal fade" id="customerModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -364,6 +379,47 @@
         <div class="mb-2"><label>توضیحات</label><input type="text" id="custNotes" class="form-control"></div>
       </div>
       <div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره مشتری</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- مدال ثبت چک جدید -->
+<div class="modal fade" id="chequeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید از مشتری</h5></div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="fw-bold">مبلغ چک *</label>
+          <input type="number" id="chqAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 50000000">
+        </div>
+        <div class="mb-2">
+          <label class="fw-bold">واحد ارز *</label>
+          <select id="chqCurr" class="form-select">
+            <option value="1000000 تومان">1000000 تومان</option>
+            <option value="دلار ($)">دلار ($)</option>
+            <option value="یورو (€)">یورو (€)</option>
+            <option value="افغانی">افغانی</option>
+            <option value="کلدار">کلدار</option>
+            <option value="لیر">لیر (ترکیه)</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>شماره چک / شناسه صیادی *</label>
+          <input type="text" id="chqNumber" class="form-control" placeholder="مثلاً: 123456789">
+        </div>
+        <div class="mb-2">
+          <label>نام بانک و شعبه *</label>
+          <input type="text" id="chqBank" class="form-control" placeholder="مثلاً: بانک ملی شعبه آزادی">
+        </div>
+        <div class="mb-2">
+          <label>تاریخ سررسید چک (وصول) *</label>
+          <input type="text" id="chqDueDate" class="form-control" placeholder="مثلاً: ۱۴۰۳/۰۹/۱۰">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning fw-bold text-dark" onclick="saveCheque()">ثبت چک و ارسال رسید 📱</button>
+      </div>
     </div>
   </div>
 </div>
@@ -547,11 +603,13 @@
   let remittances = [];
   let exchangeRates = [];
   let deposits = [];
+  let cheques = [];
 
   try {
     customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
     remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
     deposits = JSON.parse(localStorage.getItem('edalat_deposits')) || [];
+    cheques = JSON.parse(localStorage.getItem('edalat_cheques')) || [];
     exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [
       { from: '1000000 تومان', to: 'افغانی', rate: 1200 }
     ];
@@ -560,13 +618,14 @@
   }
 
   let currentCustId = null;
-  let custModal, remModal, depModal, balModal;
+  let custModal, remModal, depModal, balModal, chqModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
     remModal = new bootstrap.Modal(document.getElementById('remittanceModal'));
     depModal = new bootstrap.Modal(document.getElementById('depositModal'));
     balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
+    chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
     renderRates();
     calculateClientNet();
   });
@@ -711,6 +770,7 @@
     document.getElementById('customerDetailsSection').style.display = 'block';
 
     calculateCustomerDeposits(c.id);
+    renderCustomerCheques(c.id);
 
     let list = remittances.filter(r => r.custId === c.id);
     let table = document.getElementById('remittancesTable');
@@ -764,6 +824,162 @@
     }
 
     document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون سپرده پیشکی';
+  }
+
+  function showChequeModal() {
+    document.getElementById('chqAmount').value = '';
+    document.getElementById('chqNumber').value = '';
+    document.getElementById('chqBank').value = '';
+    document.getElementById('chqDueDate').value = '';
+    if(chqModal) chqModal.show();
+  }
+
+  function saveCheque() {
+    let amt = parseFloat(document.getElementById('chqAmount').value);
+    let curr = document.getElementById('chqCurr').value;
+    let number = document.getElementById('chqNumber').value.trim();
+    let bank = document.getElementById('chqBank').value.trim();
+    let dueDate = document.getElementById('chqDueDate').value.trim();
+
+    if (!amt || !number || !bank || !dueDate) {
+      return alert('لطفاً تمامی اطلاعات چک را وارد نمایید.');
+    }
+
+    let c = customers.find(x => x.id === currentCustId);
+    if(!c) return alert('مشتری انتخاب نشده است!');
+
+    let obj = {
+      id: Date.now().toString(),
+      custId: currentCustId,
+      amount: amt,
+      curr,
+      number,
+      bank,
+      dueDate,
+      status: 'در انتظار وصول (نقد نشده)',
+      regDate: new Date().toLocaleDateString('fa-IR')
+    };
+
+    cheques.push(obj);
+    localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
+    if(chqModal) chqModal.hide();
+
+    loadCustomerData(c);
+
+    // ارسال رسید چک به مشتری در واتساپ
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `🧾 *رسید دریافت چک امانتی*%0A%0A` +
+               `جناب آقای / سرکار خانم *${c.name}*، چک شما با مشخصات زیر تحویل صرافی گردید:%0A%0A` +
+               `💵 *مبلغ چک:* *${amt.toLocaleString('fa-IR')} ${curr}*%0A` +
+               `📑 *شماره چک / صیادی:* ${number}%0A` +
+               `🏦 *بانک عامل:* ${bank}%0A` +
+               `📅 *تاریخ سررسید چک:* ${dueDate}%0A` +
+               `📌 *وضعیت فعلی:* در انتظار وصول (امانت)%0A` +
+               `----------------------------------%0A` +
+               `💡 *توجه:* پس از پاس شدن و وصول چک در بانک، مبلغ آن مستقیماً به کیف پول پیشکی شما اضافه خواهد شد.%0A` +
+               `----------------------------------%0A` +
+               `با تشکر و احترام - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
+
+    if (phoneNum) {
+      window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+    }
+  }
+
+  function convertChequeToMoney(chequeId) {
+    let chq = cheques.find(x => x.id === chequeId);
+    if (!chq) return;
+
+    let c = customers.find(x => x.id === chq.custId);
+    if (!c) return;
+
+    if (confirm(`آیا چک شماره ${chq.number} به مبلغ ${chq.amount.toLocaleString('fa-IR')} ${chq.curr} در بانک پاس و تبدیل به پول شد؟`)) {
+      chq.status = 'پاس شده (نقد شد) 🏦';
+      localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
+
+      // افزودن خودکار مبلغ چک به کیف پول پیشکی مشتری
+      let depObj = {
+        id: Date.now().toString(),
+        custId: c.id,
+        amount: chq.amount,
+        curr: chq.curr,
+        notes: `تبدیل چک شماره ${chq.number} (${chq.bank}) به پول نقد`,
+        date: new Date().toLocaleDateString('fa-IR')
+      };
+      deposits.push(depObj);
+      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+
+      loadCustomerData(c);
+
+      // ارسال پیام تاییدیه پاس شدن چک به مشتری در واتساپ
+      let phoneNum = c.phone.replace(/[^0-9]/g, '');
+      let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+                 `----------------------------------%0A` +
+                 `🏦 *اطلاعیه وصول و تبدیل چک به پول*%0A%0A` +
+                 `مشتری گرامی *${c.name}*، چک شما با موفقیت در بانک پاس شد:%0A%0A` +
+                 `📑 *شماره چک:* ${chq.number}%0A` +
+                 `💵 *مبلغ چک:* *${chq.amount.toLocaleString('fa-IR')} ${chq.curr}*%0A` +
+                 `🏦 *بانک:* ${chq.bank}%0A` +
+                 `----------------------------------%0A` +
+                 `✅ *نتیجه:* مبلغ فوق به‌طور کامل به موجودی کیف پول پیشکی شما اضافه گردید و می‌توانید با آن حواله ارسال کنید.%0A` +
+                 `----------------------------------%0A` +
+                 `با تشکر - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
+
+      if (phoneNum) {
+        window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+      }
+    }
+  }
+
+  function deleteCheque(chequeId) {
+    if (confirm('آیا از حذف این چک اطمینان دارید؟')) {
+      cheques = cheques.filter(x => x.id !== chequeId);
+      localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
+      let c = customers.find(x => x.id === currentCustId);
+      loadCustomerData(c);
+    }
+  }
+
+  function renderCustomerCheques(custId) {
+    let container = document.getElementById('chequesTableContainer');
+    let list = cheques.filter(x => x.custId === custId);
+
+    if (list.length === 0) {
+      container.innerHTML = '<span class="text-muted small">هیچ چکی برای این مشتری ثبت نشده است.</span>';
+      return;
+    }
+
+    let html = `<table class="table table-sm table-bordered text-center align-middle bg-white mb-0 mt-1">
+      <thead class="table-warning">
+        <tr>
+          <th>شماره چک</th>
+          <th>بانک</th>
+          <th>مبلغ</th>
+          <th>سررسید</th>
+          <th>وضعیت</th>
+          <th>عملیات</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+    list.forEach(ch => {
+      let isDone = ch.status.includes('پاس شده');
+      html += `<tr>
+        <td><strong>${ch.number}</strong></td>
+        <td>${ch.bank}</td>
+        <td class="fw-bold text-success">${ch.amount.toLocaleString('fa-IR')} ${ch.curr}</td>
+        <td>${ch.dueDate}</td>
+        <td><span class="badge ${isDone ? 'bg-success' : 'bg-warning text-dark'}">${ch.status}</span></td>
+        <td>
+          ${!isDone ? `<button class="btn btn-sm btn-success fw-bold p-1 me-1" onclick="convertChequeToMoney('${ch.id}')" title="تبدیل چک به پول نقد">🏦 پاس شد</button>` : ''}
+          <button class="btn btn-sm btn-danger p-1" onclick="deleteCheque('${ch.id}')" title="حذف">🗑</button>
+        </td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
   }
 
   function clearCustomerDeposits() {
@@ -1030,9 +1246,11 @@
       customers = customers.filter(x => x.id !== currentCustId);
       remittances = remittances.filter(x => x.custId !== currentCustId);
       deposits = deposits.filter(x => x.custId !== currentCustId);
+      cheques = cheques.filter(x => x.custId !== currentCustId);
       localStorage.setItem('edalat_customers', JSON.stringify(customers));
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
       localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+      localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
       document.getElementById('customerDetailsSection').style.display = 'none';
     }
   }
@@ -1074,7 +1292,7 @@
   }
 
   function exportBackup() {
-    let data = { customers, remittances, exchangeRates, deposits };
+    let data = { customers, remittances, exchangeRates, deposits, cheques };
     let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -1094,6 +1312,7 @@
           localStorage.setItem('edalat_remittances', JSON.stringify(imported.remittances));
           if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
           if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
+          if(imported.cheques) localStorage.setItem('edalat_cheques', JSON.stringify(imported.cheques));
           alert('اطلاعات با موفقیت بازیابی شد!');
           location.reload();
         }
