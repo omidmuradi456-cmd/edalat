@@ -349,14 +349,16 @@
                 <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
 
-              <!-- کادر بدهی‌ها و قرض‌های مشتری (جدید) -->
+              <!-- کادر بدهی‌ها و قرض‌های مشتری همراه با شماره تماس و ارسال یادآوری -->
               <div class="debt-box mt-2">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
                     <h6 class="fw-bold text-danger m-0">❌ باقی‌مانده بدهی (حواله‌های قرض):</h6>
                     <div id="cDebtSummary" class="fw-bold text-danger fs-5 mt-1">۰ بدون بدهی</div>
+                    <small class="text-muted d-block mt-1">📱 شماره مشتری جهت تماس/واتساپ: <strong id="cDebtPhone" class="text-dark" dir="ltr">---</strong></small>
                   </div>
-                  <div class="d-flex gap-1">
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()" title="ارسال پیامک محترمانه یادآوری بدهی به واتساپ">📲 یادآوری بدهی (واتساپ)</button>
                     <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editCustomerDebt()" title="ویرایش بدهی">✏️ ویرایش بدهی</button>
                     <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDebt()" title="تسویه و صفر کردن بدهی">🗑️ تسویه / پاک کردن</button>
                   </div>
@@ -405,6 +407,25 @@
         <div class="mb-2"><label>توضیحات</label><input type="text" id="custNotes" class="form-control"></div>
       </div>
       <div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره مشتری</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- مدال یادآوری بدهی و تعیین مهلت پرداخت -->
+<div class="modal fade" id="debtNoticeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title text-danger fw-bold">📲 ارسال یادآوری محترمانه بدهی</h5></div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="fw-bold mb-1">لطفاً آخرین مهلت پرداخت بدهی را وارد نمایید (سال/ماه/روز):</label>
+          <input type="text" id="debtDueDateInput" class="form-control text-center fs-5 fw-bold text-danger" placeholder="مثال: ۱۴۰۳/۰۹/۱۵">
+          <small class="text-muted d-block mt-1">فرمت تاریخ: سال/ماه/روز (مثلاً ۱۴۰۳/۰۹/۱۵)</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success fw-bold w-100 py-2" onclick="sendDebtNoticeWhatsApp()">📲 ارسال پیامک محترمانه به واتساپ مشتری</button>
+      </div>
     </div>
   </div>
 </div>
@@ -645,7 +666,7 @@
   }
 
   let currentCustId = null;
-  let custModal, remModal, depModal, balModal, chqModal;
+  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
@@ -653,6 +674,7 @@
     depModal = new bootstrap.Modal(document.getElementById('depositModal'));
     balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
     chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
+    debtNoticeModal = new bootstrap.Modal(document.getElementById('debtNoticeModal'));
     renderRates();
     calculateClientNet();
   });
@@ -794,6 +816,7 @@
     document.getElementById('cPhone').innerText = c.phone;
     document.getElementById('cAddress').innerText = c.address;
     document.getElementById('cNotes').innerText = c.notes;
+    document.getElementById('cDebtPhone').innerText = c.phone || 'ثبت نشده';
     document.getElementById('customerDetailsSection').style.display = 'block';
 
     calculateCustomerDeposits(c.id);
@@ -874,6 +897,50 @@
     document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون بدهی';
   }
 
+  function openDebtNoticeModal() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+
+    let d = new Date();
+    d.setDate(d.getDate() + 7);
+    document.getElementById('debtDueDateInput').value = d.toLocaleDateString('fa-IR');
+    
+    if (debtNoticeModal) debtNoticeModal.show();
+  }
+
+  function sendDebtNoticeWhatsApp() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    if (!phoneNum) return alert('شماره واتساپ مشتری یافت نشد!');
+
+    let dueDate = document.getElementById('debtDueDateInput').value.trim();
+    if (!dueDate) return alert('لطفاً تاریخ آخرین مهلت پرداخت را وارد کنید.');
+
+    let debtText = document.getElementById('cDebtSummary').innerText;
+    if (debtText.includes('بدون بدهی')) return alert('این مشتری هیچ بدهی فعالی ندارد!');
+
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `📜 *احترام‌نامه و یادآوری تسویه حساب*%0A%0A` +
+               `جناب آقای / سرکار خانم *${c.name}* عزیز، با سلام و عرض ادب؛%0A%0A` +
+               `ضمن تشکر فراوان از همراهی و حسن اعتماد ارزشمند شما به صرافی عدالت، به اطلاع می‌رساند باقی‌مانده بدهی شما بابت حواله‌های انجام شده به شرح زیر است:%0A%0A` +
+               `📱 *شماره تماس:* ${c.phone}%0A` +
+               `❌ *میزان باقی‌مانده بدهی:* *${debtText}*%0A` +
+               `📅 *تاریخ تنظیم گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
+               `----------------------------------%0A` +
+               `⏰ *آخرین مهلت پرداخت و تسویه حساب:*%0A` +
+               `📅 *${dueDate}*%0A` +
+               `----------------------------------%0A` +
+               `خواهشمند است جهت تسویه حساب، تا تاریخ ذکر شده اقدام فرموده یا در صورت نیاز با پشتیبانی صرافی هماهنگ نمایید.%0A%0A` +
+               `از بذل توجه و همکاری شایسته شما کمال تشکر را داریم. 🙏%0A` +
+               `با احترام و سپاس - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
+
+    if (debtNoticeModal) debtNoticeModal.hide();
+    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
+  }
+
   function editCustomerDebt() {
     if (!currentCustId) return alert('مشتری انتخاب نشده است!');
     let newDebt = prompt('لطفاً مبلغ جدید بدهی مشتری را وارد نمایید:');
@@ -881,7 +948,6 @@
       let val = parseFloat(newDebt);
       if (isNaN(val)) return alert('مبلغ وارد شده معتبر نیست!');
 
-      // حذف حواله‌های قرض قبلی و جایگزینی با قرض دستی
       remittances = remittances.filter(r => !(r.custId === currentCustId && r.paymentType === 'قرض'));
       if (val > 0) {
         remittances.push({
