@@ -331,25 +331,32 @@
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
               <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
               
-              <!-- کادر موجودی کیف پول / پیش‌پرداخت -->
-              <div class="deposit-box d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <div>
-                  <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
-                  <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
-                </div>
-                <div class="d-flex gap-1">
-                  <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editWalletBalance()" title="ویرایش مستقیم موجودی کیف پول">✏️ ویرایش کیف پول</button>
-                  <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن</button>
+              <!-- کادر موجودی کیف پول / پیش‌پرداخت همراه با شماره و ارسال واتساپ -->
+              <div class="deposit-box">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <div>
+                    <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
+                    <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
+                    <small class="text-muted d-block mt-1">📱 شماره مشتری جهت تماس/واتساپ: <strong id="cDepPhone" class="text-dark" dir="ltr">---</strong></small>
+                  </div>
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-sm btn-success fw-bold" onclick="openDepositNoticeModal()" title="ارسال پیامک یادآوری کیف پول به واتساپ">📲 یادآوری کیف پول (واتساپ)</button>
+                    <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editWalletBalance()" title="ویرایش مستقیم موجودی کیف پول">✏️ ویرایش</button>
+                    <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن</button>
+                  </div>
                 </div>
               </div>
 
-              <!-- کادر چک‌های ثبت شده مشتری -->
+              <!-- کادر چک‌های ثبت شده مشتری همراه با شماره و ارسال واتساپ -->
               <div class="cheque-box mt-2">
-                <h6 class="fw-bold text-dark mb-2">📑 چک‌های دریافتی امانتی از مشتری:</h6>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <h6 class="fw-bold text-dark m-0">📑 چک‌های دریافتی امانتی از مشتری:</h6>
+                  <small class="text-muted">📱 شماره مشتری: <strong id="cChqPhone" class="text-dark" dir="ltr">---</strong></small>
+                </div>
                 <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
 
-              <!-- کادر بدهی‌ها و قرض‌های مشتری -->
+              <!-- کادر بدهی‌ها و قرض‌های مشتری همراه با شماره تماس و ارسال یادآوری -->
               <div class="debt-box mt-2">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -407,6 +414,24 @@
         <div class="mb-2"><label>توضیحات</label><input type="text" id="custNotes" class="form-control"></div>
       </div>
       <div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره مشتری</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- مدال یادآوری کیف پول -->
+<div class="modal fade" id="depositNoticeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title text-primary fw-bold">📲 ارسال یادآوری موجودی کیف پول</h5></div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="fw-bold mb-1">تاریخ دلخواه یا توضیحات جهت ارسال به مشتری (سال/ماه/روز):</label>
+          <input type="text" id="depositDueDateInput" class="form-control text-center fs-5 fw-bold text-primary" placeholder="مثال: ۱۴۰۳/۰۹/۱۵">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success fw-bold w-100 py-2" onclick="sendDepositNoticeWhatsApp()">📲 ارسال پیامک موجودی کیف پول به واتساپ</button>
+      </div>
     </div>
   </div>
 </div>
@@ -614,22 +639,25 @@
     if (pwd === ADMIN_PASSWORD) {
       document.getElementById('adminLoginBox').style.display = 'none';
       document.getElementById('adminContentSection').style.display = 'block';
-      sessionStorage.setItem('edalat_logged_in', 'true');
+      localStorage.setItem('edalat_logged_in', 'true');
     } else {
       alert("⛔️ رمز عبور اشتباه است!");
     }
   }
 
   function logoutAdmin() {
-    sessionStorage.removeItem('edalat_logged_in');
+    localStorage.removeItem('edalat_logged_in');
     document.getElementById('adminContentSection').style.display = 'none';
     document.getElementById('adminLoginBox').style.display = 'block';
     document.getElementById('adminPasswordInput').value = '';
   }
 
-  if (sessionStorage.getItem('edalat_logged_in') === 'true') {
+  if (localStorage.getItem('edalat_logged_in') === 'true') {
     document.getElementById('adminLoginBox').style.display = 'none';
     document.getElementById('adminContentSection').style.display = 'block';
+  } else {
+    document.getElementById('adminLoginBox').style.display = 'block';
+    document.getElementById('adminContentSection').style.display = 'none';
   }
 
   function updateFileName(input) {
@@ -666,7 +694,7 @@
   }
 
   let currentCustId = null;
-  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal;
+  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal, depositNoticeModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
@@ -675,6 +703,7 @@
     balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
     chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
     debtNoticeModal = new bootstrap.Modal(document.getElementById('debtNoticeModal'));
+    depositNoticeModal = new bootstrap.Modal(document.getElementById('depositNoticeModal'));
     renderRates();
     calculateClientNet();
   });
@@ -794,7 +823,6 @@
     }
   }
 
-  // اصلاح دقیق جستجوگر فقط روی نام و شماره تلفن خود مشتری
   function handleSearch() {
     let q = document.getElementById('searchInput').value.trim().toLowerCase();
     if(!q) return alert('لطفاً نام یا شماره تلفن مشتری را وارد کنید');
@@ -820,6 +848,8 @@
     document.getElementById('cPhone').innerText = c.phone;
     document.getElementById('cAddress').innerText = c.address;
     document.getElementById('cNotes').innerText = c.notes;
+    document.getElementById('cDepPhone').innerText = c.phone || 'ثبت نشده';
+    document.getElementById('cChqPhone').innerText = c.phone || 'ثبت نشده';
     document.getElementById('cDebtPhone').innerText = c.phone || 'ثبت نشده';
     document.getElementById('customerDetailsSection').style.display = 'block';
 
@@ -899,6 +929,39 @@
     }
 
     document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون بدهی';
+  }
+
+  function openDepositNoticeModal() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+    document.getElementById('depositDueDateInput').value = new Date().toLocaleDateString('fa-IR');
+    if (depositNoticeModal) depositNoticeModal.show();
+  }
+
+  function sendDepositNoticeWhatsApp() {
+    let c = customers.find(x => x.id === currentCustId);
+    if (!c) return alert('مشتری انتخاب نشده است!');
+
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    if (!phoneNum) return alert('شماره واتساپ مشتری یافت نشد!');
+
+    let depositText = document.getElementById('cDepositsSummary').innerText;
+    if (depositText.includes('بدون سپرده')) return alert('این مشتری هیچ موجودی پیشکی فعالی ندارد!');
+
+    let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
+               `----------------------------------%0A` +
+               `💼 *اطلاعیه موجودی کیف پول پیشکی (سپرده)*%0A%0A` +
+               `جناب آقای / سرکار خانم *${c.name}* عزیز، با سلام و احترام؛%0A%0A` +
+               `موجودی فعلی کیف پول پیشکی شما در صرافی عدالت به شرح زیر است:%0A%0A` +
+               `📱 *شماره تماس:* ${c.phone}%0A` +
+               `💰 *موجودی کیف پول:* *${depositText}*%0A` +
+               `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
+               `----------------------------------%0A` +
+               `می‌توانید در صورت نیاز از این موجودی جهت ارسال حواله استفاده فرمایید.%0A%0A` +
+               `با احترام و سپاس - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
+
+    if (depositNoticeModal) depositNoticeModal.hide();
+    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
 
   function openDebtNoticeModal() {
@@ -1591,7 +1654,7 @@
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `----------------------------------%0A` +
              `✅ *تایید اجرا برای پشتیبانی:*%0A` +
-             `همکار گرامی پس از پرداخت، روی لینک زیر ضربه بزنید یا علامت *✓* ارسال فرمایید:%0A` +
+             `همکار گرامی پس از پرداخت، روی لینک زیر ضربه بزنید یا فقط علامت *✓* ارسال فرمایید:%0A` +
              `👉 ${quickAgentLink}%0A` +
              `----------------------------------%0A` +
              `صرافی و حواله‌داری عدالت`;
