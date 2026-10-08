@@ -258,10 +258,10 @@
           <button class="btn btn-sm btn-danger fw-bold" onclick="logoutAdmin()">خروج 🔒</button>
         </div>
 
-        <!-- بخش مدیریت نمایندگی‌ها (فقط برای مدیر کل قابل مشاهده است) -->
+        <!-- بخش مدیریت نمایندگی‌ها و شریکان -->
         <div id="branchManagementSection" class="card p-3 border-primary mb-3" style="display: none;">
-          <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نام‌های کاربری و نمایندگی‌ها</h5>
-          <p class="text-muted small">در این بخش می‌توانید برای شرکا یا نمایندگی‌های مختلف نام کاربری و رمز عبور بسازید.</p>
+          <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نام‌های کاربری، نمایندگی‌ها و شریکان</h5>
+          <p class="text-muted small">در این بخش می‌توانید برای شریکان یا نمایندگی‌های مختلف نام کاربری و رمز عبور بسازید، ویرایش یا حذف کنید.</p>
           
           <div class="row g-2 mb-3">
             <input type="hidden" id="branchId">
@@ -286,14 +286,14 @@
             </div>
           </div>
 
-          <h6 class="small fw-bold text-muted">📋 لیست حساب‌های فعال نمایندگان و شرکا:</h6>
+          <h6 class="small fw-bold text-muted">📋 لیست حساب‌های فعال مدیر، نمایندگان و شریکان:</h6>
           <div class="table-responsive">
             <table class="table table-sm table-bordered text-center align-middle bg-white">
               <thead class="table-light">
                 <tr>
                   <th>نام کاربری</th>
                   <th>رمز عبور</th>
-                  <th>نام نمایندگی</th>
+                  <th>نام نمایندگی / مدیر</th>
                   <th>مکان</th>
                   <th>عملیات</th>
                 </tr>
@@ -416,7 +416,7 @@
                     <small class="text-muted d-block mt-1">📱 شماره مشتری جهت تماس/واتساپ: <strong id="cDebtPhone" class="text-dark" dir="ltr">---</strong></small>
                   </div>
                   <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()" title="ارسال پیامک یادآوری بدهی به واتساپ">📲 یادآوری بدهی (واتساپ)</button>
+                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()" title="ارسال پیامک محترمانه یادآوری بدهی به واتساپ">📲 یادآوری بدهی (واتساپ)</button>
                     <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editCustomerDebt()" title="ویرایش بدهی">✏️ ویرایش بدهی</button>
                     <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDebt()" title="تسویه و صفر کردن بدهی">🗑️ تسویه / پاک کردن</button>
                   </div>
@@ -783,7 +783,8 @@
     }
 
     let idx = branches.findIndex(b => b.id === id);
-    let obj = { id, username, password, name, location, role: 'agent' };
+    let role = (username === 'admin') ? 'admin' : 'agent';
+    let obj = { id, username, password, name, location, role };
 
     if (idx > -1) {
       branches[idx] = obj;
@@ -802,26 +803,25 @@
     document.getElementById('branchPassword').value = '';
     document.getElementById('branchName').value = '';
     document.getElementById('branchLocation').value = '';
-    alert('✅ نام کاربری نمایندگی با موفقیت ثبت شد.');
+    alert('✅ نام کاربری با موفقیت ثبت / به‌روزرسانی شد.');
   }
 
   function renderBranchesList() {
     let tbody = document.getElementById('branchesTableBody');
     tbody.innerHTML = '';
 
-    branches.forEach((b, idx) => {
-      let isAdmin = b.role === 'admin' || b.username === 'admin';
+    branches.forEach((b) => {
       tbody.innerHTML += `
         <tr>
           <td><strong class="text-primary">${b.username}</strong></td>
           <td>${b.password}</td>
-          <td>${b.name}</td>
+          <td>${b.name} ${b.role === 'admin' ? '<span class="badge bg-success ms-1">مدیر کل</span>' : ''}</td>
           <td>${b.location}</td>
           <td>
-            ${!isAdmin ? `
+            <div class="d-flex justify-content-center gap-1">
               <button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')" title="ویرایش">✏️</button>
               <button class="btn btn-sm btn-danger p-1" onclick="deleteBranch('${b.id}')" title="حذف">🗑️</button>
-            ` : '<span class="badge bg-secondary">مدیر کل اصلی</span>'}
+            </div>
           </td>
         </tr>
       `;
@@ -839,11 +839,14 @@
   }
 
   function deleteBranch(id) {
-    if (confirm('آیا مطمئن هستید که می‌خواهید این نام کاربری و نمایندگی را حذف کنید؟')) {
+    if (branches.length <= 1) {
+      return alert('حداقل یک حساب کاربری مدیر باید در سیستم وجود داشته باشد!');
+    }
+    if (confirm('آیا مطمئن هستید که می‌خواهید این حساب کاربری را حذف کنید؟')) {
       branches = branches.filter(x => x.id !== id);
       localStorage.setItem('edalat_branches', JSON.stringify(branches));
       renderBranchesList();
-      alert('🗑️ نام کاربری حذف شد.');
+      alert('🗑️ حساب کاربری با موفقیت حذف شد.');
     }
   }
 
