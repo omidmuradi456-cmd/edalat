@@ -67,6 +67,14 @@
       border-radius: 10px;
       padding: 12px;
     }
+
+    .deposit-box {
+      background-color: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -290,8 +298,9 @@
           <!-- جزئیات مشتری و لیست حواله‌ها -->
           <div id="customerDetailsSection" class="mt-3" style="display: none;">
             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-              <div class="d-flex gap-2">
+              <div class="d-flex gap-2 flex-wrap">
                 <button class="btn btn-sm btn-success fw-bold" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
+                <button class="btn btn-sm btn-info text-white fw-bold" onclick="showDepositModal()">💰 ثبت واریزی پیشکی (سپرده)</button>
                 <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="sendBalanceStatement()">📊 رسید باقی‌مانده حساب</button>
               </div>
               <div>
@@ -303,7 +312,13 @@
             <div class="card p-3 bg-white mb-2">
               <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
-              <p class="mb-0 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
+              <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
+              
+              <!-- کادر موجودی کیف پول / پیش‌پرداخت -->
+              <div class="deposit-box">
+                <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
+                <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
+              </div>
             </div>
 
             <div class="table-responsive">
@@ -333,7 +348,7 @@
   </div>
 </div>
 
-<!-- مدال‌های مشتری و حواله -->
+<!-- مدال‌های مشتری، حواله و واریزی پیشکی -->
 <div class="modal fade" id="customerModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -350,6 +365,39 @@
   </div>
 </div>
 
+<!-- مدال واریزی پیشکی -->
+<div class="modal fade" id="depositModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی (امانت/سپرده)</h5></div>
+      <div class="modal-body">
+        <div class="mb-2">
+          <label class="fw-bold">مبلغ واریزی پیشکی</label>
+          <input type="number" id="depAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 50000000">
+        </div>
+        <div class="mb-2">
+          <label class="fw-bold">واحد ارز</label>
+          <select id="depCurr" class="form-select">
+            <option value="1000000 تومان">1000000 تومان</option>
+            <option value="دلار ($)">دلار ($)</option>
+            <option value="یورو (€)">یورو (€)</option>
+            <option value="افغانی">افغانی</option>
+            <option value="کلدار">کلدار</option>
+            <option value="لیر">لیر (ترکیه)</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>توضیحات / بابت</label>
+          <input type="text" id="depNotes" class="form-control" placeholder="مثلاً: واریزی امانتی جهت ارسال حواله‌ها">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت و کسر خودکار</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="remittanceModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -360,6 +408,7 @@
           <div class="col-md-6 mb-2">
             <label class="fw-bold">نوع پرداخت مشتری</label>
             <select id="remPaymentType" class="form-select border-primary fw-bold">
+              <option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option>
               <option value="نقدی">نقدی (پرداخت شده)</option>
               <option value="قرض">قرض / دفتری</option>
               <option value="عمده">عمده</option>
@@ -475,10 +524,12 @@
   let customers = [];
   let remittances = [];
   let exchangeRates = [];
+  let deposits = [];
 
   try {
     customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
     remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
+    deposits = JSON.parse(localStorage.getItem('edalat_deposits')) || [];
     exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [
       { from: '1000000 تومان', to: 'افغانی', rate: 1200 }
     ];
@@ -487,11 +538,12 @@
   }
 
   let currentCustId = null;
-  let custModal, remModal;
+  let custModal, remModal, depModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
     remModal = new bootstrap.Modal(document.getElementById('remittanceModal'));
+    depModal = new bootstrap.Modal(document.getElementById('depositModal'));
     renderRates();
     calculateClientNet();
   });
@@ -635,12 +687,14 @@
     document.getElementById('cNotes').innerText = c.notes;
     document.getElementById('customerDetailsSection').style.display = 'block';
 
+    calculateCustomerDeposits(c.id);
+
     let list = remittances.filter(r => r.custId === c.id);
     let table = document.getElementById('remittancesTable');
     table.innerHTML = '';
 
     list.forEach(r => {
-      let badge = r.paymentType === 'قرض' ? 'bg-danger' : (r.paymentType === 'عمده' ? 'bg-primary' : 'bg-success');
+      let badge = r.paymentType === 'قرض' ? 'bg-danger' : (r.paymentType === 'از پیشکی (سپرده)' ? 'bg-info' : (r.paymentType === 'عمده' ? 'bg-primary' : 'bg-success'));
       table.innerHTML += `
         <tr>
           <td><small>${r.code}</small></td>
@@ -661,6 +715,63 @@
         </tr>
       `;
     });
+  }
+
+  function calculateCustomerDeposits(custId) {
+    let custDeps = deposits.filter(d => d.custId === custId);
+    let custRems = remittances.filter(r => r.custId === custId && (r.paymentType === 'از پیشکی (سپرده)' || r.paymentType === 'امانت'));
+
+    let balances = {};
+
+    custDeps.forEach(d => {
+      let curr = d.curr;
+      if (!balances[curr]) balances[curr] = 0;
+      balances[curr] += parseFloat(d.amount) || 0;
+    });
+
+    custRems.forEach(r => {
+      let curr = r.currReceived;
+      if (!balances[curr]) balances[curr] = 0;
+      balances[curr] -= parseFloat(r.received) || 0;
+    });
+
+    let textArr = [];
+    for (let curr in balances) {
+      textArr.push(`${balances[curr].toLocaleString('fa-IR')} ${curr}`);
+    }
+
+    document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون سپرده پیشکی';
+  }
+
+  function showDepositModal() {
+    document.getElementById('depAmount').value = '';
+    document.getElementById('depNotes').value = '';
+    if(depModal) depModal.show();
+  }
+
+  function saveDeposit() {
+    let amt = parseFloat(document.getElementById('depAmount').value);
+    let curr = document.getElementById('depCurr').value;
+    let notes = document.getElementById('depNotes').value;
+
+    if (!amt || amt <= 0) return alert('لطفاً مبلغ معتبر وارد کنید.');
+
+    let obj = {
+      id: Date.now().toString(),
+      custId: currentCustId,
+      amount: amt,
+      curr,
+      notes,
+      date: new Date().toLocaleDateString('fa-IR')
+    };
+
+    deposits.push(obj);
+    localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+    if(depModal) depModal.hide();
+
+    let c = customers.find(x => x.id === currentCustId);
+    loadCustomerData(c);
+    alert('✅ مبلغ پیشکی با موفقیت به حساب مشتری اضافه شد!');
   }
 
   function saveCustomer() {
@@ -779,8 +890,10 @@
     if(confirm('این مشتری و تمام حواله‌ها پاک شوند؟')) {
       customers = customers.filter(x => x.id !== currentCustId);
       remittances = remittances.filter(x => x.custId !== currentCustId);
+      deposits = deposits.filter(x => x.custId !== currentCustId);
       localStorage.setItem('edalat_customers', JSON.stringify(customers));
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
+      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
       document.getElementById('customerDetailsSection').style.display = 'none';
     }
   }
@@ -822,7 +935,7 @@
   }
 
   function exportBackup() {
-    let data = { customers, remittances, exchangeRates };
+    let data = { customers, remittances, exchangeRates, deposits };
     let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -841,6 +954,7 @@
           localStorage.setItem('edalat_customers', JSON.stringify(imported.customers));
           localStorage.setItem('edalat_remittances', JSON.stringify(imported.remittances));
           if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
+          if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
           alert('اطلاعات با موفقیت بازیابی شد!');
           location.reload();
         }
@@ -928,48 +1042,33 @@
     let c = customers.find(x => x.id === currentCustId);
     if (!c) return alert('مشتری انتخاب نشده است!');
 
-    let list = remittances.filter(r => r.custId === c.id);
-    if (list.length === 0) return alert('هیچ حواله‌ای برای این مشتری یافت نشد!');
-
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     if (!phoneNum) return alert('شماره تلفن مشتری معتبر نیست!');
 
-    let totals = {};
-    let unpaidListText = '';
+    let custDeps = deposits.filter(d => d.custId === c.id);
+    let custRems = remittances.filter(r => r.custId === c.id && (r.paymentType === 'از پیشکی (سپرده)' || r.paymentType === 'امانت'));
 
-    list.forEach(r => {
-      let curr = r.currReceived;
-      if (!totals[curr]) {
-        totals[curr] = { totalReceived: 0, debt: 0, cash: 0 };
-      }
-      let amt = parseFloat(r.received) || 0;
-      totals[curr].totalReceived += amt;
+    let totalDeposit = 0;
+    let usedDeposit = 0;
+    let curr = 'تومان';
 
-      if (r.paymentType === 'قرض') {
-        totals[curr].debt += amt;
-        unpaidListText += `• ${r.code} (${r.date}): ${r.received} ${r.currReceived} [قرض]%0A`;
-      } else {
-        totals[curr].cash += amt;
-      }
-    });
+    custDeps.forEach(d => { totalDeposit += parseFloat(d.amount) || 0; curr = d.curr; });
+    custRems.forEach(r => { usedDeposit += parseFloat(r.received) || 0; });
 
-    let summaryText = '';
-    for (let curr in totals) {
-      summaryText += `🔹 *مجموع حواله‌ها (${curr}):* ${totals[curr].totalReceived} ${curr}%0A`;
-      summaryText += `✅ *پرداخت نقدی:* ${totals[curr].cash} ${curr}%0A`;
-      summaryText += `❌ *باقی‌مانده بدهی (قرض):* *${totals[curr].debt} ${curr}*%0A%0A`;
-    }
+    let remBalance = totalDeposit - usedDeposit;
 
     let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
                `----------------------------------%0A` +
-               `📊 *صورت‌حساب و باقی‌مانده حساب مشتری*%0A%0A` +
+               `📊 *صورت‌حساب کیف پول و باقی‌مانده پیش‌پرداخت*%0A%0A` +
                `👤 *نام مشتری:* ${c.name}%0A` +
                `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
                `----------------------------------%0A` +
-               summaryText +
-               (unpaidListText ? `📋 *ریز حواله‌های بدهکار/قرض:*%0A${unpaidListText}----------------------------------%0A` : '') +
-               `🙏 جهت تسویه باقی‌مانده حساب با ما در تماس باشید.%0A` +
-               `صرافی و حواله‌داری عدالت - دکتر روح‌الله مرادی (مسئول حواله‌داری عمومی)`;
+               `💰 *مجموع کل واریزی پیشکی:* ${totalDeposit.toLocaleString('fa-IR')} ${curr}%0A` +
+               `💸 *مجموع حواله‌های کسر شده:* ${usedDeposit.toLocaleString('fa-IR')} ${curr}%0A` +
+               `✨ *باقی‌مانده خالص موجودی پیشکی:* *${remBalance.toLocaleString('fa-IR')} ${curr}*%0A` +
+               `----------------------------------%0A` +
+               `🙏 جهت اطلاعات بیشتر یا برداشت موجودی با پشتیبانی در تماس باشید.%0A` +
+               `صرافی و حواله‌داری عدالت - دکتر روح‌الله مرادی`;
 
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
