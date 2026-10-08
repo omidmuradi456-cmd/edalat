@@ -892,7 +892,13 @@
     if (!chq) return;
 
     let c = customers.find(x => x.id === chq.custId);
-    if (!c) return;
+    if (!c) return alert('مشتری مربوطه یافت نشد!');
+
+    let phoneNum = c.phone.replace(/[^0-9]/g, '');
+    if (!phoneNum) {
+      alert('شماره تلفن واتساپ مشتری یافت نشد!');
+      return;
+    }
 
     if (confirm(`آیا چک شماره ${chq.number} به مبلغ ${chq.amount.toLocaleString('fa-IR')} ${chq.curr} در بانک پاس و تبدیل به پول شد؟`)) {
       chq.status = 'پاس شده (نقد شد) 🏦';
@@ -912,32 +918,30 @@
 
       loadCustomerData(c);
 
-      // ارسال پیام تاییدیه پاس شدن چک به مشتری در واتساپ
-      let phoneNum = c.phone.replace(/[^0-9]/g, '');
+      // ارسال پیام تاییدیه پاس شدن چک به شماره واتساپ مشتری
       let text = `🏛 *صرافی و حواله‌داری عدالت*%0A` +
                  `----------------------------------%0A` +
                  `🏦 *اطلاعیه وصول و تبدیل چک به پول*%0A%0A` +
-                 `مشتری گرامی *${c.name}*، چک شما با موفقیت در بانک پاس شد:%0A%0A` +
+                 `مشتری گرامی *${c.name}* (📱 ${c.phone})، چک شما با موفقیت در بانک پاس شد:%0A%0A` +
                  `📑 *شماره چک:* ${chq.number}%0A` +
                  `💵 *مبلغ چک:* *${chq.amount.toLocaleString('fa-IR')} ${chq.curr}*%0A` +
-                 `🏦 *بانک:* ${chq.bank}%0A` +
+                 `🏦 *بانک عامل:* ${chq.bank}%0A` +
                  `----------------------------------%0A` +
                  `✅ *نتیجه:* مبلغ فوق به‌طور کامل به موجودی کیف پول پیشکی شما اضافه گردید و می‌توانید با آن حواله ارسال کنید.%0A` +
                  `----------------------------------%0A` +
                  `با تشکر - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
 
-      if (phoneNum) {
-        window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
-      }
+      window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
     }
   }
 
   function deleteCheque(chequeId) {
-    if (confirm('آیا از حذف این چک اطمینان دارید؟')) {
+    if (confirm('آیا مطمئن هستید که می‌خواهید این چک را حذف کنید؟')) {
       cheques = cheques.filter(x => x.id !== chequeId);
       localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
       let c = customers.find(x => x.id === currentCustId);
-      loadCustomerData(c);
+      if(c) loadCustomerData(c);
+      alert('🗑️ چک با موفقیت حذف شد.');
     }
   }
 
@@ -972,8 +976,10 @@
         <td>${ch.dueDate}</td>
         <td><span class="badge ${isDone ? 'bg-success' : 'bg-warning text-dark'}">${ch.status}</span></td>
         <td>
-          ${!isDone ? `<button class="btn btn-sm btn-success fw-bold p-1 me-1" onclick="convertChequeToMoney('${ch.id}')" title="تبدیل چک به پول نقد">🏦 پاس شد</button>` : ''}
-          <button class="btn btn-sm btn-danger p-1" onclick="deleteCheque('${ch.id}')" title="حذف">🗑</button>
+          <div class="d-flex justify-content-center gap-1">
+            ${!isDone ? `<button class="btn btn-sm btn-success fw-bold p-1" onclick="convertChequeToMoney('${ch.id}')" title="تبدیل چک به پول نقد">🏦 پاس شد</button>` : ''}
+            <button class="btn btn-sm btn-danger fw-bold p-1" onclick="deleteCheque('${ch.id}')" title="حذف چک">🗑️ حذف</button>
+          </div>
         </td>
       </tr>`;
     });
