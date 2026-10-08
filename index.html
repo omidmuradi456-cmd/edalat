@@ -235,26 +235,77 @@
     <!-- ==================== بخش دوم: مدیریت ==================== -->
     <div class="tab-pane fade" id="adminTabContent" role="tabpanel">
       
-      <!-- کادر ورود رمزعبور -->
+      <!-- کادر ورود با نام کاربری و رمزعبور -->
       <div id="adminLoginBox" class="card p-4 text-center">
-        <h5 class="fw-bold text-primary mb-3">🔒 ورود به پنل مدیریت</h5>
-        <p class="text-muted small">لطفاً رمز عبور مدیریت را وارد نمایید:</p>
-        <div class="mb-3">
-          <input type="password" id="adminPasswordInput" class="form-control text-center fs-5" placeholder="رمز عبور">
+        <h5 class="fw-bold text-primary mb-3">🔒 ورود به پنل مدیریت و نمایندگی</h5>
+        <p class="text-muted small">لطفاً نام کاربری و رمز عبور خود را وارد نمایید:</p>
+        <div class="mb-2">
+          <input type="text" id="loginUsername" class="form-control text-center fs-6" placeholder="نام کاربری (مثلاً admin یا kabul)">
         </div>
-        <button class="btn btn-primary w-100 fw-bold py-2" onclick="checkAdminPassword()">ورود 🔓</button>
+        <div class="mb-3">
+          <input type="password" id="loginPassword" class="form-control text-center fs-6" placeholder="رمز عبور">
+        </div>
+        <button class="btn btn-primary w-100 fw-bold py-2" onclick="checkLogin()">ورود 🔓</button>
       </div>
 
-      <!-- محتوای اصلی پنل مدیریت -->
+      <!-- محتوای اصلی پنل مدیریت و نمایندگی -->
       <div id="adminContentSection">
         <div class="alert alert-warning d-flex justify-content-between align-items-center p-2 mb-3">
-          <span class="fw-bold">🔑 **پنل مدیریت فعال است**</span>
+          <div>
+            <span class="fw-bold">🔑 خوش آمدید: <span id="currentLoggedInUser" class="text-primary"></span></span>
+            <span class="badge bg-success ms-2" id="currentUserRole">مدیر کل</span>
+          </div>
           <button class="btn btn-sm btn-danger fw-bold" onclick="logoutAdmin()">خروج 🔒</button>
+        </div>
+
+        <!-- بخش مدیریت نمایندگی‌ها (فقط برای مدیر کل قابل مشاهده است) -->
+        <div id="branchManagementSection" class="card p-3 border-primary mb-3" style="display: none;">
+          <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نام‌های کاربری و نمایندگی‌ها</h5>
+          <p class="text-muted small">در این بخش می‌توانید برای شرکا یا نمایندگی‌های مختلف نام کاربری و رمز عبور بسازید.</p>
+          
+          <div class="row g-2 mb-3">
+            <input type="hidden" id="branchId">
+            <div class="col-md-3">
+              <label class="small fw-bold">نام کاربری *</label>
+              <input type="text" id="branchUsername" class="form-control form-control-sm" placeholder="مثال: kabul_agent">
+            </div>
+            <div class="col-md-3">
+              <label class="small fw-bold">رمز عبور *</label>
+              <input type="text" id="branchPassword" class="form-control form-control-sm" placeholder="رمز ورود">
+            </div>
+            <div class="col-md-3">
+              <label class="small fw-bold">نام نمایندگی / شخص *</label>
+              <input type="text" id="branchName" class="form-control form-control-sm" placeholder="مثال: نمایندگی کابل">
+            </div>
+            <div class="col-md-3">
+              <label class="small fw-bold">مکان / شهر *</label>
+              <input type="text" id="branchLocation" class="form-control form-control-sm" placeholder="مثال: افغانستان، کابل">
+            </div>
+            <div class="col-12 mt-2">
+              <button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره / ثبت نام کاربری جدید</button>
+            </div>
+          </div>
+
+          <h6 class="small fw-bold text-muted">📋 لیست حساب‌های فعال نمایندگان و شرکا:</h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered text-center align-middle bg-white">
+              <thead class="table-light">
+                <tr>
+                  <th>نام کاربری</th>
+                  <th>رمز عبور</th>
+                  <th>نام نمایندگی</th>
+                  <th>مکان</th>
+                  <th>عملیات</th>
+                </tr>
+              </thead>
+              <tbody id="branchesTableBody"></tbody>
+            </table>
+          </div>
         </div>
 
         <div class="card p-3 mb-3">
           <h5 class="fw-bold mb-2">📋 مدیریت و اجرای حواله‌ها</h5>
-          <p class="text-muted small">در این بخش می‌توانید نرخ روز ارزها را تنظیم کرده، نرخ‌های قبلی را حذف و حواله‌ها را مدیریت نمایید.</p>
+          <p class="text-muted small">در این بخش می‌توانید نرخ روز ارزها را تنظیم کرده، نرخ‌های قبلی را حذف و حواله‌ها را مدیریت و با ثبت نام خود اجرا نمایید.</p>
 
           <!-- تنظیم نرخ جدید -->
           <div class="card p-3 border-info bg-light">
@@ -331,7 +382,7 @@
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
               <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
               
-              <!-- کادر موجودی کیف پول / پیش‌پرداخت همراه با شماره و ارسال واتساپ -->
+              <!-- کادر موجودی کیف پول -->
               <div class="deposit-box">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -340,14 +391,14 @@
                     <small class="text-muted d-block mt-1">📱 شماره مشتری جهت تماس/واتساپ: <strong id="cDepPhone" class="text-dark" dir="ltr">---</strong></small>
                   </div>
                   <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-success fw-bold" onclick="openDepositNoticeModal()" title="ارسال پیامک یادآوری کیف پول به واتساپ">📲 یادآوری کیف پول (واتساپ)</button>
+                    <button class="btn btn-sm btn-success fw-bold" onclick="openDepositNoticeModal()" title="ارسال پیامک یادآوری کیف پول به واتساپ">📲 یادآوری کیف پول</button>
                     <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editWalletBalance()" title="ویرایش مستقیم موجودی کیف پول">✏️ ویرایش</button>
                     <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()" title="حذف کامل سپرده‌های پیشکی">🗑️ پاک کردن</button>
                   </div>
                 </div>
               </div>
 
-              <!-- کادر چک‌های ثبت شده مشتری همراه با شماره و ارسال واتساپ -->
+              <!-- کادر چک‌های ثبت شده مشتری -->
               <div class="cheque-box mt-2">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <h6 class="fw-bold text-dark m-0">📑 چک‌های دریافتی امانتی از مشتری:</h6>
@@ -356,7 +407,7 @@
                 <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
 
-              <!-- کادر بدهی‌ها و قرض‌های مشتری همراه با شماره تماس و ارسال یادآوری -->
+              <!-- کادر بدهی‌ها و قرض‌های مشتری -->
               <div class="debt-box mt-2">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -365,7 +416,7 @@
                     <small class="text-muted d-block mt-1">📱 شماره مشتری جهت تماس/واتساپ: <strong id="cDebtPhone" class="text-dark" dir="ltr">---</strong></small>
                   </div>
                   <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()" title="ارسال پیامک محترمانه یادآوری بدهی به واتساپ">📲 یادآوری بدهی (واتساپ)</button>
+                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()" title="ارسال پیامک یادآوری بدهی به واتساپ">📲 یادآوری بدهی (واتساپ)</button>
                     <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editCustomerDebt()" title="ویرایش بدهی">✏️ ویرایش بدهی</button>
                     <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDebt()" title="تسویه و صفر کردن بدهی">🗑️ تسویه / پاک کردن</button>
                   </div>
@@ -384,6 +435,7 @@
                     <th>مبلغ دریافتی</th>
                     <th>کارمزد</th>
                     <th>خالص مقصد</th>
+                    <th>مجری / تاریخ</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
                   </tr>
@@ -436,7 +488,7 @@
   </div>
 </div>
 
-<!-- مدال یادآوری بدهی و تعیین مهلت پرداخت -->
+<!-- مدال یادآوری بدهی -->
 <div class="modal fade" id="debtNoticeModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -549,6 +601,7 @@
   </div>
 </div>
 
+<!-- مدال ثبت / ویرایش حواله -->
 <div class="modal fade" id="remittanceModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -632,60 +685,21 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  const ADMIN_PASSWORD = "456250";
-
-  function checkAdminPassword() {
-    let pwd = document.getElementById('adminPasswordInput').value;
-    if (pwd === ADMIN_PASSWORD) {
-      document.getElementById('adminLoginBox').style.display = 'none';
-      document.getElementById('adminContentSection').style.display = 'block';
-      localStorage.setItem('edalat_logged_in', 'true');
-    } else {
-      alert("⛔️ رمز عبور اشتباه است!");
-    }
-  }
-
-  function logoutAdmin() {
-    localStorage.removeItem('edalat_logged_in');
-    document.getElementById('adminContentSection').style.display = 'none';
-    document.getElementById('adminLoginBox').style.display = 'block';
-    document.getElementById('adminPasswordInput').value = '';
-  }
-
-  if (localStorage.getItem('edalat_logged_in') === 'true') {
-    document.getElementById('adminLoginBox').style.display = 'none';
-    document.getElementById('adminContentSection').style.display = 'block';
-  } else {
-    document.getElementById('adminLoginBox').style.display = 'block';
-    document.getElementById('adminContentSection').style.display = 'none';
-  }
-
-  function updateFileName(input) {
-    if (input.files && input.files[0]) {
-      document.getElementById('fileNameLabel').innerText = input.files[0].name;
-    } else {
-      document.getElementById('fileNameLabel').innerText = 'هیچ فایلی انتخاب نشده است';
-    }
-  }
-
-  function copyCardNumber(cardNum) {
-    navigator.clipboard.writeText(cardNum);
-    alert("شماره کارت با موفقیت کپی شد!");
-  }
-
-  const SUPPORT_PHONE = "989962671189";
-
   let customers = [];
   let remittances = [];
   let exchangeRates = [];
   let deposits = [];
   let cheques = [];
+  let branches = [];
 
   try {
     customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
     remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
     deposits = JSON.parse(localStorage.getItem('edalat_deposits')) || [];
     cheques = JSON.parse(localStorage.getItem('edalat_cheques')) || [];
+    branches = JSON.parse(localStorage.getItem('edalat_branches')) || [
+      { id: '1', username: 'admin', password: '456250', name: 'دکتر روح‌الله مرادی (مدیر کل)', location: 'مرکزی', role: 'admin' }
+    ];
     exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [
       { from: '1000000 تومان', to: 'افغانی', rate: 1200 }
     ];
@@ -704,9 +718,149 @@
     chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
     debtNoticeModal = new bootstrap.Modal(document.getElementById('debtNoticeModal'));
     depositNoticeModal = new bootstrap.Modal(document.getElementById('depositNoticeModal'));
+    
+    checkLoginState();
     renderRates();
     calculateClientNet();
   });
+
+  function checkLoginState() {
+    let loggedUser = localStorage.getItem('edalat_logged_user');
+    let loggedRole = localStorage.getItem('edalat_logged_role');
+    let loggedName = localStorage.getItem('edalat_logged_name');
+
+    if (loggedUser) {
+      document.getElementById('adminLoginBox').style.display = 'none';
+      document.getElementById('adminContentSection').style.display = 'block';
+      document.getElementById('currentLoggedInUser').innerText = loggedName + ' (' + loggedUser + ')';
+      document.getElementById('currentUserRole').innerText = loggedRole === 'admin' ? 'مدیر کل' : 'نمایندگی / شریک';
+
+      if (loggedRole === 'admin') {
+        document.getElementById('branchManagementSection').style.display = 'block';
+        renderBranchesList();
+      } else {
+        document.getElementById('branchManagementSection').style.display = 'none';
+      }
+    } else {
+      document.getElementById('adminLoginBox').style.display = 'block';
+      document.getElementById('adminContentSection').style.display = 'none';
+    }
+  }
+
+  function checkLogin() {
+    let u = document.getElementById('loginUsername').value.trim();
+    let p = document.getElementById('loginPassword').value.trim();
+
+    let found = branches.find(b => b.username === u && b.password === p);
+    if (found) {
+      localStorage.setItem('edalat_logged_user', found.username);
+      localStorage.setItem('edalat_logged_role', found.role || 'agent');
+      localStorage.setItem('edalat_logged_name', found.name);
+      checkLoginState();
+    } else {
+      alert("⛔️ نام کاربری یا رمز عبور اشتباه است!");
+    }
+  }
+
+  function logoutAdmin() {
+    localStorage.removeItem('edalat_logged_user');
+    localStorage.removeItem('edalat_logged_role');
+    localStorage.removeItem('edalat_logged_name');
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    checkLoginState();
+  }
+
+  function saveBranchUser() {
+    let id = document.getElementById('branchId').value || Date.now().toString();
+    let username = document.getElementById('branchUsername').value.trim();
+    let password = document.getElementById('branchPassword').value.trim();
+    let name = document.getElementById('branchName').value.trim();
+    let location = document.getElementById('branchLocation').value.trim();
+
+    if (!username || !password || !name || !location) {
+      return alert('لطفاً تمامی فیلدها را برای ثبت نام کاربری تکمیل کنید.');
+    }
+
+    let idx = branches.findIndex(b => b.id === id);
+    let obj = { id, username, password, name, location, role: 'agent' };
+
+    if (idx > -1) {
+      branches[idx] = obj;
+    } else {
+      if (branches.some(b => b.username === username)) {
+        return alert('این نام کاربری قبلاً ثبت شده است!');
+      }
+      branches.push(obj);
+    }
+
+    localStorage.setItem('edalat_branches', JSON.stringify(branches));
+    renderBranchesList();
+    
+    document.getElementById('branchId').value = '';
+    document.getElementById('branchUsername').value = '';
+    document.getElementById('branchPassword').value = '';
+    document.getElementById('branchName').value = '';
+    document.getElementById('branchLocation').value = '';
+    alert('✅ نام کاربری نمایندگی با موفقیت ثبت شد.');
+  }
+
+  function renderBranchesList() {
+    let tbody = document.getElementById('branchesTableBody');
+    tbody.innerHTML = '';
+
+    branches.forEach((b, idx) => {
+      let isAdmin = b.role === 'admin' || b.username === 'admin';
+      tbody.innerHTML += `
+        <tr>
+          <td><strong class="text-primary">${b.username}</strong></td>
+          <td>${b.password}</td>
+          <td>${b.name}</td>
+          <td>${b.location}</td>
+          <td>
+            ${!isAdmin ? `
+              <button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')" title="ویرایش">✏️</button>
+              <button class="btn btn-sm btn-danger p-1" onclick="deleteBranch('${b.id}')" title="حذف">🗑️</button>
+            ` : '<span class="badge bg-secondary">مدیر کل اصلی</span>'}
+          </td>
+        </tr>
+      `;
+    });
+  }
+
+  function editBranch(id) {
+    let b = branches.find(x => x.id === id);
+    if (!b) return;
+    document.getElementById('branchId').value = b.id;
+    document.getElementById('branchUsername').value = b.username;
+    document.getElementById('branchPassword').value = b.password;
+    document.getElementById('branchName').value = b.name;
+    document.getElementById('branchLocation').value = b.location;
+  }
+
+  function deleteBranch(id) {
+    if (confirm('آیا مطمئن هستید که می‌خواهید این نام کاربری و نمایندگی را حذف کنید؟')) {
+      branches = branches.filter(x => x.id !== id);
+      localStorage.setItem('edalat_branches', JSON.stringify(branches));
+      renderBranchesList();
+      alert('🗑️ نام کاربری حذف شد.');
+    }
+  }
+
+  function updateFileName(input) {
+    if (input.files && input.files[0]) {
+      document.getElementById('fileNameLabel').innerText = input.files[0].name;
+    } else {
+      document.getElementById('fileNameLabel').innerText = 'هیچ فایلی انتخاب نشده است';
+    }
+  }
+
+  function copyCardNumber(cardNum) {
+    navigator.clipboard.writeText(cardNum);
+    alert("شماره کارت با موفقیت کپی شد!");
+  }
+
+  const SUPPORT_PHONE = "989962671189";
 
   function calculateClientNet() {
     let amt = parseFloat(document.getElementById('reqAmount').value) || 0;
@@ -871,6 +1025,7 @@
           <td>${r.received} ${r.currReceived}</td>
           <td>${r.fee} ${r.currFee}</td>
           <td class="fw-bold text-success">${r.sent} ${r.currSent}</td>
+          <td><small class="text-muted">${r.executedBy || 'تعیین نشده'}<br>${r.date} (${r.execTime || ''})</small></td>
           <td><span class="badge ${r.status === 'تکمیل شده' ? 'bg-success' : 'bg-warning'}">${r.status}</span></td>
           <td>
             <div class="d-flex gap-1 justify-content-center">
@@ -957,7 +1112,7 @@
                `💰 *موجودی کیف پول:* *${depositText}*%0A` +
                `📅 *تاریخ گزارش:* ${new Date().toLocaleDateString('fa-IR')}%0A` +
                `----------------------------------%0A` +
-               `می‌توانید در صورت نیاز از این موجودی جهت ارسال حواله استفاده فرمایید.%0A%0A` +
+               `می‌توانید در صورت نیاز از این موجودی جهت ارسال حواله استفاده فرمایید.%0A` +
                `با احترام و سپاس - صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)`;
 
     if (depositNoticeModal) depositNoticeModal.hide();
@@ -1009,6 +1164,9 @@
   }
 
   function editCustomerDebt() {
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر کل';
+    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
+
     if (!currentCustId) return alert('مشتری انتخاب نشده است!');
     let newDebt = prompt('لطفاً مبلغ جدید بدهی مشتری را وارد نمایید:');
     if (newDebt !== null && newDebt.trim() !== '') {
@@ -1025,6 +1183,8 @@
           sender: document.getElementById('cName').innerText,
           receiver: 'ثبت دستی بدهی',
           date: new Date().toLocaleDateString('fa-IR'),
+          execTime: timeNow,
+          executedBy: loggedName,
           received: val,
           currReceived: '1000000 تومان',
           sent: val,
@@ -1054,7 +1214,7 @@
 
   function editWalletBalance() {
     if (!currentCustId) return alert('مشتری انتخاب نشده است!');
-    let newBalance = prompt('لطفاً مبلغ جدید کیف پول پیشکی را وارد نمایید (تومان یا ارز مربوطه):');
+    let newBalance = prompt('لطفاً مبلغ جدید کیف پول پیشکی را وارد نمایید:');
     if (newBalance !== null && newBalance.trim() !== '') {
       let val = parseFloat(newBalance);
       if (isNaN(val)) return alert('مبلغ وارد شده معتبر نیست!');
@@ -1424,6 +1584,9 @@
     let idx = remittances.findIndex(x => x.id === remId);
     let code = idx > -1 ? remittances[idx].code : ('REM-' + Math.floor(1000 + Math.random() * 9000));
 
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر کل';
+    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
+
     let obj = {
       id: remId || Date.now().toString(),
       code,
@@ -1435,6 +1598,8 @@
       destination: document.getElementById('remDestination').value,
       destPhone: document.getElementById('remDestPhone').value,
       date: document.getElementById('remDate').value,
+      execTime: timeNow,
+      executedBy: loggedName,
       received: document.getElementById('remReceived').value,
       currReceived: document.getElementById('remCurrReceived').value,
       sent: document.getElementById('remSent').value,
@@ -1564,7 +1729,7 @@
   }
 
   function exportBackup() {
-    let data = { customers, remittances, exchangeRates, deposits, cheques };
+    let data = { customers, remittances, exchangeRates, deposits, cheques, branches };
     let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     let a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -1585,6 +1750,7 @@
           if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
           if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
           if(imported.cheques) localStorage.setItem('edalat_cheques', JSON.stringify(imported.cheques));
+          if(imported.branches) localStorage.setItem('edalat_branches', JSON.stringify(imported.branches));
           alert('اطلاعات با موفقیت بازیابی شد!');
           location.reload();
         }
@@ -1614,7 +1780,8 @@
              `🧾 *رسید رسمی حواله*%0A%0A` +
              `مشتری گرامی *${c.name}*، رسید شما آماده شد:%0A%0A` +
              `🆔 *کد حواله:* ${r.code}%0A` +
-             `📅 *تاریخ:* ${r.date}%0A` +
+             `📅 *تاریخ:* ${r.date} (${r.execTime || ''})%0A` +
+             `👤 *مجری / نمایندگی:* ${r.executedBy || 'مدیر کل'}%0A` +
              `👤 *فرستنده:* ${r.sender} (${r.origin || 'مبدا'})%0A` +
              `👤 *گیرنده:* ${r.receiver} (${r.destination || 'مقصد'})%0A` +
              `💵 *مبلغ دریافتی:* ${r.received} ${r.currReceived}%0A` +
@@ -1647,7 +1814,8 @@
              `🏢 *نمایندگی محترم مقصد*%0A` +
              `لطفاً حواله زیر را پرداخت نمایید:%0A%0A` +
              `🆔 *کد حواله:* ${r.code}%0A` +
-             `📅 *تاریخ:* ${r.date}%0A` +
+             `📅 *تاریخ و ساعت:* ${r.date} - ${r.execTime || ''}%0A` +
+             `👤 *ثبت‌کننده / مجری:* ${r.executedBy || 'مدیر کل'}%0A` +
              `👤 *گیرنده:* *${r.receiver}*%0A` +
              `📍 *مقصد:* ${r.destination || 'تعیین نشده'}%0A` +
              `💵 *مبلغ پرداختی:* *${r.sent} ${r.currSent}*%0A` +
