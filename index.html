@@ -299,7 +299,7 @@
               <input type="text" id="branchLocation" class="form-control form-control-sm" placeholder="مثال: ایران، تهران">
             </div>
             <div class="col-md-12 mt-2">
-              <label class="small fw-bold">شماره واتساپ نمایندگی (جهت دریافت اتوماتیک سفارش‌های مبدأ) *</label>
+              <label class="small fw-bold">شماره واتساپ نمایندگی *</label>
               <input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="مثال: +989123456789">
             </div>
             <div class="col-12 mt-2">
@@ -460,7 +460,7 @@
   </div>
 </div>
 
-<!-- مدال‌های سیستم -->
+<!-- مدال‌ها -->
 <div class="modal fade" id="customerModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -547,7 +547,7 @@
           <div class="col-md-12 mb-2">
             <label>وضعیت</label>
             <select id="remStatus" class="form-control">
-              <option value="⏳ در حال بررسی (نمایندگی مبدأ)">⏳ در حال بررسی (نمایندگی مبدأ)</option>
+              <option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی (توسط نمایندگی)</option>
               <option value="🔄 در حال اجرای مقصد">🔄 در حال اجرای مقصد</option>
               <option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده (اجرا شد)</option>
             </select>
@@ -691,7 +691,7 @@
     let phone = document.getElementById('branchPhone').value.trim();
 
     if (!username || !password || !name || !location || !phone) {
-      return alert('لطفاً تمامی فیلدها از جمله شماره واتساپ و کشور/شهر را تکمیل کنید.');
+      return alert('لطفاً تمامی فیلدها را تکمیل کنید.');
     }
 
     let idx = branches.findIndex(b => b.id === id);
@@ -799,7 +799,6 @@
     }
   }
 
-  // ==================== ارسال ثبت حواله مشتری (بر اساس نمایندگی مبدأ) ====================
   function submitClientRemittance() {
     let sender = document.getElementById('reqSender').value.trim();
     let phone = document.getElementById('reqPhone').value.trim();
@@ -819,14 +818,12 @@
     let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
     let dateNow = new Date().toLocaleDateString('fa-IR');
 
-    // جستجوی هوشمند نمایندگی بر اساس مبدأ ورودی
+    // پیدا کردن نمایندگی مبدأ
     let originAgent = branches.find(b => origin.toLowerCase().includes(b.location.toLowerCase()) || b.location.toLowerCase().includes(origin.toLowerCase()));
-    
-    // شماره واتساپ جهت ارسال: نمایندگی مبدأ یا در صورت عدم وجود -> مدیریت
     let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
     let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
 
-    let text = `🏛 *درخواست حواله جدید (نیازمند بررسی واریزی در مبدأ)*%0A` +
+    let text = `🏛 *درخواست حواله جدید*%0A` +
                `----------------------------------%0A` +
                `🆔 *کد اختصاصی حواله:* ${code}%0A` +
                `👤 *فرستنده:* ${sender}%0A` +
@@ -837,9 +834,9 @@
                `📍 *مقصد:* ${destination}%0A` +
                `💵 *مبلغ واریزی:* ${amount} ${curr}%0A` +
                `✨ *خالص مقصد:* ${calculatedNet}%0A` +
-               `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی مبدأ)%0A` +
+               `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
                `----------------------------------%0A` +
-               `لطفاً پس از بررسی و تأیید واریزی فیش، حواله را وارد سیستم کرده و به وضعیت "در حال اجرای مقصد" تغییر دهید.`;
+               `لطفاً پس از بررسی فیش، حواله را از حالت بررسی به اجرا درآورید.`;
 
     let cust = customers.find(x => x.phone === phone);
     let custId = cust ? cust.id : Date.now().toString();
@@ -860,21 +857,19 @@
       destPhone: recPhone,
       date: dateNow,
       execTime: timeNow,
-      executedBy: 'در انتظار بررسی مبدأ (' + agentNameText + ')',
+      executedBy: 'ثبت شده - در انتظار بررسی مبدأ (' + agentNameText + ')',
       received: amount,
       currReceived: curr,
       sent: calculatedNet.replace(/[^0-9.]/g, ''),
       currSent: document.getElementById('reqDestCurr').value,
       fee: 0,
       currFee: curr,
-      status: '⏳ در حال بررسی (نمایندگی مبدأ)'
+      status: '⏳ در حال بررسی (توسط نمایندگی)'
     });
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
     window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
-    
-    // اعلان هوشمند به مشتری
-    alert(`حواله شما با کد اختصاصی ${code} با موفقیت ثبت گردید.\n\nپیام بررسی واریزی برای نمایندگی مبدأ [ ${agentNameText} ] ارسال شد.\nپس از تأیید نمایندگی مبدأ، حواله جهت تحویل به مقصد منتقل می‌شود.`);
+    alert(`حواله شما با کد اختصاصی ${code} با موفقیت ثبت گردید.\n\nپیام جهت بررسی به نمایندگی مبدأ [ ${agentNameText} ] ارسال شد.`);
   }
 
   function trackClientRemittance() {
@@ -971,13 +966,12 @@
     calculateCustomerDebt(c.id);
 
     let loggedRole = localStorage.getItem('edalat_logged_role');
-    let loggedUser = localStorage.getItem('edalat_logged_user');
     let list = remittances.filter(r => r.custId === c.id);
     let table = document.getElementById('remittancesTable');
     table.innerHTML = '';
 
     list.forEach(r => {
-      let isOriginReview = r.status.includes('نمایندگی مبدأ');
+      let isUnderReview = r.status.includes('بررسی');
       let isDestinationExec = r.status.includes('اجرای مقصد');
       let isCompleted = r.status.includes('تکمیل شده');
 
@@ -985,7 +979,8 @@
       
       let actionButtonsHtml = '';
       
-      if (isOriginReview) {
+      // کلیک‌پذیر شدن گزینه بررسی جهت تأیید واریزی مبدأ
+      if (isUnderReview) {
         actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="approveByOrigin('${r.id}')" title="تأیید فیش در مبدأ و ارجاع به مقصد">✅ تأیید واریزی (مبدأ)</button>`;
       } else if (isDestinationExec) {
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')" title="تحویل وجه و تکمیل در مقصد">🚀 تکمیل و تحویل (مقصد)</button>`;
@@ -1001,6 +996,7 @@
       actionButtonsHtml += `
         <button class="btn btn-sm btn-outline-primary" onclick="sendWhatsApp('${r.id}', 'customer')">📱 رسید</button>
         <button class="btn btn-sm btn-outline-success" onclick="sendWhatsApp('${r.id}', 'agent')">🏢 مقصد</button>
+        <button class="btn btn-sm btn-outline-dark" onclick="sendWhatsApp('${r.id}', 'admin')" title="ارسال پیام به مدیریت کل">👑 اعلام به مدیریت</button>
       `;
 
       table.innerHTML += `
@@ -1023,10 +1019,10 @@
     });
   }
 
-  // مرحله ۱: تأیید توسط نمایندگی مبدأ -> انتقال به اجرای مقصد
+  // ۱. تغییر از حالت «در حال بررسی» به «در حال اجرای مقصد» توسط نماینده مبدأ
   function approveByOrigin(remId) {
     let loggedUser = localStorage.getItem('edalat_logged_user');
-    if (!loggedUser) return alert('لطفاً ابتدا وارد حساب نمایندگی شوید!');
+    if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
 
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
@@ -1035,14 +1031,14 @@
     let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
 
     r.status = '🔄 در حال اجرای مقصد';
-    r.executedBy = 'تأیید مبدأ توسط: ' + loggedName;
+    r.executedBy = 'تأیید واریزی مبدأ توسط: ' + loggedName;
     r.execTime = timeNow;
 
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     let c = customers.find(x => x.id === r.custId);
     if (c) loadCustomerData(c);
 
-    // پیدا کردن نمایندگی مقصد جهت اطلاع‌رسانی
+    // پیدا کردن نمایندگی مقصد جهت ارسال پیام خودکار
     let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
     let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
 
@@ -1053,16 +1049,17 @@
                `📞 *تلفن گیرنده:* ${r.destPhone}%0A` +
                `📍 *مقصد:* ${r.destination}%0A` +
                `💵 *مبلغ قابل تحویل:* ${r.sent} ${r.currSent}%0A` +
-               `✅ *واریزی مبدأ تأیید شده است. لطفاً تحویل دهید.*`;
+               `✅ *تأییدکننده مبدأ:* ${loggedName}%0A` +
+               `لطفاً مبلغ فوق را به مشتری تحویل دهید.`;
 
     window.open(`https://wa.me/${destPhone}?text=${text}`, '_blank');
-    alert(`✅ واریزی مبدأ با موفقیت تأیید شد و حواله جهت اجرای تحویل به نمایندگی مقصد ارسال گردید.`);
+    alert(`✅ واریزی مبدأ با نام کاربری [ ${loggedName} ] تأیید شد و پیام به نمایندگی مقصد ارسال گردید.`);
   }
 
-  // مرحله ۲: تحویل وجه در مقصد -> تکمیل نهایی
+  // ۲. تحویل پول به مشتری در مقصد -> تغییر وضعیت به «تکمیل شده» و ارسال پیام اتوماتیک به مبدأ
   function completeByDestination(remId) {
     let loggedUser = localStorage.getItem('edalat_logged_user');
-    if (!loggedUser) return alert('لطفاً ابتدا وارد سیستم شوید!');
+    if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
 
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
@@ -1072,14 +1069,28 @@
     let dateNow = new Date().toLocaleDateString('fa-IR');
 
     r.status = '✅ تکمیل شده (اجرا شد)';
-    r.executedBy += ' | تکمیل در مقصد: ' + loggedName;
+    r.executedBy += ' | تحویل مقصد: ' + loggedName;
     r.date = dateNow;
     r.execTime = timeNow;
 
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     let c = customers.find(x => x.id === r.custId);
     if (c) loadCustomerData(c);
-    alert(`🚀 حواله کد ${r.code} با موفقیت تحویل و نهایی شد.`);
+
+    // ارسال پیام اتوماتیک به نمایندگی مبدأ جهت اطلاع از تحویل پول
+    let originAgent = branches.find(b => r.origin.toLowerCase().includes(b.location.toLowerCase()));
+    let originPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
+
+    let notifyOriginText = `🏛 *اطلاعیه تحویل موفق حواله به مبدأ*%0A` +
+                           `----------------------------------%0A` +
+                           `🆔 *کد حواله:* ${r.code}%0A` +
+                           `👤 *فرستنده:* ${r.sender}%0A` +
+                           `👥 *گیرنده:* ${r.receiver}%0A` +
+                           `💵 *مبلغ تحویل داده شده:* ${r.sent} ${r.currSent}%0A` +
+                           `✅ *حواله با موفقیت توسط نمایندگی مقصد (${loggedName}) به مشتری تحویل داده شد.*`;
+
+    window.open(`https://wa.me/${originPhone}?text=${notifyOriginText}`, '_blank');
+    alert(`🚀 پول با موفقیت به مشتری تحویل داده شد. وضعیت به "تکمیل شده" تغییر یافت و پیام تأیید به مبدأ ارسال شد.`);
   }
 
   function calculateCustomerDeposits(custId) {
@@ -1312,14 +1323,17 @@
 
     if (target === 'customer') {
       phoneNum = c.phone.replace(/[^0-9]/g, '');
-      text = `🏛 *صرافی عدالت*%0Aرسید رسمی حواله (${r.code})%0Aمبلغ: ${r.sent} ${r.currSent}%0Aوضعیت: ${r.status}`;
+      text = `🏛 *صرافی عدالت*%0Aرسید رسمی حواله (${r.code})%0Aفرستنده: ${r.sender}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}%0Aوضعیت: ${r.status}`;
     } else if (target === 'agent') {
       let targetBranch = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
       phoneNum = targetBranch && targetBranch.phone ? targetBranch.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-      text = `🏛 *دستور اجرا*%0Aکد حواله: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ: ${r.sent} ${r.currSent}`;
+      text = `🏛 *دستور اجرای حواله*%0Aکد حواله: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}`;
+    } else if (target === 'admin') {
+      phoneNum = SUPPORT_PHONE;
+      text = `👑 *گزارش به مدیریت کل صرافی عدالت*%0Aکد حواله: ${r.code}%0Aفرستنده: ${r.sender}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}%0Aوضعیت فعلی: ${r.status}`;
     }
 
-    if (!phoneNum) return alert('شماره معتبر یافت نشد!');
+    if (!phoneNum) return alert('شماره واتساپ معتبر یافت نشد!');
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
 </script>
