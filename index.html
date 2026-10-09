@@ -256,7 +256,7 @@
           <button class="btn btn-sm btn-danger fw-bold" onclick="logoutAdmin()">خروج 🔒</button>
         </div>
 
-        <!-- بخش تنظیمات کارت صرافی -->
+        <!-- بخش تنظیمات کارت صرافی (فقط مدیر) -->
         <div id="cardSettingSection" class="card p-3 border-success mb-3" style="display: none;">
           <h5 class="fw-bold text-success border-bottom pb-2">💳 مدیریت و تغییر شماره کارت صرافی</h5>
           <p class="text-muted small">ویرایش شماره کارت و صاحب حساب صرافی جهت نمایش به مشتریان:</p>
@@ -275,7 +275,7 @@
           </div>
         </div>
 
-        <!-- بخش مدیریت نمایندگی‌ها -->
+        <!-- بخش مدیریت نمایندگی‌ها (فقط مدیر) -->
         <div id="branchManagementSection" class="card p-3 border-primary mb-3" style="display: none;">
           <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نمایندگی‌ها و شریکان</h5>
           <p class="text-muted small">ثبت نام کاربری، رمز عبور، کشور/شهر و شماره واتساپ نمایندگی‌ها جهت تخصیص هوشمند حواله‌ها:</p>
@@ -326,7 +326,7 @@
         <div class="card p-3 mb-3">
           <h5 class="fw-bold mb-2">📋 مدیریت و اجرای حواله‌ها</h5>
 
-          <!-- تنظیم نرخ روز -->
+          <!-- تنظیم نرخ روز (فقط مدیر) -->
           <div id="rateSettingBox" class="card p-3 border-info bg-light">
             <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ جدید ارزها:</h6>
             <div class="row g-2 align-items-center">
@@ -360,7 +360,7 @@
             <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
           </div>
 
-          <!-- پشتیبان‌گیری -->
+          <!-- پشتیبان‌گیری (فقط مدیر) -->
           <div id="backupBox" class="d-flex justify-content-center gap-2 my-3">
             <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 دانلود فایل پشتیبان</button>
             <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی پشتیبان</button>
@@ -642,6 +642,7 @@
         document.getElementById('settingCardOwner').value = cardSettings.owner;
         renderBranchesList();
       } else {
+        // سطح دسترسی محدود برای نمایندگی‌ها
         document.getElementById('cardSettingSection').style.display = 'none';
         document.getElementById('branchManagementSection').style.display = 'none';
         document.getElementById('rateSettingBox').style.display = 'none';
@@ -818,7 +819,6 @@
     let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
     let dateNow = new Date().toLocaleDateString('fa-IR');
 
-    // پیدا کردن نمایندگی مبدأ
     let originAgent = branches.find(b => origin.toLowerCase().includes(b.location.toLowerCase()) || b.location.toLowerCase().includes(origin.toLowerCase()));
     let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
     let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
@@ -979,17 +979,17 @@
       
       let actionButtonsHtml = '';
       
-      // کلیک‌پذیر شدن گزینه بررسی جهت تأیید واریزی مبدأ
       if (isUnderReview) {
         actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="approveByOrigin('${r.id}')" title="تأیید فیش در مبدأ و ارجاع به مقصد">✅ تأیید واریزی (مبدأ)</button>`;
       } else if (isDestinationExec) {
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')" title="تحویل وجه و تکمیل در مقصد">🚀 تکمیل و تحویل (مقصد)</button>`;
       }
 
+      // فقط مدیر کل (admin) دسترسی به ویرایش و حذف دارد
       if (loggedRole === 'admin') {
         actionButtonsHtml += `
-          <button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>
+          <button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')" title="ویرایش حواله">✏️</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')" title="حذف حواله">🗑</button>
         `;
       }
 
@@ -1019,7 +1019,6 @@
     });
   }
 
-  // ۱. تغییر از حالت «در حال بررسی» به «در حال اجرای مقصد» توسط نماینده مبدأ
   function approveByOrigin(remId) {
     let loggedUser = localStorage.getItem('edalat_logged_user');
     if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
@@ -1038,7 +1037,6 @@
     let c = customers.find(x => x.id === r.custId);
     if (c) loadCustomerData(c);
 
-    // پیدا کردن نمایندگی مقصد جهت ارسال پیام خودکار
     let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
     let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
 
@@ -1056,7 +1054,6 @@
     alert(`✅ واریزی مبدأ با نام کاربری [ ${loggedName} ] تأیید شد و پیام به نمایندگی مقصد ارسال گردید.`);
   }
 
-  // ۲. تحویل پول به مشتری در مقصد -> تغییر وضعیت به «تکمیل شده» و ارسال پیام اتوماتیک به مبدأ
   function completeByDestination(remId) {
     let loggedUser = localStorage.getItem('edalat_logged_user');
     if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
@@ -1077,7 +1074,6 @@
     let c = customers.find(x => x.id === r.custId);
     if (c) loadCustomerData(c);
 
-    // ارسال پیام اتوماتیک به نمایندگی مبدأ جهت اطلاع از تحویل پول
     let originAgent = branches.find(b => r.origin.toLowerCase().includes(b.location.toLowerCase()));
     let originPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
 
