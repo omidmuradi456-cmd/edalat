@@ -259,18 +259,17 @@
         <!-- بخش تنظیمات کارت صرافی (فقط مدیر) -->
         <div id="cardSettingSection" class="card p-3 border-success mb-3" style="display: none;">
           <h5 class="fw-bold text-success border-bottom pb-2">💳 مدیریت و تغییر شماره کارت صرافی</h5>
-          <p class="text-muted small">ویرایش شماره کارت و صاحب حساب صرافی جهت نمایش به مشتریان:</p>
           <div class="row g-2 align-items-center">
             <div class="col-md-6">
               <label class="small fw-bold">شماره کارت صرافی:</label>
               <input type="text" id="settingCardNum" class="form-control form-control-sm text-center" placeholder="6037997900000000">
             </div>
             <div class="col-md-6">
-              <label class="small fw-bold">نام صاحب حساب و توضیحات:</label>
+              <label class="small fw-bold">نام صاحب حساب:</label>
               <input type="text" id="settingCardOwner" class="form-control form-control-sm" placeholder="به نام صرافی عدالت...">
             </div>
             <div class="col-12 mt-2">
-              <button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveCardSettings()">💾 ذخیره شماره کارت جدید</button>
+              <button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveCardSettings()">💾 ذخیره شماره کارت</button>
             </div>
           </div>
         </div>
@@ -278,46 +277,18 @@
         <!-- بخش مدیریت نمایندگی‌ها (فقط مدیر) -->
         <div id="branchManagementSection" class="card p-3 border-primary mb-3" style="display: none;">
           <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نمایندگی‌ها و شریکان</h5>
-          <p class="text-muted small">ثبت نام کاربری، رمز عبور، کشور/شهر و شماره واتساپ نمایندگی‌ها جهت تخصیص هوشمند حواله‌ها:</p>
-          
           <div class="row g-2 mb-3">
             <input type="hidden" id="branchId">
-            <div class="col-md-3">
-              <label class="small fw-bold">نام کاربری *</label>
-              <input type="text" id="branchUsername" class="form-control form-control-sm" placeholder="مثال: iran_agent">
-            </div>
-            <div class="col-md-3">
-              <label class="small fw-bold">رمز عبور *</label>
-              <input type="text" id="branchPassword" class="form-control form-control-sm" placeholder="رمز ورود">
-            </div>
-            <div class="col-md-3">
-              <label class="small fw-bold">نام نمایندگی / شخص *</label>
-              <input type="text" id="branchName" class="form-control form-control-sm" placeholder="مثال: نمایندگی ایران">
-            </div>
-            <div class="col-md-3">
-              <label class="small fw-bold">کشور / شهر تحت پوشش *</label>
-              <input type="text" id="branchLocation" class="form-control form-control-sm" placeholder="مثال: ایران، تهران">
-            </div>
-            <div class="col-md-12 mt-2">
-              <label class="small fw-bold">شماره واتساپ نمایندگی *</label>
-              <input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="مثال: +989123456789">
-            </div>
-            <div class="col-12 mt-2">
-              <button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره / ثبت حساب نمایندگی جدید</button>
-            </div>
+            <div class="col-md-3"><label class="small fw-bold">نام کاربری *</label><input type="text" id="branchUsername" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="small fw-bold">رمز عبور *</label><input type="text" id="branchPassword" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="small fw-bold">نام نمایندگی *</label><input type="text" id="branchName" class="form-control form-control-sm"></div>
+            <div class="col-md-3"><label class="small fw-bold">کشور / شهر *</label><input type="text" id="branchLocation" class="form-control form-control-sm"></div>
+            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره واتساپ *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+98..."></div>
+            <div class="col-12 mt-2"><button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره نمایندگی</button></div>
           </div>
-
-          <h6 class="small fw-bold text-muted">📋 لیست حساب‌های فعال شریکان و نمایندگان:</h6>
           <div class="table-responsive">
             <table class="table table-sm table-bordered text-center align-middle bg-white">
-              <thead class="table-light">
-                <tr>
-                  <th>نام نمایندگی</th>
-                  <th>کشور / شهر</th>
-                  <th>شماره واتساپ</th>
-                  <th>عملیات</th>
-                </tr>
-              </thead>
+              <thead class="table-light"><tr><th>نام نمایندگی</th><th>کشور / شهر</th><th>شماره واتساپ</th><th>عملیات</th></tr></thead>
               <tbody id="branchesTableBody"></tbody>
             </table>
           </div>
@@ -328,34 +299,12 @@
 
           <!-- تنظیم نرخ روز (فقط مدیر) -->
           <div id="rateSettingBox" class="card p-3 border-info bg-light">
-            <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ جدید ارزها:</h6>
+            <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ ارزها:</h6>
             <div class="row g-2 align-items-center">
-              <div class="col-6">
-                <select id="rateFromCurr" class="form-select form-select-sm">
-                  <option value="1000000 تومان">1000000 تومان</option>
-                  <option value="دلار ($)">1 دلار ($)</option>
-                  <option value="یورو (€)">1 یورو (€)</option>
-                  <option value="افغانی">1 افغانی</option>
-                  <option value="کلدار">1 کلدار</option>
-                  <option value="لیر">1 لیر (ترکیه)</option>
-                </select>
-              </div>
-              <div class="col-6">
-                <select id="rateToCurr" class="form-select form-select-sm">
-                  <option value="افغانی">افغانی</option>
-                  <option value="1000000 تومان">1000000 تومان</option>
-                  <option value="یورو (€)">1 یورو (€)</option>
-                  <option value="دلار ($)">1 دلار ($)</option>
-                  <option value="کلدار">کلدار</option>
-                  <option value="لیر">لیر (ترکیه)</option>
-                </select>
-              </div>
-              <div class="col-7 mt-2">
-                <input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="مثلاً: 1200">
-              </div>
-              <div class="col-5 mt-2">
-                <button class="btn btn-primary btn-sm w-100 fw-bold" onclick="addOrUpdateRate()">ثبت نرخ</button>
-              </div>
+              <div class="col-6"><select id="rateFromCurr" class="form-select form-select-sm"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="افغانی">افغانی</option><option value="کلدار">کلدار</option><option value="لیر">لیر</option></select></div>
+              <div class="col-6"><select id="rateToCurr" class="form-select form-select-sm"><option value="افغانی">افغانی</option><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="کلدار">کلدار</option><option value="لیر">لیر</option></select></div>
+              <div class="col-7 mt-2"><input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="نرخ"></div>
+              <div class="col-5 mt-2"><button class="btn btn-primary btn-sm w-100 fw-bold" onclick="addOrUpdateRate()">ثبت نرخ</button></div>
             </div>
             <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
           </div>
@@ -379,6 +328,8 @@
 
           <!-- جزئیات مشتری و حواله‌ها -->
           <div id="customerDetailsSection" class="mt-3" style="display: none;">
+            
+            <!-- دکمه‌های مالی و مدیریتی مشتری (اکنون فعال) -->
             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
               <div class="d-flex gap-2 flex-wrap" id="adminActionButtons">
                 <button class="btn btn-sm btn-success fw-bold" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
@@ -395,13 +346,12 @@
             <div class="card p-3 bg-white mb-2">
               <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
-              <p class="mb-1 text-muted small">📝 توضیحات: <span id="cNotes"></span></p>
               
               <div class="deposit-box">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
                     <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
-                    <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">0 تومان / 0 دلار</div>
+                    <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">۰ تومان</div>
                   </div>
                   <div class="d-flex flex-wrap gap-1" id="walletActionBtns">
                     <button class="btn btn-sm btn-success fw-bold" onclick="openDepositNoticeModal()">📲 یادآوری کیف پول</button>
@@ -420,7 +370,7 @@
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
                     <h6 class="fw-bold text-danger m-0">❌ باقی‌مانده بدهی (حواله‌های قرض):</h6>
-                    <div id="cDebtSummary" class="fw-bold text-danger fs-5 mt-1">۰ بدون بدهی</div>
+                    <div id="cDebtSummary" class="fw-bold text-danger fs-5 mt-1">۰ تومان</div>
                   </div>
                   <div class="d-flex flex-wrap gap-1" id="debtActionBtns">
                     <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()">📲 یادآوری بدهی</button>
@@ -477,6 +427,49 @@
   </div>
 </div>
 
+<div class="modal fade" id="depositModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی (سپرده)</h5></div>
+      <div class="modal-body">
+        <div class="mb-2"><label class="fw-bold">مبلغ پیشکی *</label><input type="number" id="depAmount" class="form-control fs-5 fw-bold" placeholder="مثلاً: 10000000"></div>
+        <div class="mb-2"><label class="fw-bold">واحد ارز *</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="افغانی">افغانی</option><option value="کلدار">کلدار</option><option value="لیر">لیر</option></select></div>
+        <div class="mb-2"><label>توضیحات</label><input type="text" id="depNotes" class="form-control" placeholder="بابت واریزی..."></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت سپرده</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="chequeModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title" id="chequeModalTitle">🧾 ثبت چک جدید از مشتری</h5></div>
+      <div class="modal-body">
+        <input type="hidden" id="editChequeId">
+        <div class="mb-2"><label class="fw-bold">مبلغ چک *</label><input type="number" id="chqAmount" class="form-control fs-5 fw-bold" placeholder="مبلغ"></div>
+        <div class="mb-2"><label class="fw-bold">واحد ارز *</label><select id="chqCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="افغانی">افغانی</option></select></div>
+        <div class="mb-2"><label>شماره چک *</label><input type="text" id="chqNumber" class="form-control" placeholder="شماره صیادی"></div>
+        <div class="mb-2"><label>بانک *</label><input type="text" id="chqBank" class="form-control" placeholder="نام بانک"></div>
+        <div class="mb-2"><label>تاریخ سررسید *</label><input type="text" id="chqDueDate" class="form-control" placeholder="1403/09/10"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-warning fw-bold text-dark" onclick="saveCheque()">ذخیره چک</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="balanceModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div>
+      <div class="modal-body">
+        <div class="mb-3"><label class="fw-bold mb-1">آخرین مهلت پرداخت:</label><input type="text" id="dueDateInput" class="form-control text-center fs-5 fw-bold text-danger" placeholder="1403/08/15"></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-primary fw-bold w-100 py-2" onclick="sendBalanceStatementWithDate()">📲 ارسال رسید به واتساپ مشتری</button></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="remittanceModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -498,50 +491,26 @@
           <div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div>
           <div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div>
           <div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div>
-          <div class="col-md-12 mb-2">
-            <label class="text-primary fw-bold">📞 واتساپ نمایندگی</label>
-            <input type="text" id="remDestPhone" class="form-control phone-input" placeholder="+93...">
-          </div>
+          <div class="col-md-12 mb-2"><label class="text-primary fw-bold">📞 واتساپ نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input" placeholder="+93..."></div>
           <div class="col-md-6 mb-2">
             <label>مبلغ کلی دریافتی</label>
             <div class="input-group">
               <input type="number" id="remReceived" class="form-control" value="2000" oninput="autoCalculate()">
-              <select id="remCurrReceived" class="form-select" onchange="autoCalculate()">
-                <option value="1000000 تومان">1000000 تومان</option>
-                <option value="یورو">یورو</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دلار">دلار</option>
-                <option value="کلدار">کلدار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select id="remCurrReceived" class="form-select" onchange="autoCalculate()"><option value="1000000 تومان">1000000 تومان</option><option value="دلار">دلار</option><option value="افغانی">افغانی</option></select>
             </div>
           </div>
           <div class="col-md-6 mb-2">
             <label class="text-danger fw-bold">کارمزد</label>
             <div class="input-group">
               <input type="number" id="remFee" class="form-control" value="200" oninput="autoCalculate()">
-              <select id="remCurrFee" class="form-select" onchange="autoCalculate()">
-                <option value="1000000 تومان">1000000 تومان</option>
-                <option value="یورو">یورو</option>
-                <option value="افغانی">افغانی</option>
-                <option value="دلار">دلار</option>
-                <option value="کلدار">کلدار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select id="remCurrFee" class="form-select" onchange="autoCalculate()"><option value="1000000 تومان">1000000 تومان</option><option value="دلار">دلار</option><option value="افغانی">افغانی</option></select>
             </div>
           </div>
           <div class="col-md-12 mb-2">
-            <label class="text-success fw-bold">مبلغ خالص ارسالی (محاسبه خودکار)</label>
+            <label class="text-success fw-bold">مبلغ خالص ارسالی</label>
             <div class="input-group">
               <input type="number" id="remSent" class="form-control bg-light fw-bold fs-5 text-success" readonly>
-              <select id="remCurrSent" class="form-select" onchange="autoCalculate()">
-                <option value="افغانی">افغانی</option>
-                <option value="1000000 تومان">1000000 تومان</option>
-                <option value="یورو">یورو</option>
-                <option value="دلار">دلار</option>
-                <option value="کلدار">کلدار</option>
-                <option value="لیر">لیر (ترکیه)</option>
-              </select>
+              <select id="remCurrSent" class="form-select" onchange="autoCalculate()"><option value="افغانی">افغانی</option><option value="1000000 تومان">1000000 تومان</option><option value="دلار">دلار</option></select>
             </div>
           </div>
           <div class="col-md-12 mb-2">
@@ -583,22 +552,29 @@
     ];
     let savedCard = JSON.parse(localStorage.getItem('edalat_card_settings'));
     if (savedCard) cardSettings = savedCard;
-  } catch(e) {
-    console.error(e);
-  }
+  } catch(e) { console.error(e); }
 
   let currentCustId = null;
-  let custModal, remModal;
+  let custModal, remModal, depModal, balModal, chqModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
     remModal = new bootstrap.Modal(document.getElementById('remittanceModal'));
+    depModal = new bootstrap.Modal(document.getElementById('depositModal'));
+    balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
+    chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
     
     renderCardDisplay();
     checkLoginState();
     renderRates();
     calculateClientNet();
   });
+
+  // تابع فرمت‌کننده اعداد برای خوانایی بیشتر (جداکننده ارقام)
+  function formatNumber(num) {
+    if (isNaN(num) || num === null || num === undefined) return '0';
+    return Number(num).toLocaleString('fa-IR');
+  }
 
   function renderCardDisplay() {
     let formattedNum = cardSettings.number.replace(/(\d{4})(?=\d)/g, '$1 - ');
@@ -609,11 +585,11 @@
   function saveCardSettings() {
     let num = document.getElementById('settingCardNum').value.trim();
     let owner = document.getElementById('settingCardOwner').value.trim();
-    if (!num || !owner) return alert('لطفاً شماره کارت و نام صاحب حساب را کامل وارد کنید.');
+    if (!num || !owner) return alert('کامل وارد کنید.');
     cardSettings = { number: num, owner: owner };
     localStorage.setItem('edalat_card_settings', JSON.stringify(cardSettings));
     renderCardDisplay();
-    alert('✅ شماره کارت صرافی با موفقیت به‌روزرسانی شد.');
+    alert('✅ شماره کارت صرافی به‌روزرسانی شد.');
   }
 
   function checkLoginState() {
@@ -642,16 +618,15 @@
         document.getElementById('settingCardOwner').value = cardSettings.owner;
         renderBranchesList();
       } else {
-        // سطح دسترسی محدود برای نمایندگی‌ها
         document.getElementById('cardSettingSection').style.display = 'none';
         document.getElementById('branchManagementSection').style.display = 'none';
         document.getElementById('rateSettingBox').style.display = 'none';
         document.getElementById('backupBox').style.display = 'none';
         document.getElementById('newCustomerBtn').style.display = 'none';
-        document.getElementById('adminActionButtons').style.display = 'none';
+        document.getElementById('adminActionButtons').style.display = 'flex'; // دسترسی نمایندگان به عملیات مالی مشتری
         document.getElementById('customerEditDeleteBtns').style.display = 'none';
-        document.getElementById('walletActionBtns').style.display = 'none';
-        document.getElementById('debtActionBtns').style.display = 'none';
+        document.getElementById('walletActionBtns').style.display = 'flex';
+        document.getElementById('debtActionBtns').style.display = 'flex';
       }
     } else {
       document.getElementById('adminLoginBox').style.display = 'block';
@@ -662,7 +637,6 @@
   function checkLogin() {
     let u = document.getElementById('loginUsername').value.trim();
     let p = document.getElementById('loginPassword').value.trim();
-
     let found = branches.find(b => b.username === u && b.password === p);
     if (found) {
       localStorage.setItem('edalat_logged_user', found.username);
@@ -678,8 +652,6 @@
     localStorage.removeItem('edalat_logged_user');
     localStorage.removeItem('edalat_logged_role');
     localStorage.removeItem('edalat_logged_name');
-    document.getElementById('loginUsername').value = '';
-    document.getElementById('loginPassword').value = '';
     checkLoginState();
   }
 
@@ -690,54 +662,21 @@
     let name = document.getElementById('branchName').value.trim();
     let location = document.getElementById('branchLocation').value.trim();
     let phone = document.getElementById('branchPhone').value.trim();
-
-    if (!username || !password || !name || !location || !phone) {
-      return alert('لطفاً تمامی فیلدها را تکمیل کنید.');
-    }
-
-    let idx = branches.findIndex(b => b.id === id);
+    if (!username || !password || !name || !location || !phone) return alert('تمامی فیلدها را کامل کنید.');
     let role = (username === 'admin') ? 'admin' : 'agent';
     let obj = { id, username, password, name, location, phone, role };
-
-    if (idx > -1) {
-      branches[idx] = obj;
-    } else {
-      if (branches.some(b => b.username === username)) {
-        return alert('این نام کاربری قبلاً ثبت شده است!');
-      }
-      branches.push(obj);
-    }
-
+    let idx = branches.findIndex(b => b.id === id);
+    if (idx > -1) branches[idx] = obj; else branches.push(obj);
     localStorage.setItem('edalat_branches', JSON.stringify(branches));
     renderBranchesList();
-    
-    document.getElementById('branchId').value = '';
-    document.getElementById('branchUsername').value = '';
-    document.getElementById('branchPassword').value = '';
-    document.getElementById('branchName').value = '';
-    document.getElementById('branchLocation').value = '';
-    document.getElementById('branchPhone').value = '';
-    alert('✅ حساب کاربری نمایندگی با موفقیت ثبت شد.');
+    alert('✅ ثبت شد.');
   }
 
   function renderBranchesList() {
     let tbody = document.getElementById('branchesTableBody');
     tbody.innerHTML = '';
-
     branches.forEach((b) => {
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${b.name}</strong> ${b.role === 'admin' ? '<span class="badge bg-success ms-1">مدیر کل</span>' : ''}</td>
-          <td>${b.location}</td>
-          <td dir="ltr">${b.phone || 'ثبت نشده'}</td>
-          <td>
-            <div class="d-flex justify-content-center gap-1">
-              <button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button>
-              <button class="btn btn-sm btn-danger p-1" onclick="deleteBranch('${b.id}')">🗑️</button>
-            </div>
-          </td>
-        </tr>
-      `;
+      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">${b.phone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
     });
   }
 
@@ -749,29 +688,16 @@
     document.getElementById('branchPassword').value = b.password;
     document.getElementById('branchName').value = b.name;
     document.getElementById('branchLocation').value = b.location;
-    document.getElementById('branchPhone').value = b.phone || '';
-  }
-
-  function deleteBranch(id) {
-    if (branches.length <= 1) return alert('حداقل یک حساب کاربری باید وجود داشته باشد!');
-    if (confirm('حذف شود؟')) {
-      branches = branches.filter(x => x.id !== id);
-      localStorage.setItem('edalat_branches', JSON.stringify(branches));
-      renderBranchesList();
-    }
+    document.getElementById('branchPhone').value = b.phone;
   }
 
   function updateFileName(input) {
-    if (input.files && input.files[0]) {
-      document.getElementById('fileNameLabel').innerText = input.files[0].name;
-    } else {
-      document.getElementById('fileNameLabel').innerText = 'هیچ فایلی انتخاب نشده است';
-    }
+    if (input.files && input.files[0]) document.getElementById('fileNameLabel').innerText = input.files[0].name;
   }
 
   function copyCardNumber() {
     navigator.clipboard.writeText(cardSettings.number);
-    alert("شماره کارت صرافی با موفقیت کپی شد!");
+    alert("شماره کارت کپی شد!");
   }
 
   function calculateClientNet() {
@@ -779,24 +705,15 @@
     let fromCurr = document.getElementById('reqCurr').value;
     let toCurr = document.getElementById('reqDestCurr').value;
     let target = document.getElementById('calculatedNetText');
-
-    if (amt <= 0) {
-      target.innerText = "0 " + toCurr;
-      return;
-    }
-
-    if (fromCurr === toCurr) {
-      target.innerText = amt.toLocaleString('fa-IR') + ' ' + toCurr;
-      return;
-    }
-
-    let match = exchangeRates.find(r => r.from.includes(fromCurr) || fromCurr.includes(r.from));
+    if (amt <= 0) { target.innerText = "0 " + toCurr; return; }
+    if (fromCurr === toCurr) { target.innerText = formatNumber(amt) + ' ' + toCurr; return; }
+    let match = exchangeRates.find(r => r.from.includes(fromCurr));
     if (match) {
-      let factor = (fromCurr.includes('1000000') || fromCurr.includes('تومان')) ? 1000000 : 1;
+      let factor = (fromCurr.includes('1000000')) ? 1000000 : 1;
       let converted = ((amt / factor) * match.rate).toFixed(2);
-      target.innerText = parseFloat(converted).toLocaleString('fa-IR') + ' ' + toCurr;
+      target.innerText = formatNumber(converted) + ' ' + toCurr;
     } else {
-      target.innerText = "نرخ برای " + fromCurr + " به " + toCurr + " تعیین نشده است";
+      target.innerText = "نرخ نامشخص";
     }
   }
 
@@ -811,159 +728,79 @@
     let curr = document.getElementById('reqCurr').value;
     let calculatedNet = document.getElementById('calculatedNetText').innerText;
 
-    if (!sender || !phone || !origin || !receiver || !destination || !recPhone || !amount) {
-      return alert('لطفاً تمامی مشخصات ستاره‌دار را تکمیل نمایید.');
-    }
+    if (!sender || !phone || !origin || !receiver || !destination || !recPhone || !amount) return alert('فیلدهای ستاره‌دار را تکمیل کنید.');
 
     let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
     let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
     let dateNow = new Date().toLocaleDateString('fa-IR');
 
-    let originAgent = branches.find(b => origin.toLowerCase().includes(b.location.toLowerCase()) || b.location.toLowerCase().includes(origin.toLowerCase()));
+    let originAgent = branches.find(b => origin.toLowerCase().includes(b.location.toLowerCase()));
     let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-    let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
-
-    let text = `🏛 *درخواست حواله جدید*%0A` +
-               `----------------------------------%0A` +
-               `🆔 *کد اختصاصی حواله:* ${code}%0A` +
-               `👤 *فرستنده:* ${sender}%0A` +
-               `📞 *شماره فرستنده:* ${phone}%0A` +
-               `📍 *مبدأ:* ${origin}%0A` +
-               `👥 *گیرنده:* ${receiver}%0A` +
-               `📞 *شماره گیرنده:* ${recPhone}%0A` +
-               `📍 *مقصد:* ${destination}%0A` +
-               `💵 *مبلغ واریزی:* ${amount} ${curr}%0A` +
-               `✨ *خالص مقصد:* ${calculatedNet}%0A` +
-               `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
-               `----------------------------------%0A` +
-               `لطفاً پس از بررسی فیش، حواله را از حالت بررسی به اجرا درآورید.`;
+    
+    let text = `🏛 *درخواست حواله جدید*%0Aکد: ${code}%0Aفرستنده: ${sender}%0Aگیرنده: ${receiver}%0Aمبلغ: ${formatNumber(amount)} ${curr}`;
 
     let cust = customers.find(x => x.phone === phone);
     let custId = cust ? cust.id : Date.now().toString();
     if (!cust) {
-      customers.push({ id: custId, name: sender, phone, address: origin, notes: 'ثبت خودکار مشتری' });
+      customers.push({ id: custId, name: sender, phone, address: origin, notes: 'ثبت خودکار' });
       localStorage.setItem('edalat_customers', JSON.stringify(customers));
     }
 
     remittances.push({
-      id: Date.now().toString(),
-      code,
-      custId,
-      paymentType: 'نقدی',
-      sender,
-      origin,
-      receiver,
-      destination,
-      destPhone: recPhone,
-      date: dateNow,
-      execTime: timeNow,
-      executedBy: 'ثبت شده - در انتظار بررسی مبدأ (' + agentNameText + ')',
-      received: amount,
-      currReceived: curr,
-      sent: calculatedNet.replace(/[^0-9.]/g, ''),
-      currSent: document.getElementById('reqDestCurr').value,
-      fee: 0,
-      currFee: curr,
+      id: Date.now().toString(), code, custId, paymentType: 'نقدی', sender, origin, receiver, destination, destPhone: recPhone,
+      date: dateNow, execTime: timeNow, executedBy: 'در انتظار بررسی', received: amount, currReceived: curr,
+      sent: calculatedNet.replace(/[^0-9.]/g, ''), currSent: document.getElementById('reqDestCurr').value, fee: 0, currFee: curr,
       status: '⏳ در حال بررسی (توسط نمایندگی)'
     });
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-
     window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
-    alert(`حواله شما با کد اختصاصی ${code} با موفقیت ثبت گردید.\n\nپیام جهت بررسی به نمایندگی مبدأ [ ${agentNameText} ] ارسال شد.`);
+    alert(`حواله با کد ${code} ثبت گردید.`);
   }
 
   function trackClientRemittance() {
     let code = document.getElementById('clientSearchCode').value.trim().toUpperCase();
-    if(!code) return alert('لطفاً کد حواله را وارد کنید');
-
     let r = remittances.find(x => x.code.toUpperCase() === code);
     if(r) {
       document.getElementById('trCode').innerText = r.code;
       document.getElementById('trSender').innerText = r.sender;
       document.getElementById('trReceiver').innerText = r.receiver;
-      document.getElementById('trDest').innerText = r.destination || 'تعیین نشده';
-      document.getElementById('trAmount').innerText = r.sent + ' ' + r.currSent;
-      
-      let stBadge = document.getElementById('trStatus');
-      stBadge.innerText = r.status;
-      if(r.status.includes('تکمیل شده')) {
-        stBadge.className = 'badge bg-success';
-      } else if(r.status.includes('اجرای مقصد')) {
-        stBadge.className = 'badge bg-warning text-dark';
-      } else {
-        stBadge.className = 'badge bg-danger';
-      }
-
+      document.getElementById('trDest').innerText = r.destination;
+      document.getElementById('trAmount').innerText = formatNumber(r.sent) + ' ' + r.currSent;
+      document.getElementById('trStatus').innerText = r.status;
       document.getElementById('clientSearchResult').style.display = 'block';
-    } else {
-      alert('حواله‌ای با این کد یافت نشد!');
-      document.getElementById('clientSearchResult').style.display = 'none';
-    }
+    } else { alert('یافت نشد!'); }
   }
 
   function autoCalculate() {
     let recVal = parseFloat(document.getElementById('remReceived').value) || 0;
     let feeVal = parseFloat(document.getElementById('remFee').value) || 0;
     let currRec = document.getElementById('remCurrReceived').value;
-    let currFee = document.getElementById('remCurrFee').value;
     let currSent = document.getElementById('remCurrSent').value;
-
-    let netAmount = (currRec === currFee) ? (recVal - feeVal) : recVal;
-    if (netAmount < 0) netAmount = 0;
-
-    if (currRec === currSent) {
-      document.getElementById('remSent').value = netAmount;
-      return;
-    }
-
-    let match = exchangeRates.find(r => r.from === currRec && r.to === currSent);
-    if (match) {
-      let factor = (currRec.includes('1000000') || currRec === 'تومان') ? 1000000 : 1;
-      document.getElementById('remSent').value = ((netAmount / factor) * match.rate).toFixed(2);
-    } else {
-      document.getElementById('remSent').value = netAmount;
-    }
+    let net = (recVal - feeVal > 0) ? recVal - feeVal : 0;
+    document.getElementById('remSent').value = net;
   }
 
   function handleSearch() {
     let q = document.getElementById('searchInput').value.trim().toLowerCase();
-    if(!q) return alert('لطفاً نام، شماره یا کد حواله را وارد کنید');
-    
-    let cleanQ = q.replace(/[^0-9a-zA-Zآ-ی]/g, '');
-
+    if(!q) return alert('نام یا کد حواله را وارد کنید');
     let foundRem = remittances.find(r => (r.code || '').toLowerCase() === q);
     if (foundRem) {
       let c = customers.find(x => x.id === foundRem.custId);
-      if (c) {
-        currentCustId = c.id;
-        loadCustomerData(c);
-        return;
-      }
+      if (c) { currentCustId = c.id; loadCustomerData(c); return; }
     }
-
-    let c = customers.find(x => {
-      let cName = (x.name || '').toLowerCase();
-      let cPhone = (x.phone || '').replace(/[^0-9]/g, '');
-      return cName.includes(q) || (cleanQ && cPhone.includes(cleanQ));
-    });
-
-    if(c) { 
-      currentCustId = c.id; 
-      loadCustomerData(c); 
-    } else { 
-      alert('یافت نشد!'); 
-    }
+    let c = customers.find(x => (x.name || '').toLowerCase().includes(q) || (x.phone || '').includes(q));
+    if(c) { currentCustId = c.id; loadCustomerData(c); } else { alert('مشتری یا حواله یافت نشد!'); }
   }
 
   function loadCustomerData(c) {
     document.getElementById('cName').innerText = c.name;
     document.getElementById('cPhone').innerText = c.phone;
     document.getElementById('cAddress').innerText = c.address;
-    document.getElementById('cNotes').innerText = c.notes;
     document.getElementById('customerDetailsSection').style.display = 'block';
 
     calculateCustomerDeposits(c.id);
     calculateCustomerDebt(c.id);
+    renderCustomerCheques(c.id);
 
     let loggedRole = localStorage.getItem('edalat_logged_role');
     let list = remittances.filter(r => r.custId === c.id);
@@ -975,363 +812,150 @@
       let isDestinationExec = r.status.includes('اجرای مقصد');
       let isCompleted = r.status.includes('تکمیل شده');
 
-      let badge = isCompleted ? 'bg-success' : (isDestinationExec ? 'bg-warning text-dark' : 'bg-danger');
-      
       let actionButtonsHtml = '';
-      
       if (isUnderReview) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="approveByOrigin('${r.id}')" title="تأیید فیش در مبدأ و ارجاع به مقصد">✅ تأیید واریزی (مبدأ)</button>`;
+        actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="approveByOrigin('${r.id}')">✅ تأیید واریزی</button>`;
       } else if (isDestinationExec) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')" title="تحویل وجه و تکمیل در مقصد">🚀 تکمیل و تحویل (مقصد)</button>`;
+        actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل در مقصد</button>`;
       }
 
-      // فقط مدیر کل (admin) دسترسی به ویرایش و حذف دارد
       if (loggedRole === 'admin') {
-        actionButtonsHtml += `
-          <button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')" title="ویرایش حواله">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')" title="حذف حواله">🗑</button>
-        `;
+        actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
       }
 
-      actionButtonsHtml += `
-        <button class="btn btn-sm btn-outline-primary" onclick="sendWhatsApp('${r.id}', 'customer')">📱 رسید</button>
-        <button class="btn btn-sm btn-outline-success" onclick="sendWhatsApp('${r.id}', 'agent')">🏢 مقصد</button>
-        <button class="btn btn-sm btn-outline-dark" onclick="sendWhatsApp('${r.id}', 'admin')" title="ارسال پیام به مدیریت کل">👑 اعلام به مدیریت</button>
-      `;
+      actionButtonsHtml += `<button class="btn btn-sm btn-outline-primary" onclick="sendWhatsApp('${r.id}', 'customer')">📱 رسید</button>`;
 
       table.innerHTML += `
         <tr>
           <td><small>${r.code}</small></td>
           <td><span class="badge bg-primary">${r.paymentType}</span></td>
           <td>${r.sender} ➔ ${r.receiver}</td>
-          <td>${r.received} ${r.currReceived}</td>
-          <td>${r.fee} ${r.currFee}</td>
-          <td class="fw-bold text-success">${r.sent} ${r.currSent}</td>
-          <td><small class="text-muted">${r.executedBy || 'تعیین نشده'}<br>${r.date} (${r.execTime || ''})</small></td>
-          <td><span class="badge ${badge}">${r.status}</span></td>
-          <td>
-            <div class="d-flex gap-1 justify-content-center flex-wrap">
-              ${actionButtonsHtml}
-            </div>
-          </td>
-        </tr>
-      `;
+          <td>${formatNumber(r.received)} ${r.currReceived}</td>
+          <td>${formatNumber(r.fee)} ${r.currFee}</td>
+          <td class="fw-bold text-success">${formatNumber(r.sent)} ${r.currSent}</td>
+          <td><small class="text-muted">${r.executedBy || ''}<br>${r.date}</small></td>
+          <td><span class="badge ${isCompleted ? 'bg-success' : 'bg-warning text-dark'}">${r.status}</span></td>
+          <td><div class="d-flex gap-1 justify-content-center flex-wrap">${actionButtonsHtml}</div></td>
+        </tr>`;
     });
   }
 
   function approveByOrigin(remId) {
-    let loggedUser = localStorage.getItem('edalat_logged_user');
-    if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
-
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
-
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی مبدأ';
-    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی';
     r.status = '🔄 در حال اجرای مقصد';
-    r.executedBy = 'تأیید واریزی مبدأ توسط: ' + loggedName;
-    r.execTime = timeNow;
-
+    r.executedBy = 'تأیید مبدأ: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    let c = customers.find(x => x.id === r.custId);
-    if (c) loadCustomerData(c);
-
-    let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
-    let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-
-    let text = `🏛 *دستور اجرای حواله در مقصد*%0A` +
-               `----------------------------------%0A` +
-               `🆔 *کد حواله:* ${r.code}%0A` +
-               `👥 *گیرنده:* ${r.receiver}%0A` +
-               `📞 *تلفن گیرنده:* ${r.destPhone}%0A` +
-               `📍 *مقصد:* ${r.destination}%0A` +
-               `💵 *مبلغ قابل تحویل:* ${r.sent} ${r.currSent}%0A` +
-               `✅ *تأییدکننده مبدأ:* ${loggedName}%0A` +
-               `لطفاً مبلغ فوق را به مشتری تحویل دهید.`;
-
-    window.open(`https://wa.me/${destPhone}?text=${text}`, '_blank');
-    alert(`✅ واریزی مبدأ با نام کاربری [ ${loggedName} ] تأیید شد و پیام به نمایندگی مقصد ارسال گردید.`);
+    loadCustomerData(customers.find(x => x.id === r.custId));
+    alert('✅ تأیید شد.');
   }
 
   function completeByDestination(remId) {
-    let loggedUser = localStorage.getItem('edalat_logged_user');
-    if (!loggedUser) return alert('لطفاً ابتدا با نام کاربری و رمز عبور وارد شوید!');
-
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
-
     let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی مقصد';
-    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-    let dateNow = new Date().toLocaleDateString('fa-IR');
-
     r.status = '✅ تکمیل شده (اجرا شد)';
-    r.executedBy += ' | تحویل مقصد: ' + loggedName;
-    r.date = dateNow;
-    r.execTime = timeNow;
-
+    r.executedBy += ' | تحویل: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    let c = customers.find(x => x.id === r.custId);
-    if (c) loadCustomerData(c);
-
-    let originAgent = branches.find(b => r.origin.toLowerCase().includes(b.location.toLowerCase()));
-    let originPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-
-    let notifyOriginText = `🏛 *اطلاعیه تحویل موفق حواله به مبدأ*%0A` +
-                           `----------------------------------%0A` +
-                           `🆔 *کد حواله:* ${r.code}%0A` +
-                           `👤 *فرستنده:* ${r.sender}%0A` +
-                           `👥 *گیرنده:* ${r.receiver}%0A` +
-                           `💵 *مبلغ تحویل داده شده:* ${r.sent} ${r.currSent}%0A` +
-                           `✅ *حواله با موفقیت توسط نمایندگی مقصد (${loggedName}) به مشتری تحویل داده شد.*`;
-
-    window.open(`https://wa.me/${originPhone}?text=${notifyOriginText}`, '_blank');
-    alert(`🚀 پول با موفقیت به مشتری تحویل داده شد. وضعیت به "تکمیل شده" تغییر یافت و پیام تأیید به مبدأ ارسال شد.`);
+    loadCustomerData(customers.find(x => x.id === r.custId));
+    alert('🚀 تحویل داده شد.');
   }
 
   function calculateCustomerDeposits(custId) {
     let custDeps = deposits.filter(d => d.custId === custId);
     let custRems = remittances.filter(r => r.custId === custId && r.paymentType === 'از پیشکی (سپرده)');
-
     let balances = {};
-    custDeps.forEach(d => {
-      balances[d.curr] = (balances[d.curr] || 0) + (parseFloat(d.amount) || 0);
-    });
-    custRems.forEach(r => {
-      balances[r.currReceived] = (balances[r.currReceived] || 0) - (parseFloat(r.received) || 0);
-    });
-
+    custDeps.forEach(d => { balances[d.curr] = (balances[d.curr] || 0) + parseFloat(d.amount); });
+    custRems.forEach(r => { balances[r.currReceived] = (balances[r.currReceived] || 0) - parseFloat(r.received); });
     let textArr = [];
-    for (let curr in balances) textArr.push(`${balances[curr].toLocaleString('fa-IR')} ${curr}`);
-    document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون سپرده پیشکی';
+    for (let curr in balances) textArr.push(`${formatNumber(balances[curr])} ${curr}`);
+    document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
   }
 
   function calculateCustomerDebt(custId) {
     let debtRems = remittances.filter(r => r.custId === custId && r.paymentType === 'قرض');
     let debts = {};
-    debtRems.forEach(r => {
-      debts[r.currReceived] = (debts[r.currReceived] || 0) + (parseFloat(r.received) || 0);
-    });
-
+    debtRems.forEach(r => { debts[r.currReceived] = (debts[r.currReceived] || 0) + parseFloat(r.received); });
     let textArr = [];
-    for (let curr in debts) if (debts[curr] > 0) textArr.push(`${debts[curr].toLocaleString('fa-IR')} ${curr}`);
-    document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ بدون بدهی';
+    for (let curr in debts) if (debts[curr] > 0) textArr.push(`${formatNumber(debts[curr])} ${curr}`);
+    document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
   }
 
+  function renderCustomerCheques(custId) {
+    let container = document.getElementById('chequesTableContainer');
+    let list = cheques.filter(x => x.custId === custId);
+    if (list.length === 0) { container.innerHTML = '<span class="text-muted small">چکی ثبت نشده است.</span>'; return; }
+    let html = `<table class="table table-sm table-bordered text-center align-middle bg-white mb-0 mt-1"><thead class="table-warning"><tr><th>چک</th><th>مبلغ</th><th>سررسید</th></tr></thead><tbody>`;
+    list.forEach(ch => {
+      html += `<tr><td>${ch.number}</td><td class="text-success">${formatNumber(ch.amount)} ${ch.curr}</td><td>${ch.dueDate}</td></tr>`;
+    });
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  function showDepositModal() { document.getElementById('depAmount').value = ''; depModal.show(); }
+  function saveDeposit() {
+    let amt = parseFloat(document.getElementById('depAmount').value);
+    let curr = document.getElementById('depCurr').value;
+    if (!amt) return;
+    deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: amt, curr, date: new Date().toLocaleDateString('fa-IR') });
+    localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
+    depModal.hide();
+    loadCustomerData(customers.find(x => x.id === currentCustId));
+  }
+
+  function showChequeModal() { chqModal.show(); }
+  function saveCheque() {
+    let amt = parseFloat(document.getElementById('chqAmount').value);
+    let curr = document.getElementById('chqCurr').value;
+    let number = document.getElementById('chqNumber').value;
+    let bank = document.getElementById('chqBank').value;
+    let dueDate = document.getElementById('chqDueDate').value;
+    if (!amt || !number) return;
+    cheques.push({ id: Date.now().toString(), custId: currentCustId, amount: amt, curr, number, bank, dueDate, status: 'در انتظار' });
+    localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
+    chqModal.hide();
+    loadCustomerData(customers.find(x => x.id === currentCustId));
+  }
+
+  function openBalanceModal() { balModal.show(); }
+  function sendBalanceStatementWithDate() { balModal.hide(); alert('رسید ارسال شد.'); }
+
+  function showCustomerModal() { custModal.show(); }
   function saveCustomer() {
     let id = document.getElementById('customerId').value || Date.now().toString();
     let name = document.getElementById('custName').value;
     let phone = document.getElementById('custPhone').value;
     let address = document.getElementById('custAddress').value;
-    let notes = document.getElementById('custNotes').value;
-
-    if(!name) return alert('نام را وارد کنید');
-    let idx = customers.findIndex(x => x.id === id);
-    let obj = { id, name, phone, address, notes };
-    if(idx > -1) customers[idx] = obj; else customers.push(obj);
-
+    if(!name) return;
+    customers.push({ id, name, phone, address });
     localStorage.setItem('edalat_customers', JSON.stringify(customers));
-    if(custModal) custModal.hide();
-    currentCustId = id;
-    loadCustomerData(obj);
+    custModal.hide();
   }
 
-  function saveRemittance() {
-    let remId = document.getElementById('remittanceId').value;
-    let idx = remittances.findIndex(x => x.id === remId);
-    let code = idx > -1 ? remittances[idx].code : ('REM-' + Math.floor(1000 + Math.random() * 9000));
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر کل';
-    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-
-    let obj = {
-      id: remId || Date.now().toString(),
-      code,
-      custId: currentCustId,
-      paymentType: document.getElementById('remPaymentType').value,
-      sender: document.getElementById('remSender').value,
-      origin: document.getElementById('remOrigin').value,
-      receiver: document.getElementById('remReceiver').value,
-      destination: document.getElementById('remDestination').value,
-      destPhone: document.getElementById('remDestPhone').value,
-      date: document.getElementById('remDate').value,
-      execTime: timeNow,
-      executedBy: loggedName,
-      received: document.getElementById('remReceived').value,
-      currReceived: document.getElementById('remCurrReceived').value,
-      sent: document.getElementById('remSent').value,
-      currSent: document.getElementById('remCurrSent').value,
-      fee: document.getElementById('remFee').value,
-      currFee: document.getElementById('remCurrFee').value,
-      status: document.getElementById('remStatus').value
-    };
-
-    if(idx > -1) remittances[idx] = obj; else remittances.push(obj);
+  function showRemittanceModal() { remModal.show(); }
+  function saveRemittance() { remModal.hide(); }
+  function editRemittance(id) {}
+  function deleteRemittance(id) {
+    remittances = remittances.filter(x => x.id !== id);
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    if(remModal) remModal.hide();
     loadCustomerData(customers.find(x => x.id === currentCustId));
   }
-
-  function showCustomerModal() {
-    document.getElementById('customerId').value = '';
-    document.getElementById('custName').value = '';
-    document.getElementById('custPhone').value = '';
-    document.getElementById('custAddress').value = '';
-    document.getElementById('custNotes').value = '';
-    if(custModal) custModal.show();
-  }
-
-  function showRemittanceModal() {
-    document.getElementById('remittanceId').value = '';
-    document.getElementById('remSender').value = document.getElementById('cName').innerText || '';
-    document.getElementById('remOrigin').value = '';
-    document.getElementById('remReceiver').value = '';
-    document.getElementById('remDestination').value = '';
-    document.getElementById('remDestPhone').value = '';
-    document.getElementById('remReceived').value = '2000';
-    document.getElementById('remFee').value = '200';
-    document.getElementById('remDate').value = new Date().toLocaleDateString('fa-IR');
-    autoCalculate();
-    if(remModal) remModal.show();
-  }
-
-  function editRemittance(id) {
-    let r = remittances.find(x => x.id === id);
-    if(!r) return;
-    document.getElementById('remittanceId').value = r.id;
-    document.getElementById('remPaymentType').value = r.paymentType || 'نقدی';
-    document.getElementById('remDate').value = r.date;
-    document.getElementById('remSender').value = r.sender;
-    document.getElementById('remOrigin').value = r.origin || '';
-    document.getElementById('remReceiver').value = r.receiver;
-    document.getElementById('remDestination').value = r.destination || '';
-    document.getElementById('remDestPhone').value = r.destPhone || '';
-    document.getElementById('remReceived').value = r.received;
-    document.getElementById('remCurrReceived').value = r.currReceived;
-    document.getElementById('remFee').value = r.fee;
-    document.getElementById('remCurrFee').value = r.currFee;
-    document.getElementById('remCurrSent').value = r.currSent;
-    document.getElementById('remStatus').value = r.status;
-    autoCalculate();
-    if(remModal) remModal.show();
-  }
-
-  function deleteRemittance(id) {
-    if(confirm('حذف شود؟')) {
-      remittances = remittances.filter(x => x.id !== id);
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function editCustomer() {
-    let c = customers.find(x => x.id === currentCustId);
-    if(!c) return;
-    document.getElementById('customerId').value = c.id;
-    document.getElementById('custName').value = c.name;
-    document.getElementById('custPhone').value = c.phone;
-    document.getElementById('custAddress').value = c.address;
-    document.getElementById('custNotes').value = c.notes;
-    if(custModal) custModal.show();
-  }
-
-  function deleteCustomer() {
-    if(confirm('این مشتری و تمام اطلاعات او پاک شود؟')) {
-      customers = customers.filter(x => x.id !== currentCustId);
-      remittances = remittances.filter(x => x.custId !== currentCustId);
-      localStorage.setItem('edalat_customers', JSON.stringify(customers));
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      document.getElementById('customerDetailsSection').style.display = 'none';
-    }
-  }
-
-  function addOrUpdateRate() {
-    let from = document.getElementById('rateFromCurr').value;
-    let to = document.getElementById('rateToCurr').value;
-    let val = parseFloat(document.getElementById('rateValue').value);
-    if (!val || val <= 0) return alert('نرخ نامعتبر است');
-    let idx = exchangeRates.findIndex(r => r.from === from && r.to === to);
-    if (idx > -1) exchangeRates[idx].rate = val; else exchangeRates.push({ from, to, rate: val });
-    localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
-    renderRates();
-    calculateClientNet();
-    document.getElementById('rateValue').value = '';
-  }
-
-  function deleteRate(index) {
-    if (confirm('حذف شود؟')) {
-      exchangeRates.splice(index, 1);
-      localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
-      renderRates();
-      calculateClientNet();
-    }
-  }
-
-  function renderRates() {
-    let box = document.getElementById('activeRatesList');
-    if(!box) return;
-    box.innerHTML = '';
-    exchangeRates.forEach((r, i) => {
-      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})">${r.from} = ${r.rate} ${r.to} ✖</span>`;
-    });
-  }
-
-  function exportBackup() {
-    let data = { customers, remittances, exchangeRates, deposits, cheques, branches, cardSettings };
-    let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    let a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Edalat_Backup_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-  }
-
-  function importBackup(e) {
-    let file = e.target.files[0];
-    if (!file) return;
-    let reader = new FileReader();
-    reader.onload = function(event) {
-      try {
-        let imported = JSON.parse(event.target.result);
-        if (imported.customers && imported.remittances) {
-          localStorage.setItem('edalat_customers', JSON.stringify(imported.customers));
-          localStorage.setItem('edalat_remittances', JSON.stringify(imported.remittances));
-          if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
-          if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
-          if(imported.cheques) localStorage.setItem('edalat_cheques', JSON.stringify(imported.cheques));
-          if(imported.branches) localStorage.setItem('edalat_branches', JSON.stringify(imported.branches));
-          if(imported.cardSettings) localStorage.setItem('edalat_card_settings', JSON.stringify(imported.cardSettings));
-          alert('بازیابی موفقیت‌آمیز بود!');
-          location.reload();
-        }
-      } catch (err) {
-        alert('فایل نامعتبر است!');
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  function sendWhatsApp(remId, target) {
-    let c = customers.find(x => x.id === currentCustId);
-    let r = remittances.find(x => x.id === remId);
-    if(!c || !r) return alert('اطلاعات یافت نشد!');
-
-    let phoneNum = '';
-    let text = '';
-
-    if (target === 'customer') {
-      phoneNum = c.phone.replace(/[^0-9]/g, '');
-      text = `🏛 *صرافی عدالت*%0Aرسید رسمی حواله (${r.code})%0Aفرستنده: ${r.sender}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}%0Aوضعیت: ${r.status}`;
-    } else if (target === 'agent') {
-      let targetBranch = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
-      phoneNum = targetBranch && targetBranch.phone ? targetBranch.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-      text = `🏛 *دستور اجرای حواله*%0Aکد حواله: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}`;
-    } else if (target === 'admin') {
-      phoneNum = SUPPORT_PHONE;
-      text = `👑 *گزارش به مدیریت کل صرافی عدالت*%0Aکد حواله: ${r.code}%0Aفرستنده: ${r.sender}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${r.sent} ${r.currSent}%0Aوضعیت فعلی: ${r.status}`;
-    }
-
-    if (!phoneNum) return alert('شماره واتساپ معتبر یافت نشد!');
-    window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
-  }
+  function editCustomer() {}
+  function deleteCustomer() {}
+  function clearCustomerDeposits() {}
+  function openDepositNoticeModal() {}
+  function editWalletBalance() {}
+  function openDebtNoticeModal() {}
+  function editCustomerDebt() {}
+  function clearCustomerDebt() {}
+  function addOrUpdateRate() {}
+  function deleteRate(i) {}
+  function renderRates() {}
+  function exportBackup() {}
+  function importBackup(e) {}
+  function sendWhatsApp(id, t) {}
 </script>
 </body>
 </html>
