@@ -104,7 +104,7 @@
           <div class="col-12"><label class="small fw-bold">👥 نام و تخلص گیرنده *</label><input type="text" id="reqReceiver" class="form-control" placeholder="مثال: محمود محمودزاده"></div>
           <div class="col-12"><label class="small fw-bold">📞 شماره تماس گیرنده *</label><input type="text" id="reqRecPhone" class="form-control phone-input" placeholder="+93..."></div>
           <div class="col-12"><label class="small fw-bold">📍 مقصد (کشور / شهر گیرنده) *</label><input type="text" id="reqDestination" class="form-control" placeholder="مثال: افغانستان، کابل..."></div>
-          <div class="col-7"><label class="small fw-bold">💵 مبلغ حواله *</label><input type="number" id="reqAmount" class="form-control" placeholder="مثال: 25000000" oninput="calculateClientNet()"></div>
+          <div class="col-7"><label class="small fw-bold">💵 مبلغ حواله *</label><input type="text" id="reqAmount" class="form-control" placeholder="مثال: 25,000,000" oninput="formatInputNumber(this); calculateClientNet()"></div>
           <div class="col-5">
             <label class="small fw-bold">واحد پول (ارز) *</label>
             <select id="reqCurr" class="form-select" onchange="calculateClientNet()">
@@ -222,18 +222,19 @@
         <div class="card p-3 mb-3">
           <h5 class="fw-bold mb-2">📋 مدیریت و اجرای حواله‌ها</h5>
 
-          <div id="rateSettingBox" class="card p-3 border-info bg-light" style="display:none;">
+          <!-- بخش تنظیم نرخ ارزها (فعال شده) -->
+          <div id="rateSettingBox" class="card p-3 border-info bg-light">
             <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ ارزها:</h6>
             <div class="row g-2 align-items-center">
               <div class="col-6"><select id="rateFromCurr" class="form-select form-select-sm"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="افغانی">افغانی</option></select></div>
               <div class="col-6"><select id="rateToCurr" class="form-select form-select-sm"><option value="افغانی">افغانی</option><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option></select></div>
-              <div class="col-7 mt-2"><input type="number" step="0.01" id="rateValue" class="form-control form-control-sm" placeholder="نرخ"></div>
+              <div class="col-7 mt-2"><input type="text" id="rateValue" class="form-control form-control-sm" placeholder="نرخ" oninput="formatInputNumber(this)"></div>
               <div class="col-5 mt-2"><button class="btn btn-primary btn-sm w-100 fw-bold" onclick="addOrUpdateRate()">ثبت نرخ</button></div>
             </div>
             <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
           </div>
 
-          <div id="backupBox" class="d-flex justify-content-center gap-2 my-3" style="display:none;">
+          <div id="backupBox" class="d-flex justify-content-center gap-2 my-3">
             <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 پشتیبان</button>
             <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی</button>
             <input type="file" id="importFile" style="display:none;" onchange="importBackup(event)" accept=".json">
@@ -337,9 +338,9 @@
 <!-- مدال‌ها -->
 <div class="modal fade" id="customerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">اطلاعات مشتری</h5></div><div class="modal-body"><input type="hidden" id="customerId"><div class="mb-2"><label>نام و تخلص</label><input type="text" id="custName" class="form-control"></div><div class="mb-2"><label>شماره واتساپ</label><input type="text" id="custPhone" class="form-control phone-input"></div><div class="mb-2"><label>آدرس</label><input type="text" id="custAddress" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره</button></div></div></div></div>
 
-<div class="modal fade" id="depositModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی</h5></div><div class="modal-body"><div class="mb-2"><label class="fw-bold">مبلغ *</label><input type="number" id="depAmount" class="form-control fs-5 fw-bold"></div><div class="mb-2"><label>واحد ارز</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div></div><div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت</button></div></div></div></div>
+<div class="modal fade" id="depositModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی</h5></div><div class="modal-body"><div class="mb-2"><label class="fw-bold">مبلغ *</label><input type="text" id="depAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div></div><div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت</button></div></div></div></div>
 
-<div class="modal fade" id="chequeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید</h5></div><div class="modal-body"><input type="hidden" id="editChequeId"><div class="mb-2"><label>مبلغ *</label><input type="number" id="chqAmount" class="form-control fs-5 fw-bold"></div><div class="mb-2"><label>واحد ارز</label><select id="chqCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div><div class="mb-2"><label>شماره چک *</label><input type="text" id="chqNumber" class="form-control"></div><div class="mb-2"><label>بانک *</label><input type="text" id="chqBank" class="form-control"></div><div class="mb-2"><label>سررسید *</label><input type="text" id="chqDueDate" class="form-control" placeholder="1403/09/10"></div></div><div class="modal-footer"><button class="btn btn-warning fw-bold" onclick="saveCheque()">ذخیره چک</button></div></div></div></div>
+<div class="modal fade" id="chequeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید</h5></div><div class="modal-body"><input type="hidden" id="editChequeId"><div class="mb-2"><label>مبلغ *</label><input type="text" id="chqAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="chqCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div><div class="mb-2"><label>شماره چک *</label><input type="text" id="chqNumber" class="form-control"></div><div class="mb-2"><label>بانک *</label><input type="text" id="chqBank" class="form-control"></div><div class="mb-2"><label>سررسید *</label><input type="text" id="chqDueDate" class="form-control" placeholder="1403/09/10"></div></div><div class="modal-footer"><button class="btn btn-warning fw-bold" onclick="saveCheque()">ذخیره چک</button></div></div></div></div>
 
 <div class="modal fade" id="depositNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-primary">📲 یادآوری کیف پول</h5></div><div class="modal-body"><label>تاریخ یا توضیحات:</label><input type="text" id="depositDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDepositNoticeWhatsApp()">ارسال به واتساپ</button></div></div></div></div>
 
@@ -347,7 +348,7 @@
 
 <div class="modal fade" id="balanceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div><div class="modal-body"><label>مهلت پرداخت:</label><input type="text" id="dueDateInput" class="form-control text-center fs-5 text-danger" value="1403/08/15"></div><div class="modal-footer"><button class="btn btn-primary w-100 fw-bold" onclick="sendBalanceStatementWithDate()">ارسال به واتساپ</button></div></div></div></div>
 
-<div class="modal fade" id="remittanceModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="remittanceModalTitle">ثبت / ویرایش حواله</h5></div><div class="modal-body"><input type="hidden" id="remittanceId"><div class="row"><div class="col-md-6 mb-2"><label>نوع پرداخت</label><select id="remPaymentType" class="form-select"><option value="نقدی">نقدی</option><option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option><option value="قرض">قرض</option></select></div><div class="col-md-6 mb-2"><label>تاریخ</label><input type="text" id="remDate" class="form-control"></div><div class="col-md-6 mb-2"><label>فرستنده</label><input type="text" id="remSender" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div><div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div><div class="col-md-12 mb-2"><label>تلفن واتساپ نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input"></div><div class="col-md-6 mb-2"><label>مبلغ دریافتی</label><input type="number" id="remReceived" class="form-control" oninput="autoCalculate()"></div><div class="col-md-6 mb-2"><label>کارمزد</label><input type="number" id="remFee" class="form-control" oninput="autoCalculate()"></div><div class="col-md-12 mb-2"><label>مبلغ خالص ارسالی</label><input type="number" id="remSent" class="form-control bg-light fw-bold" readonly></div><div class="col-md-12 mb-2"><label>وضعیت</label><select id="remStatus" class="form-control"><option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی</option><option value="🔄 در حال اجرای مقصد">🔄 اجرای مقصد</option><option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده</option></select></div></div></div><div class="modal-footer"><button class="btn btn-success" onclick="saveRemittance()">ذخیره حواله</button></div></div></div></div>
+<div class="modal fade" id="remittanceModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="remittanceModalTitle">ثبت / ویرایش حواله</h5></div><div class="modal-body"><input type="hidden" id="remittanceId"><div class="row"><div class="col-md-6 mb-2"><label>نوع پرداخت</label><select id="remPaymentType" class="form-select"><option value="نقدی">نقدی</option><option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option><option value="قرض">قرض</option></select></div><div class="col-md-6 mb-2"><label>تاریخ</label><input type="text" id="remDate" class="form-control"></div><div class="col-md-6 mb-2"><label>فرستنده</label><input type="text" id="remSender" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div><div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div><div class="col-md-12 mb-2"><label>تلفن واتساپ نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input"></div><div class="col-md-6 mb-2"><label>مبلغ دریافتی</label><input type="text" id="remReceived" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-6 mb-2"><label>کارمزد</label><input type="text" id="remFee" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-12 mb-2"><label>مبلغ خالص ارسالی</label><input type="text" id="remSent" class="form-control bg-light fw-bold" readonly></div><div class="col-md-12 mb-2"><label>وضعیت</label><select id="remStatus" class="form-control"><option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی</option><option value="🔄 در حال اجرای مقصد">🔄 اجرای مقصد</option><option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده</option></select></div></div></div><div class="modal-footer"><button class="btn btn-success" onclick="saveRemittance()">ذخیره حواله</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -380,10 +381,34 @@
     calculateClientNet();
   });
 
-  // تابع استاندارد فرمت‌کننده اعداد با جداکننده سه‌رقمی (ویرگول / ممیز خوانا)
+  // تابع استاندارد فرمت‌کننده اعداد با جداکننده سه‌رقمی (کاما / ممیز)
   function formatNumber(num) {
-    if (isNaN(num) || num === null || num === undefined || num === '') return '۰';
-    return Number(num).toLocaleString('fa-IR');
+    if (num === null || num === undefined || num === '') return '۰';
+    let cleanVal = String(num).replace(/,/g, '');
+    let n = Number(cleanVal);
+    if (isNaN(n)) return num;
+    return n.toLocaleString('fa-IR');
+  }
+
+  // تابع فرمت‌کردن فیلدهای ورودی هنگام تایپ کاربر
+  function formatInputNumber(input) {
+    let cursorPosition = input.selectionStart;
+    let originalLength = input.value.length;
+    let cleanVal = input.value.replace(/[^0-9]/g, '');
+    if (cleanVal === '') {
+      input.value = '';
+      return;
+    }
+    let formatted = Number(cleanVal).toLocaleString('en-US');
+    input.value = formatted;
+    let newLength = input.value.length;
+    cursorPosition = Math.max(0, cursorPosition + (newLength - originalLength));
+    input.setSelectionRange(cursorPosition, cursorPosition);
+  }
+
+  function getCleanNumber(val) {
+    if (!val) return 0;
+    return parseFloat(String(val).replace(/,/g, '')) || 0;
   }
 
   function renderCardDisplay() {
@@ -502,7 +527,7 @@
   }
 
   function calculateClientNet() {
-    let amt = parseFloat(document.getElementById('reqAmount').value) || 0;
+    let amt = getCleanNumber(document.getElementById('reqAmount').value);
     let fromCurr = document.getElementById('reqCurr').value;
     let toCurr = document.getElementById('reqDestCurr').value;
     let target = document.getElementById('calculatedNetText');
@@ -525,7 +550,7 @@
     let receiver = document.getElementById('reqReceiver').value.trim();
     let destination = document.getElementById('reqDestination').value.trim();
     let recPhone = document.getElementById('reqRecPhone').value.trim();
-    let amount = document.getElementById('reqAmount').value.trim();
+    let amount = getCleanNumber(document.getElementById('reqAmount').value);
     let curr = document.getElementById('reqCurr').value;
     let calculatedNet = document.getElementById('calculatedNetText').innerText;
 
@@ -573,10 +598,10 @@
   }
 
   function autoCalculate() {
-    let recVal = parseFloat(document.getElementById('remReceived').value) || 0;
-    let feeVal = parseFloat(document.getElementById('remFee').value) || 0;
+    let recVal = getCleanNumber(document.getElementById('remReceived').value);
+    let feeVal = getCleanNumber(document.getElementById('remFee').value);
     let net = (recVal - feeVal > 0) ? recVal - feeVal : 0;
-    document.getElementById('remSent').value = net;
+    document.getElementById('remSent').value = formatNumber(net);
   }
 
   function handleSearch() {
@@ -601,7 +626,6 @@
     calculateCustomerDebt(c.id);
     renderCustomerCheques(c.id);
 
-    let loggedRole = localStorage.getItem('edalat_logged_role');
     let list = remittances.filter(r => r.custId === c.id);
     let table = document.getElementById('remittancesTable');
     table.innerHTML = '';
@@ -618,7 +642,6 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل</button>`;
       }
 
-      // بخش ویرایش و حذف حواله برای همه فعال شد (یا طبق درخواست مدیر/کاربر)
       actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
       actionButtonsHtml += `<button class="btn btn-sm btn-outline-primary" onclick="sendWhatsApp('${r.id}', 'customer')">📱 رسید</button>`;
 
@@ -661,8 +684,8 @@
     let custDeps = deposits.filter(d => d.custId === custId);
     let custRems = remittances.filter(r => r.custId === custId && r.paymentType === 'از پیشکی (سپرده)');
     let balances = {};
-    custDeps.forEach(d => { balances[d.curr] = (balances[d.curr] || 0) + parseFloat(d.amount); });
-    custRems.forEach(r => { balances[r.currReceived] = (balances[r.currReceived] || 0) - parseFloat(r.received); });
+    custDeps.forEach(d => { balances[d.curr] = (balances[d.curr] || 0) + getCleanNumber(d.amount); });
+    custRems.forEach(r => { balances[r.currReceived] = (balances[r.currReceived] || 0) - getCleanNumber(r.received); });
     let textArr = [];
     for (let curr in balances) textArr.push(`${formatNumber(balances[curr])} ${curr}`);
     document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
@@ -671,7 +694,7 @@
   function calculateCustomerDebt(custId) {
     let debtRems = remittances.filter(r => r.custId === custId && r.paymentType === 'قرض');
     let debts = {};
-    debtRems.forEach(r => { debts[r.currReceived] = (debts[r.currReceived] || 0) + parseFloat(r.received); });
+    debtRems.forEach(r => { debts[r.currReceived] = (debts[r.currReceived] || 0) + getCleanNumber(r.received); });
     let textArr = [];
     for (let curr in debts) if (debts[curr] > 0) textArr.push(`${formatNumber(debts[curr])} ${curr}`);
     document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
@@ -691,7 +714,7 @@
 
   function showDepositModal() { document.getElementById('depAmount').value = ''; depModal.show(); }
   function saveDeposit() {
-    let amt = parseFloat(document.getElementById('depAmount').value);
+    let amt = getCleanNumber(document.getElementById('depAmount').value);
     let curr = document.getElementById('depCurr').value;
     if (!amt) return;
     deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: amt, curr, date: new Date().toLocaleDateString('fa-IR') });
@@ -702,7 +725,7 @@
 
   function showChequeModal() { chqModal.show(); }
   function saveCheque() {
-    let amt = parseFloat(document.getElementById('chqAmount').value);
+    let amt = getCleanNumber(document.getElementById('chqAmount').value);
     let curr = document.getElementById('chqCurr').value;
     let number = document.getElementById('chqNumber').value;
     let bank = document.getElementById('chqBank').value;
@@ -732,7 +755,7 @@
     let val = prompt('مبلغ جدید کیف پول را وارد کنید:');
     if (val !== null) {
       deposits = deposits.filter(d => d.custId !== currentCustId);
-      deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: parseFloat(val) || 0, curr: '1000000 تومان' });
+      deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: getCleanNumber(val), curr: '1000000 تومان' });
       localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
       loadCustomerData(customers.find(x => x.id === currentCustId));
     }
@@ -759,8 +782,9 @@
   function editCustomerDebt() {
     let val = prompt('مبلغ جدید بدهی را وارد کنید:');
     if (val !== null) {
+      let numVal = getCleanNumber(val);
       remittances = remittances.filter(r => !(r.custId === currentCustId && r.paymentType === 'قرض'));
-      remittances.push({ id: Date.now().toString(), code: 'DEBT-' + Math.floor(1000+Math.random()*9000), custId: currentCustId, paymentType: 'قرض', sender: 'بدهی', receiver: 'ثبت', received: parseFloat(val)||0, currReceived: '1000000 تومان', sent: parseFloat(val)||0, currSent: '1000000 تومان', status: '✅ تکمیل شده' });
+      remittances.push({ id: Date.now().toString(), code: 'DEBT-' + Math.floor(1000+Math.random()*9000), custId: currentCustId, paymentType: 'قرض', sender: 'بدهی', receiver: 'ثبت', received: numVal, currReceived: '1000000 تومان', sent: numVal, currSent: '1000000 تومان', status: '✅ تکمیل شده' });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
       loadCustomerData(customers.find(x => x.id === currentCustId));
     }
@@ -808,11 +832,71 @@
       document.getElementById('customerDetailsSection').style.display = 'none';
     }
   }
-  function addOrUpdateRate() {}
-  function deleteRate(i) {}
-  function renderRates() {}
-  function exportBackup() {}
-  function importBackup(e) {}
+
+  function addOrUpdateRate() {
+    let from = document.getElementById('rateFromCurr').value;
+    let to = document.getElementById('rateToCurr').value;
+    let val = getCleanNumber(document.getElementById('rateValue').value);
+    if (!val || val <= 0) return alert('نرخ نامعتبر است');
+    let idx = exchangeRates.findIndex(r => r.from === from && r.to === to);
+    if (idx > -1) exchangeRates[idx].rate = val; else exchangeRates.push({ from, to, rate: val });
+    localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
+    renderRates();
+    calculateClientNet();
+    document.getElementById('rateValue').value = '';
+    alert('✅ نرخ با موفقیت ثبت شد.');
+  }
+
+  function deleteRate(index) {
+    if (confirm('حذف شود؟')) {
+      exchangeRates.splice(index, 1);
+      localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
+      renderRates();
+      calculateClientNet();
+    }
+  }
+
+  function renderRates() {
+    let box = document.getElementById('activeRatesList');
+    if(!box) return;
+    box.innerHTML = '';
+    exchangeRates.forEach((r, i) => {
+      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})">${r.from} = ${formatNumber(r.rate)} ${r.to} ✖</span>`;
+    });
+  }
+
+  function exportBackup() {
+    let data = { customers, remittances, exchangeRates, deposits, cheques, branches, cardSettings };
+    let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    let a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Edalat_Backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+  }
+
+  function importBackup(e) {
+    let file = e.target.files[0];
+    if (!file) return;
+    let reader = new FileReader();
+    reader.onload = function(event) {
+      try {
+        let imported = JSON.parse(event.target.result);
+        if (imported.customers && imported.remittances) {
+          localStorage.setItem('edalat_customers', JSON.stringify(imported.customers));
+          localStorage.setItem('edalat_remittances', JSON.stringify(imported.remittances));
+          if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
+          if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
+          if(imported.cheques) localStorage.setItem('edalat_cheques', JSON.stringify(imported.cheques));
+          if(imported.branches) localStorage.setItem('edalat_branches', JSON.stringify(imported.branches));
+          if(imported.cardSettings) localStorage.setItem('edalat_card_settings', JSON.stringify(imported.cardSettings));
+          alert('بازیابی موفقیت‌آمیز بود!');
+          location.reload();
+        }
+      } catch (err) { alert('فایل نامعتبر است!'); }
+    };
+    reader.readAsText(file);
+  }
+
   function sendWhatsApp(id, t) { alert('رسید ارسال شد.'); }
 </script>
 </body>
