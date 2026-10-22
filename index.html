@@ -515,7 +515,7 @@
     tbody.innerHTML = '';
     branches.forEach((b) => {
       let cleanPhone = b.phone.replace(/[^0-9]/g, '');
-      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">+${cleanPhone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
+      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">&#x200E;+${cleanPhone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
     });
   }
 
@@ -601,41 +601,44 @@
       let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-      // پیام نمایندگی (با اصلاح علامت + به صورت %2B در لینک واتساپ)
+      // استفاده از کاراکتر کنترلی LRM (\u200E) قبل از علامت + برای قرارگیری صحیح در متن فارسی
+      let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
+
+      // پیام نمایندگی
       let agentMessage = `🏛 *ثبت حواله جدید*%0A` +
                          `همکار گرامی، لطفاً این حواله را بررسی و تأیید کنید.%0A` +
                          `----------------------------------%0A` +
                          `🆔 *کد اختصاصی حواله:* ${code}%0A` +
                          `👤 *فرستنده:* ${sender}%0A` +
-                         `📞 *شماره فرستنده:* %2B${cleanSenderPhone}%0A` +
+                         `📞 *شماره فرستنده:* ${formatPhoneForWA(cleanSenderPhone)}%0A` +
                          `📍 *مبدأ:* ${origin}%0A` +
                          `👥 *گیرنده:* ${receiver}%0A` +
-                         `📞 *شماره گیرنده:* %2B${cleanRecPhone}%0A` +
+                         `📞 *شماره گیرنده:* ${formatPhoneForWA(cleanRecPhone)}%0A` +
                          `📍 *مقصد:* ${destination}%0A` +
                          `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
                          `✨ *خالص مقصد:* ${calculatedNet}%0A` +
                          `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
                          `----------------------------------%0A` +
-                         `📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+                         `📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
 
-      // پیام مشتری با متن منظم و اصلاح‌شده شما
+      // پیام مشتری با متن منظم و اصلاح‌شده
       let customerMessage = `🏛 *ثبت حواله صرافی عدالت*%0A` +
                             `مشتری گرامی، تشکر از ثبت حواله تان؛ ثبت حواله در سیستم موفقانه ثبت گردید. 🙏%0A` +
                             `----------------------------------%0A` +
                             `🆔 *کد پیگیری:* ${code}%0A` +
                             `👤 *فرستنده:* ${sender}%0A` +
-                            `📞 *شماره فرستنده:* %2B${cleanSenderPhone}%0A` +
+                            `📞 *شماره فرستنده:* ${formatPhoneForWA(cleanSenderPhone)}%0A` +
                             `📍 *مبدأ:* ${origin}%0A` +
                             `👥 *گیرنده:* ${receiver}%0A` +
-                            `📞 *شماره گیرنده:* %2B${cleanRecPhone}%0A` +
+                            `📞 *شماره گیرنده:* ${formatPhoneForWA(cleanRecPhone)}%0A` +
                             `📍 *مقصد:* ${destination}%0A` +
                             `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
                             `✨ *خالص پرداختی در مقصد:* ${calculatedNet}%0A` +
                             `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
                             `----------------------------------%0A` +
                             `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
-                            `📞 *شماره تماس نمایندگی مقصد:* %2B${cleanDestAgentPhone}%0A` +
-                            `📞 *پشتیبانی مرکزی مدیریت:* %2B${cleanSupportPhone}%0A` +
+                            `📞 *شماره تماس نمایندگی مقصد:* ${formatPhoneForWA(cleanDestAgentPhone)}%0A` +
+                            `📞 *پشتیبانی مرکزی مدیریت:* ${formatPhoneForWA(cleanSupportPhone)}%0A` +
                             `----------------------------------%0A` +
                             `⚠️ *نکته مهم:* جهت دریافت پول، مشتری گرامی شناسنامه خود را همراه داشته باشید و می‌توانید با نمایندگی مقصد به تماس شوید.`;
 
@@ -817,6 +820,7 @@
     let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
     let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
+    let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
 
     let text = `🏛 *رسید حواله صرافی عدالت*%0A` +
                `----------------------------------%0A` +
@@ -828,8 +832,8 @@
                `📌 وضعیت: ${r.status}%0A` +
                `----------------------------------%0A` +
                `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
-               `📞 *شماره تماس نمایندگی:* %2B${destAgentPhone}%0A` +
-               `📞 *پشتیبانی مدیریت:* %2B${cleanSupportPhone}`;
+               `📞 *شماره تماس نمایندگی:* ${formatPhoneForWA(destAgentPhone)}%0A` +
+               `📞 *پشتیبانی مدیریت:* ${formatPhoneForWA(cleanSupportPhone)}`;
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   }
 
@@ -854,18 +858,20 @@
       let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
       let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
+      let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
 
       let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A` +
                      `📍 نمایندگی مقصد: ${destAgentName}%0A` +
-                     `📞 شماره تماس نمایندگی مقصد: %2B${destAgentPhone}%0A` +
-                     `📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+                     `📞 شماره تماس نمایندگی مقصد: ${formatPhoneForWA(destAgentPhone)}%0A` +
+                     `📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
     let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
     let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+    let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
+    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
     window.open(`https://wa.me/${destPhone}?text=${destText}`, '_blank');
 
     alert('✅ واریزی تأیید شد و پیام اطلاع‌رسانی به مشتری و مقصد ارسال گردید.');
@@ -884,7 +890,8 @@
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏%0A📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+      let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
@@ -958,7 +965,8 @@
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let text = `🏛 *موجودی کیف پول صرافی عدالت*%0Aمشتری گرامی ${c.name}، موجودی کیف پول شما: ${document.getElementById('cDepositsSummary').innerText}%0A📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+    let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
+    let text = `🏛 *موجودی کیف پول صرافی عدالت*%0Aمشتری گرامی ${c.name}، موجودی کیف پول شما: ${document.getElementById('cDepositsSummary').innerText}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
     depositNoticeModal.hide();
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
@@ -987,7 +995,8 @@
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let dueDate = document.getElementById('debtDueDateInput').value;
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let text = `🏛 *یادآوری بدهی صرافی عدالت*%0Aمبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}%0Aمهلت پرداخت: ${dueDate}%0A📞 پشتیبانی مدیریت: %2B${cleanSupportPhone}`;
+    let formatPhoneForWA = (numStr) => `%E2%80%8E+${numStr}`;
+    let text = `🏛 *یادآوری بدهی صرافی عدالت*%0Aمبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}%0Aمهلت پرداخت: ${dueDate}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
     debtNoticeModal.hide();
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
@@ -1189,6 +1198,7 @@
 
   function importBackup(e) {
     let file = e.target.files[0];
+    ;
     if (!file) return;
     let reader = new FileReader();
     reader.onload = function(event) {
