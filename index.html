@@ -586,7 +586,7 @@
       let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
       let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
 
-      // پیدا کردن نمایندگی مقصد جهت درج شماره تماس آن در پیام مشتری
+      // پیدا کردن نمایندگی مقصد جهت ارسال شماره تماس آن به مشتری
       let destAgent = branches.find(b => {
         let loc = (b.location || '').toLowerCase();
         let name = (b.name || '').toLowerCase();
@@ -643,10 +643,10 @@
       });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
-      // ارسال درخواست به نمایندگی مبدأ
+      // ۱. ارسال پیام به واتساپ نمایندگی مبدأ
       window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
 
-      // ارسال خودکار پیام تأیید و اطلاعات نمایندگی مقصد به واتساپ مشتری
+      // ۲. ارسال خودکار پیام تأیید و شماره نمایندگی مقصد به واتساپ مشتری
       let custCleanPhone = phone.replace(/[^0-9]/g, '');
       let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0A` +
                             `مشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید. 🙏%0A` +
@@ -655,12 +655,14 @@
                             `💵 *مبلغ خالص مقصد:* ${calculatedNet}%0A` +
                             `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
                             `----------------------------------%0A` +
-                            `📍 *نمایندگی تحویل‌دهنده در مقصد:* ${destAgentName}%0A` +
+                            `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
                             `📞 *شماره تماس نمایندگی مقصد:* ${destAgentPhone}%0A` +
-                            `📞 *پشتیبانی مرکزی مدیریت:* ${SUPPORT_PHONE}%0A` +
+                            `📞 *پشتیبانی مدیریت:* ${SUPPORT_PHONE}%0A` +
                             `جهت دریافت پول می‌توانید با نمایندگی مقصد به تماس شوید.`;
       
-      window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
+      setTimeout(() => {
+        window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
+      }, 500);
     };
 
     if (fileInput.files && fileInput.files[0]) {
