@@ -601,9 +601,13 @@
       let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-      let agentMessage = `ثبت حواله جدید\nکد: ${code}\nفرستنده: ${sender}\nتلفن: +${cleanSenderPhone}\nمبدأ: ${origin}\nگیرنده: ${receiver}\nتلفن گیرنده: +${cleanRecPhone}\nمقصد: ${destination}\nمبلغ: ${formatNumber(amount)} ${curr}\nخالص: ${calculatedNet}`;
+      let formatPhoneForWA = (numStr) => '\u200E+' + numStr + '\u200E';
 
-      let customerMessage = `ثبت حواله صرافی عدالت\nکد پیگیری: ${code}\nفرستنده: ${sender}\nمبلغ: ${formatNumber(amount)} ${curr}\nخالص مقصد: ${calculatedNet}\nنمایندگی: ${destAgentName}\nپشتیبانی: +${cleanSupportPhone}`;
+      let agentMessage = `🏛 *ثبت حواله جدید*%0Aهمکار گرامی، لطفاً بررسی کنید.%0Aکد: ${code}%0Aفرستنده: ${sender}%0Aتلفن: ${formatPhoneForWA(cleanSenderPhone)}%0Aمبلغ: ${formatNumber(amount)} ${curr}`;
+      let customerMessage = `🏛 *صرافی عدالت*%0Aحواله شما ثبت شد.%0Aکد پیگیری: ${code}%0Aمبلغ: ${formatNumber(amount)} ${curr}%0Aپشتیبانی: ${formatPhoneForWA(cleanSupportPhone)}`;
+
+      let agentSMS = `ثبت حواله جدید. کد: ${code}. فرستنده: ${sender}. مبلغ: ${formatNumber(amount)} ${curr}`;
+      let customerSMS = `صرافی عدالت: حواله شما با کد ${code} ثبت شد. پشتیبانی: +${cleanSupportPhone}`;
 
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
@@ -638,10 +642,10 @@
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
       let containerCard = document.querySelector('#clientTabContent .card');
-      let actionBox = document.getElementById('smsActionBox');
+      let actionBox = document.getElementById('multiActionBox');
       if (!actionBox) {
         actionBox = document.createElement('div');
-        actionBox.id = 'smsActionBox';
+        actionBox.id = 'multiActionBox';
         actionBox.className = 'mt-3 p-3 border border-success rounded bg-light text-center';
         containerCard.appendChild(actionBox);
       }
@@ -649,14 +653,16 @@
       let custCleanPhone = phone.replace(/[^0-9]/g, '');
       actionBox.innerHTML = `
         <h6 class="fw-bold text-success mb-2">✅ حواله با کد ${code} با موفقیت ثبت شد!</h6>
-        <p class="small text-muted mb-3">برای ارسال پیامک روی دکمه‌های زیر کلیک کنید:</p>
+        <p class="small text-muted mb-3">از طریق دکمه‌های زیر می‌توانید پیامک یا واتساپ ارسال کنید:</p>
         <div class="d-grid gap-2">
-          <a href="sms:+${sendToPhone}?body=${encodeURIComponent(agentMessage)}" class="btn btn-primary fw-bold">📤 ارسال پیامک به نمایندگی مبدأ</a>
-          <a href="sms:+${custCleanPhone}?body=${encodeURIComponent(customerMessage)}" class="btn btn-success fw-bold">📱 ارسال پیامک تاییدیه به مشتری</a>
+          <a href="https://wa.me/${sendToPhone}?text=${encodeURIComponent(agentMessage)}" target="_blank" class="btn btn-success fw-bold">💬 واتساپ به نمایندگی مبدأ</a>
+          <a href="sms:+${sendToPhone}?body=${encodeURIComponent(agentSMS)}" class="btn btn-outline-success fw-bold">📱 پیامک به نمایندگی مبدأ</a>
+          <a href="https://wa.me/${custCleanPhone}?text=${encodeURIComponent(customerMessage)}" target="_blank" class="btn btn-primary fw-bold">💬 واتساپ تاییدیه به مشتری</a>
+          <a href="sms:+${custCleanPhone}?body=${encodeURIComponent(customerSMS)}" class="btn btn-outline-primary fw-bold">📱 پیامک تاییدیه به مشتری</a>
         </div>
       `;
 
-      alert('حواله ثبت شد. دکمه‌های ارسال پیامک در پایین صفحه ظاهر شدند.');
+      alert('حواله ثبت شد. گزینه‌های ارسال پیامک و واتساپ در پایین صفحه ظاهر شدند.');
     };
 
     if (fileInput.files && fileInput.files[0]) {
@@ -745,8 +751,11 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
       }
 
-      // دکمه ارسال پیامک گزارش مستقیماً به شماره مدیریت مرکزی
-      actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="sendAdminManagementSMS('${r.id}')">📞 پیامک به مدیریت</button>`;
+      // دکمه‌های گزارش مدیریت هم با واتساپ و هم با پیامک
+      actionButtonsHtml += `
+        <button class="btn btn-sm btn-success fw-bold" onclick="sendAdminManagementWhatsApp('${r.id}')">💬 واتساپ به مدیریت</button>
+        <button class="btn btn-sm btn-outline-success fw-bold" onclick="sendAdminManagementSMS('${r.id}')">📱 پیامک به مدیریت</button>
+      `;
 
       table.innerHTML += `
         <tr>
@@ -768,6 +777,18 @@
     receiptModal.show();
   }
 
+  function sendAdminManagementWhatsApp(remId) {
+    let r = remittances.find(x => x.id === remId);
+    if (!r) return;
+    let c = customers.find(x => x.id === r.custId);
+    let formatPhoneForWA = (numStr) => '\u200E+' + numStr + '\u200E';
+    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
+
+    let text = `🏛 *گزارش تکمیل و اجرای حواله به مدیریت*%0Aکد: ${r.code}%0Aفرستنده: ${r.sender} (${c ? c.phone : ''})%0Aگیرنده: ${r.receiver}%0Aمبلغ: ${formatNumber(r.sent)} ${r.currSent}%0Aوضعیت: ${r.status}%0A✅ پول به مشتری رسید و اجرا شد.%0A📞 مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
+
+    window.open(`https://wa.me/${cleanSupportPhone}?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
   function sendAdminManagementSMS(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
@@ -787,16 +808,7 @@
     r.executedBy = 'تأیید مبدأ: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
-
-    let c = customers.find(x => x.id === r.custId);
-    if (c && c.phone) {
-      let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let custText = `صرافی عدالت: مشتری گرامی ${c.name}، حواله شما با کد ${r.code} تأیید شد و جهت اجرا در مقصد ارسال گردید. پشتیبانی: +${cleanSupportPhone}`;
-      window.open(`sms:+${custPhoneNum}?body=${encodeURIComponent(custText)}`, '_blank');
-    }
-
-    alert('✅ واریزی تأیید شد و صفحه ارسال پیامک باز گردید.');
+    alert('✅ واریزی تأیید شد.');
   }
 
   function completeByDestination(remId) {
@@ -807,16 +819,7 @@
     r.executedBy += ' | تحویل: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
-
-    let c = customers.find(x => x.id === r.custId);
-    if (c && c.phone) {
-      let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let custText = `صرافی عدالت: مشتری گرامی ${c.name}، حواله شما با کد ${r.code} تکمیل و وجه آن تحویل داده شد. تشکر! پشتیبانی: +${cleanSupportPhone}`;
-      window.open(`sms:+${custPhoneNum}?body=${encodeURIComponent(custText)}`, '_blank');
-    }
-
-    alert('🚀 حواله تکمیل شد و پیامک تحویل آماده ارسال گردید.');
+    alert('🚀 حواله با موفقیت تکمیل شد.');
   }
 
   function calculateCustomerDeposits(custId) {
@@ -885,8 +888,7 @@
   function sendDepositNoticeSMS() {
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let text = `موجودی کیف پول صرافی عدالت: ${c.name}، موجودی: ${document.getElementById('cDepositsSummary').innerText}. پشتیبانی: +${cleanSupportPhone}`;
+    let text = `موجودی کیف پول صرافی عدالت: ${c.name}، موجودی: ${document.getElementById('cDepositsSummary').innerText}.`;
     depositNoticeModal.hide();
     window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
   }
@@ -914,8 +916,7 @@
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let dueDate = document.getElementById('debtDueDateInput').value;
-    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let text = `یادآوری بدهی صرافی عدالت: مبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}، مهلت: ${dueDate}. پشتیبانی: +${cleanSupportPhone}`;
+    let text = `یادآوری بدهی صرافی عدالت: مبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}، مهلت: ${dueDate}.`;
     debtNoticeModal.hide();
     window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
   }
