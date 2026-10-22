@@ -583,6 +583,9 @@
       let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
       let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
 
+      // ارسال لینک فیش در صورت وجود تصویر
+      let receiptInfoText = imageBase64 ? `%0A🖼 *مشاهده فیش واریزی در پنل سیستم*%0A` : '';
+
       let text = `🏛 *درخواست حواله جدید*%0A` +
                  `----------------------------------%0A` +
                  `🆔 *کد اختصاصی حواله:* ${code}%0A` +
@@ -594,9 +597,10 @@
                  `📍 *مقصد:* ${destination}%0A` +
                  `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
                  `✨ *خالص مقصد:* ${calculatedNet}%0A` +
+                 `${receiptInfoText}` +
                  `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
                  `----------------------------------%0A` +
-                 `لطفاً پس از بررسی فیش، حواله را تأیید کنید.`;
+                 `لطفاً پس از بررسی فیش در سیستم، حواله را تأیید کنید.`;
 
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
@@ -730,7 +734,7 @@
     });
   }
 
-  // نمایش عکس فیش در مودال داخلی صفحه
+  // تابع باز کردن عکس فیش در مودال داخلی پنل مدیریت
   function openReceiptModal(base64Data) {
     document.getElementById('modalReceiptImg').src = base64Data;
     receiptModal.show();
@@ -926,7 +930,7 @@
   function editCustomer() { custModal.show(); }
   function deleteCustomer() {
     if(confirm('حذف شود؟')) {
-      customers = customers.filter(x => x.id !== currentCustId);
+      customers = customers.filter(x => x.id === currentCustId);
       localStorage.setItem('edalat_customers', JSON.stringify(customers));
       document.getElementById('customerDetailsSection').style.display = 'none';
     }
