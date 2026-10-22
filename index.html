@@ -330,7 +330,22 @@
   </div>
 </div>
 
-<!-- مدال‌ها -->
+<!-- مدال نمایش عکس فیش واریزی -->
+<div class="modal fade" id="receiptModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">🧾 تصویر فیش واریزی مشتری</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center bg-dark">
+        <img id="modalReceiptImg" src="" alt="فیش واریزی" style="max-width: 100%; height: auto; border-radius: 6px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- مدال‌های دیگر -->
 <div class="modal fade" id="customerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">اطلاعات مشتری</h5></div><div class="modal-body"><input type="hidden" id="customerId"><div class="mb-2"><label>نام و تخلص</label><input type="text" id="custName" class="form-control"></div><div class="mb-2"><label>شماره واتساپ</label><input type="text" id="custPhone" class="form-control phone-input"></div><div class="mb-2"><label>آدرس</label><input type="text" id="custAddress" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره</button></div></div></div></div>
 
 <div class="modal fade" id="depositModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی</h5></div><div class="modal-body"><div class="mb-2"><label class="fw-bold">مبلغ *</label><input type="text" id="depAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div></div><div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت</button></div></div></div></div>
@@ -360,7 +375,7 @@
   const SUPPORT_PHONE = "989962671189";
 
   let currentCustId = null;
-  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal, depositNoticeModal;
+  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal, depositNoticeModal, receiptModal;
 
   document.addEventListener("DOMContentLoaded", function() {
     custModal = new bootstrap.Modal(document.getElementById('customerModal'));
@@ -370,6 +385,7 @@
     chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
     debtNoticeModal = new bootstrap.Modal(document.getElementById('debtNoticeModal'));
     depositNoticeModal = new bootstrap.Modal(document.getElementById('depositNoticeModal'));
+    receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
     
     renderCardDisplay();
     checkLoginState();
@@ -537,7 +553,6 @@
     }
   }
 
-  // ثبت حواله مشتری و مسیریابی به نمایندگی مبدأ + ارائه گزینه ارسال پیام به خود مشتری
   function submitClientRemittance() {
     let sender = document.getElementById('reqSender').value.trim();
     let phone = document.getElementById('reqPhone').value.trim();
@@ -559,7 +574,6 @@
       let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
       let dateNow = new Date().toLocaleDateString('fa-IR');
 
-      // تطبیق هوشمند شهر مبدأ با نمایندگی‌ها
       let originAgent = branches.find(b => {
         let loc = (b.location || '').toLowerCase();
         let name = (b.name || '').toLowerCase();
@@ -615,10 +629,8 @@
       });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
-      // ارسال پیام به نمایندگی
       window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
 
-      // پرسش برای ارسال پیام تأیید ثبت سفارش به خود مشتری
       if (confirm(`حواله شما با کد ${code} با موفقیت ثبت شد.\nآیا می‌خواهید پیام تأیید و کد پیگیری به واتساپ خودتان (${phone}) ارسال شود؟`)) {
         let custCleanPhone = phone.replace(/[^0-9]/g, '');
         let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0Aمشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید.%0A🆔 *کد پیگیری:* ${code}%0A💵 *مبلغ:* ${formatNumber(amount)} ${curr}%0A📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی [${agentNameText}]%0Aبا تشکر از اعتماد شما! 🙏`;
@@ -696,9 +708,8 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل</button>`;
       }
 
-      // دکمه باز کردن عکس فیش واریزی در صفحه جدید با کیفیت کامل
       if (r.receiptImage) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptImage('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
+        actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptModal('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
       }
 
       actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
@@ -719,13 +730,12 @@
     });
   }
 
-  // تابع باز کردن عکس فیش در تب جدید مرورگر جهت مشاهده کامل
-  function openReceiptImage(base64Data) {
-    let win = window.open();
-    win.document.write(`<html dir="rtl"><head><title>تصویر فیش واریزی</title></head><body style="text-align:center;background:#222;padding:20px;"><img src="${base64Data}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 0 10px rgba(255,255,255,0.3);"/></body></html>`);
+  // نمایش عکس فیش در مودال داخلی صفحه
+  function openReceiptModal(base64Data) {
+    document.getElementById('modalReceiptImg').src = base64Data;
+    receiptModal.show();
   }
 
-  // تأیید حواله در مبدأ و ارسال پیام به مشتری و نمایندگی مقصد
   function approveByOrigin(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
@@ -735,7 +745,6 @@
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
 
-    // ارسال واتساپ به مشتری مبنی بر تأیید واریزی
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
@@ -743,7 +752,6 @@
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
-    // ارسال واتساپ به نمایندگی مقصد
     let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
     let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
     let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}`;
@@ -752,7 +760,6 @@
     alert('✅ واریزی تأیید شد و پیام اطلاع‌رسانی به مشتری و مقصد ارسال گردید.');
   }
 
-  // تکمیل و تحویل در مقصد و ارسال پیام به مشتری
   function completeByDestination(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
@@ -762,7 +769,6 @@
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
 
-    // ارسال پیام موفقیت به مشتری
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
