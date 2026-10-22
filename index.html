@@ -99,8 +99,8 @@
         <h5 class="fw-bold text-primary mb-3 text-center">📝 مشخصات حواله را با دقت وارد کنید:</h5>
         <div class="row g-2">
           <div class="col-12"><label class="small fw-bold">👤 نام و تخلص فرستنده *</label><input type="text" id="reqSender" class="form-control" placeholder="مثال: احمد احمدی"></div>
-          <div class="col-12"><label class="small fw-bold">📞 شماره تماس فرستنده (واتساپ) *</label><input type="text" id="reqPhone" class="form-control phone-input" placeholder="+93..."></div>
-          <div class="col-12"><label class="small fw-bold">📍 مبدأ (کشور، شهر و آدرس) *</label><input type="text" id="reqOrigin" class="form-control" placeholder="مثال: ایران، تهران..."></div>
+          <div class="col-12"><label class="small fw-bold">📞 شماره تماس فرستنده (واتساپ) *</label><input type="text" id="reqPhone" class="form-control phone-input" placeholder="+358..."></div>
+          <div class="col-12"><label class="small fw-bold">📍 مبدأ (کشور، شهر و آدرس) *</label><input type="text" id="reqOrigin" class="form-control" placeholder="مثال: فنلاند، هلسینکی..."></div>
           <div class="col-12"><label class="small fw-bold">👥 نام و تخلص گیرنده *</label><input type="text" id="reqReceiver" class="form-control" placeholder="مثال: محمود محمودزاده"></div>
           <div class="col-12"><label class="small fw-bold">📞 شماره تماس گیرنده *</label><input type="text" id="reqRecPhone" class="form-control phone-input" placeholder="+93..."></div>
           <div class="col-12"><label class="small fw-bold">📍 مقصد (کشور / شهر گیرنده) *</label><input type="text" id="reqDestination" class="form-control" placeholder="مثال: افغانستان، کابل..."></div>
@@ -208,7 +208,7 @@
             <div class="col-md-3"><label class="small fw-bold">رمز عبور *</label><input type="text" id="branchPassword" class="form-control form-control-sm"></div>
             <div class="col-md-3"><label class="small fw-bold">نام نمایندگی *</label><input type="text" id="branchName" class="form-control form-control-sm"></div>
             <div class="col-md-3"><label class="small fw-bold">کشور / شهر *</label><input type="text" id="branchLocation" class="form-control form-control-sm"></div>
-            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره واتساپ *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+98..."></div>
+            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره واتساپ *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+358..."></div>
             <div class="col-12 mt-2"><button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره نمایندگی</button></div>
           </div>
           <div class="table-responsive">
@@ -222,7 +222,6 @@
         <div class="card p-3 mb-3">
           <h5 class="fw-bold mb-2">📋 مدیریت و اجرای حواله‌ها</h5>
 
-          <!-- بخش تنظیم نرخ ارزها (فعال شده) -->
           <div id="rateSettingBox" class="card p-3 border-info bg-light">
             <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ ارزها:</h6>
             <div class="row g-2 align-items-center">
@@ -249,7 +248,6 @@
             </div>
           </div>
 
-          <!-- جزئیات مشتری و اطلاعات مالی -->
           <div id="customerDetailsSection" class="mt-3" style="display: none;">
             
             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
@@ -269,7 +267,6 @@
               <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
               <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
               
-              <!-- کیف پول پیشکی -->
               <div class="deposit-box">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -284,13 +281,11 @@
                 </div>
               </div>
 
-              <!-- چک‌های امانتی -->
               <div class="cheque-box mt-2">
                 <h6 class="fw-bold text-dark m-0 mb-1">📑 چک‌های دریافتی امانتی از مشتری:</h6>
                 <div id="chequesTableContainer" class="table-responsive"></div>
               </div>
 
-              <!-- بدهی‌ها -->
               <div class="debt-box mt-2">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <div>
@@ -357,7 +352,8 @@
   let deposits = JSON.parse(localStorage.getItem('edalat_deposits')) || [];
   let cheques = JSON.parse(localStorage.getItem('edalat_cheques')) || [];
   let branches = JSON.parse(localStorage.getItem('edalat_branches')) || [
-    { id: '1', username: 'admin', password: '456250', name: 'دکتر روح‌الله مرادی (مدیر کل)', location: 'مرکزی', phone: '+989962671189', role: 'admin' }
+    { id: '1', username: 'admin', password: '456250', name: 'دکتر روح‌الله مرادی (مدیر کل)', location: 'مرکزی', phone: '+989962671189', role: 'admin' },
+    { id: '2', username: 'finland', password: '123', name: 'صرافی عدالت فنلاند', location: 'فنلاند', phone: '+358468486118', role: 'agent' }
   ];
   let exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [{ from: '1000000 تومان', to: 'افغانی', rate: 1200 }];
   let cardSettings = JSON.parse(localStorage.getItem('edalat_card_settings')) || { number: '6037997900000000', owner: 'صرافی عدالت' };
@@ -381,7 +377,6 @@
     calculateClientNet();
   });
 
-  // تابع استاندارد فرمت‌کننده اعداد با جداکننده سه‌رقمی (کاما / ممیز)
   function formatNumber(num) {
     if (num === null || num === undefined || num === '') return '۰';
     let cleanVal = String(num).replace(/,/g, '');
@@ -390,7 +385,6 @@
     return n.toLocaleString('fa-IR');
   }
 
-  // تابع فرمت‌کردن فیلدهای ورودی هنگام تایپ کاربر
   function formatInputNumber(input) {
     let cursorPosition = input.selectionStart;
     let originalLength = input.value.length;
@@ -543,6 +537,7 @@
     }
   }
 
+  // ثبت حواله مشتری همراه با ذخیره عکس فیش و مسیریابی به نمایندگی مبدأ
   function submitClientRemittance() {
     let sender = document.getElementById('reqSender').value.trim();
     let phone = document.getElementById('reqPhone').value.trim();
@@ -553,34 +548,86 @@
     let amount = getCleanNumber(document.getElementById('reqAmount').value);
     let curr = document.getElementById('reqCurr').value;
     let calculatedNet = document.getElementById('calculatedNetText').innerText;
+    let fileInput = document.getElementById('reqReceiptFile');
 
-    if (!sender || !phone || !origin || !receiver || !destination || !recPhone || !amount) return alert('تکمیل کنید.');
-
-    let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
-    let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-    let dateNow = new Date().toLocaleDateString('fa-IR');
-
-    let originAgent = branches.find(b => origin.toLowerCase().includes(b.location.toLowerCase()));
-    let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-    
-    let text = `🏛 *درخواست حواله جدید*%0Aکد: ${code}%0Aفرستنده: ${sender}%0Aمبلغ: ${formatNumber(amount)} ${curr}`;
-
-    let cust = customers.find(x => x.phone === phone);
-    let custId = cust ? cust.id : Date.now().toString();
-    if (!cust) {
-      customers.push({ id: custId, name: sender, phone, address: origin, notes: 'ثبت خودکار' });
-      localStorage.setItem('edalat_customers', JSON.stringify(customers));
+    if (!sender || !phone || !origin || !receiver || !destination || !recPhone || !amount) {
+      return alert('لطفاً تمامی فیلدهای ستاره‌دار را تکمیل کنید.');
     }
 
-    remittances.push({
-      id: Date.now().toString(), code, custId, paymentType: 'نقدی', sender, origin, receiver, destination, destPhone: recPhone,
-      date: dateNow, execTime: timeNow, executedBy: 'در انتظار بررسی', received: amount, currReceived: curr,
-      sent: calculatedNet.replace(/[^0-9.]/g, ''), currSent: document.getElementById('reqDestCurr').value, fee: 0, currFee: curr,
-      status: '⏳ در حال بررسی (توسط نمایندگی)'
-    });
-    localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
-    alert(`حواله با کد ${code} ثبت گردید.`);
+    let processSubmission = (imageBase64) => {
+      let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
+      let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
+      let dateNow = new Date().toLocaleDateString('fa-IR');
+
+      // تطبیق هوشمند شهر مبدأ با نمایندگی‌ها
+      let originAgent = branches.find(b => {
+        let loc = (b.location || '').toLowerCase();
+        let name = (b.name || '').toLowerCase();
+        let orig = origin.toLowerCase();
+        return orig.includes(loc) || loc.includes(orig) || orig.includes(name) || name.includes(orig);
+      });
+      let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
+      let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
+
+      let text = `🏛 *درخواست حواله جدید*%0A` +
+                 `----------------------------------%0A` +
+                 `🆔 *کد اختصاصی حواله:* ${code}%0A` +
+                 `👤 *فرستنده:* ${sender}%0A` +
+                 `📞 *شماره فرستنده:* ${phone}%0A` +
+                 `📍 *مبدأ:* ${origin}%0A` +
+                 `👥 *گیرنده:* ${receiver}%0A` +
+                 `📞 *شماره گیرنده:* ${recPhone}%0A` +
+                 `📍 *مقصد:* ${destination}%0A` +
+                 `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
+                 `✨ *خالص مقصد:* ${calculatedNet}%0A` +
+                 `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
+                 `----------------------------------%0A` +
+                 `لطفاً پس از بررسی فیش، حواله را تأیید کنید.`;
+
+      let cust = customers.find(x => x.phone === phone);
+      let custId = cust ? cust.id : Date.now().toString();
+      if (!cust) {
+        customers.push({ id: custId, name: sender, phone, address: origin, notes: 'ثبت خودکار مشتری' });
+        localStorage.setItem('edalat_customers', JSON.stringify(customers));
+      }
+
+      remittances.push({
+        id: Date.now().toString(),
+        code,
+        custId,
+        paymentType: 'نقدی',
+        sender,
+        origin,
+        receiver,
+        destination,
+        destPhone: recPhone,
+        date: dateNow,
+        execTime: timeNow,
+        executedBy: 'ثبت شده - در انتظار بررسی مبدأ (' + agentNameText + ')',
+        received: amount,
+        currReceived: curr,
+        sent: calculatedNet.replace(/[^0-9.]/g, ''),
+        currSent: document.getElementById('reqDestCurr').value,
+        fee: 0,
+        currFee: curr,
+        status: '⏳ در حال بررسی (توسط نمایندگی)',
+        receiptImage: imageBase64 || ''
+      });
+      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
+
+      window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
+      alert(`حواله شما با کد اختصاصی ${code} با موفقیت ثبت گردید.\n\nپیام جهت بررسی به نمایندگی مبدأ [ ${agentNameText} ] ارسال شد.`);
+    };
+
+    if (fileInput.files && fileInput.files[0]) {
+      let reader = new FileReader();
+      reader.onload = function(e) {
+        processSubmission(e.target.result);
+      };
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      processSubmission('');
+    }
   }
 
   function trackClientRemittance() {
@@ -642,6 +689,11 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل</button>`;
       }
 
+      // دکمه مشاهده فیش واریزی
+      if (r.receiptImage) {
+        actionButtonsHtml += `<a href="${r.receiptImage}" target="_blank" class="btn btn-sm btn-info text-white fw-bold" title="مشاهده فیش واریزی">🖼️ فیش</a>`;
+      }
+
       actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
       actionButtonsHtml += `<button class="btn btn-sm btn-outline-primary" onclick="sendWhatsApp('${r.id}', 'customer')">📱 رسید</button>`;
 
@@ -660,24 +712,52 @@
     });
   }
 
+  // تأیید حواله در مبدأ و ارسال پیام تأیید به مشتری و نمایندگی مقصد
   function approveByOrigin(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی';
     r.status = '🔄 در حال اجرای مقصد';
-    r.executedBy = 'تأیید مبدأ';
+    r.executedBy = 'تأیید مبدأ: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
-    alert('✅ تأیید شد.');
+
+    // ارسال واتساپ به مشتری مبنی بر تأیید واریزی
+    let c = customers.find(x => x.id === r.custId);
+    if (c && c.phone) {
+      let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅`;
+      window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
+    }
+
+    // ارسال واتساپ به نمایندگی مقصد
+    let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
+    let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
+    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}`;
+    window.open(`https://wa.me/${destPhone}?text=${destText}`, '_blank');
+
+    alert('✅ واریزی تأیید شد و پیام اطلاع‌رسانی به مشتری و مقصد ارسال گردید.');
   }
 
+  // تکمیل و تحویل در مقصد و ارسال پیام به مشتری
   function completeByDestination(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی مقصد';
     r.status = '✅ تکمیل شده (اجرا شد)';
-    r.executedBy += ' | تحویل شد';
+    r.executedBy += ' | تحویل: ' + loggedName;
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     loadCustomerData(customers.find(x => x.id === r.custId));
-    alert('🚀 تحویل داده شد.');
+
+    // ارسال پیام موفقیت به مشتری
+    let c = customers.find(x => x.id === r.custId);
+    if (c && c.phone) {
+      let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏`;
+      window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
+    }
+
+    alert('🚀 حواله با موفقیت تکمیل شد و پیام تحویل به مشتری ارسال گردید.');
   }
 
   function calculateCustomerDeposits(custId) {
