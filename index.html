@@ -601,7 +601,7 @@
       let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-      // ۱. پیام اختصاصی برای نمایندگی مبدأ
+      // پیام نمایندگی
       let agentMessage = `🏛 *ثبت حواله جدید*%0A` +
                          `همکار گرامی، لطفاً این حواله را بررسی و تأیید کنید.%0A` +
                          `----------------------------------%0A` +
@@ -617,6 +617,26 @@
                          `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
                          `----------------------------------%0A` +
                          `📞 پشتیبانی مدیریت: +${cleanSupportPhone}`;
+
+      // پیام مشتری دقیقاً مطابق درخواست شما
+      let customerMessage = `🏛 *ثبت حواله*%0A` +
+                            `مشتری گرامی تشکر از ثبت حواله تان، ثبت حواله در سیستم موفقانه ثبت گردید. 🙏%0A` +
+                            `----------------------------------%0A` +
+                            `🆔 *کد پیگیری:* ${code}%0A` +
+                            `👤 *فرستنده:* ${sender}%0A` +
+                            `📞 *شماره فرستنده:* +${cleanSenderPhone}%0A` +
+                            `📍 *مبدأ:* ${origin}%0A` +
+                            `👥 *گیرنده:* ${receiver}%0A` +
+                            `📞 *شماره گیرنده:* +${cleanRecPhone}%0A` +
+                            `📍 *مقصد:* ${destination}%0A` +
+                            `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
+                            `✨ *خالص پرداختی در مقصد:* ${calculatedNet}%0A` +
+                            `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
+                            `----------------------------------%0A` +
+                            `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
+                            `📞 *شماره تماس نمایندگی مقصد:* +${cleanDestAgentPhone}%0A` +
+                            `📞 *پشتیبانی مرکزی مدیریت:* +${cleanSupportPhone}%0A` +
+                            `جهت دریافت پول می‌توانید با نمایندگی مقصد به تماس شوید.`;
 
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
@@ -650,33 +670,27 @@
       });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
-      // باز کردن واتساپ نمایندگی مبدأ
-      window.open(`https://wa.me/${sendToPhone}?text=${agentMessage}`, '_blank');
+      // ایجاد دکمه‌های ارسال در صفحه برای جلوگیری از مسدود شدن توسط مرورگر
+      let containerCard = document.querySelector('#clientTabContent .card');
+      let actionBox = document.getElementById('whatsappActionBox');
+      if (!actionBox) {
+        actionBox = document.createElement('div');
+        actionBox.id = 'whatsappActionBox';
+        actionBox.className = 'mt-3 p-3 border border-success rounded bg-light text-center';
+        containerCard.appendChild(actionBox);
+      }
 
-      // ۲. پیام اختصاصی دوم برای خودِ مشتری با متن درخواستی شما و تمام مشخصات
       let custCleanPhone = phone.replace(/[^0-9]/g, '');
-      let customerMessage = `🏛 *ثبت حواله*%0A` +
-                            `مشتری گرامی تشکر از ثبت حواله تان، ثبت حواله در سیستم موفقانه ثبت گردید. 🙏%0A` +
-                            `----------------------------------%0A` +
-                            `🆔 *کد پیگیری:* ${code}%0A` +
-                            `👤 *فرستنده:* ${sender}%0A` +
-                            `📞 *شماره فرستنده:* +${cleanSenderPhone}%0A` +
-                            `📍 *مبدأ:* ${origin}%0A` +
-                            `👥 *گیرنده:* ${receiver}%0A` +
-                            `📞 *شماره گیرنده:* +${cleanRecPhone}%0A` +
-                            `📍 *مقصد:* ${destination}%0A` +
-                            `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
-                            `✨ *خالص پرداختی در مقصد:* ${calculatedNet}%0A` +
-                            `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
-                            `----------------------------------%0A` +
-                            `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
-                            `📞 *شماره تماس نمایندگی مقصد:* +${cleanDestAgentPhone}%0A` +
-                            `📞 *پشتیبانی مرکزی مدیریت:* +${cleanSupportPhone}%0A` +
-                            `جهت دریافت پول می‌توانید با نمایندگی مقصد به تماس شوید.`;
-      
-      setTimeout(() => {
-        window.open(`https://wa.me/${custCleanPhone}?text=${customerMessage}`, '_blank');
-      }, 1000);
+      actionBox.innerHTML = `
+        <h6 class="fw-bold text-success mb-2">✅ حواله با کد ${code} با موفقیت ثبت شد!</h6>
+        <p class="small text-muted mb-3">برای ارسال پیام‌ها به واتساپ روی دکمه‌های زیر کلیک کنید:</p>
+        <div class="d-grid gap-2">
+          <a href="https://wa.me/${sendToPhone}?text=${agentMessage}" target="_blank" class="btn btn-primary fw-bold">📤 ارسال پیام بررسی به نمایندگی مبدأ</a>
+          <a href="https://wa.me/${custCleanPhone}?text=${customerMessage}" target="_blank" class="btn btn-success fw-bold">📱 ارسال تاییدیه ثبت حواله به مشتری</a>
+        </div>
+      `;
+
+      alert('حواله با موفقیت در سیستم ثبت شد. دکمه‌های ارسال به واتساپ در پایین صفحه ظاهر شدند.');
     };
 
     if (fileInput.files && fileInput.files[0]) {
