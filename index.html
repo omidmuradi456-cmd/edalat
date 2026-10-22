@@ -514,7 +514,8 @@
     let tbody = document.getElementById('branchesTableBody');
     tbody.innerHTML = '';
     branches.forEach((b) => {
-      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">&#x200E;${b.phone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
+      let cleanPhone = b.phone.replace(/[^0-9]/g, '');
+      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">&#x200E;+${cleanPhone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
     });
   }
 
@@ -601,8 +602,8 @@
       let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-      // ۱. پیام اختصاصی اول برای نمایندگی مبدأ
-      let agentMessage = `🏛 *درخواست حواله جدید*%0A` +
+      // ۱. پیام اختصاصی برای نمایندگی مبدأ
+      let agentMessage = `🏛 *ثبت حواله جدید*%0A` +
                          `همکار گرامی، لطفاً این حواله را بررسی و تأیید کنید.%0A` +
                          `----------------------------------%0A` +
                          `🆔 *کد اختصاصی حواله:* ${code}%0A` +
@@ -653,10 +654,10 @@
       // باز کردن واتساپ نمایندگی مبدأ
       window.open(`https://wa.me/${sendToPhone}?text=${agentMessage}`, '_blank');
 
-      // ۲. پیام اختصاصی دوم برای خودِ مشتری با متنی منظم و تفکیک‌شده
+      // ۲. پیام اختصاصی دوم برای خودِ مشتری با متنی دقیق و تفکیک‌شده
       let custCleanPhone = phone.replace(/[^0-9]/g, '');
-      let customerMessage = `🏛 *صرافی عدالت - ثبت موفق حواله*%0A` +
-                            `مشتری گرامی ${sender}، تشکر از شما. حواله شما با موفقیت در سیستم ثبت گردید. 🙏%0A` +
+      let customerMessage = `🏛 *ثبت حواله جدید*%0A` +
+                            `مشتری گرامی تشکر از شما، حواله شما موفقانه در سیستم ثبت گردید. 🙏%0A` +
                             `----------------------------------%0A` +
                             `🆔 *کد پیگیری:* ${code}%0A` +
                             `👤 *فرستنده:* ${sender}%0A` +
