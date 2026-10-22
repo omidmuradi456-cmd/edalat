@@ -372,7 +372,7 @@
   ];
   let exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [{ from: '1000000 تومان', to: 'افغانی', rate: 1200 }];
   let cardSettings = JSON.parse(localStorage.getItem('edalat_card_settings')) || { number: '6037997900000000', owner: 'صرافی عدالت' };
-  const SUPPORT_PHONE = "989962671189";
+  const SUPPORT_PHONE = "+989962671189";
 
   let currentCustId = null;
   let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal, depositNoticeModal, receiptModal;
@@ -448,7 +448,6 @@
       document.getElementById('currentLoggedInUser').innerText = loggedName;
       document.getElementById('currentUserRole').innerText = loggedRole === 'admin' ? 'مدیر کل' : 'نمایندگی / شریک';
 
-      // کنترل دسترسی ویرایش و حذف مشتری برای نمایندگی‌ها
       if (loggedRole === 'admin') {
         document.getElementById('cardSettingSection').style.display = 'block';
         document.getElementById('branchManagementSection').style.display = 'block';
@@ -466,7 +465,6 @@
         document.getElementById('rateSettingBox').style.display = 'none';
         document.getElementById('backupBox').style.display = 'none';
         document.getElementById('newCustomerBtn').style.display = 'none';
-        // نمایندگی فقط مشتریانی که خودش ثبت کرده را می‌تواند ویرایش/حذف کند (در تابع loadCustomerData بررسی می‌شود)
       }
     } else {
       document.getElementById('adminLoginBox').style.display = 'block';
@@ -585,7 +583,7 @@
         let orig = origin.toLowerCase();
         return orig.includes(loc) || loc.includes(orig) || orig.includes(name) || name.includes(orig);
       });
-      let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
+      let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
       let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
 
       let text = `🏛 *درخواست حواله جدید*%0A` +
@@ -601,7 +599,7 @@
                  `✨ *خالص مقصد:* ${calculatedNet}%0A` +
                  `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
                  `----------------------------------%0A` +
-                 `پشتیبانی مرکزی: +989962671189`;
+                 `📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
 
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
@@ -639,7 +637,7 @@
 
       if (confirm(`حواله شما با کد ${code} با موفقیت ثبت شد.\nآیا می‌خواهید پیام تأیید و کد پیگیری به واتساپ خودتان (${phone}) ارسال شود؟`)) {
         let custCleanPhone = phone.replace(/[^0-9]/g, '');
-        let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0Aمشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید.%0A🆔 *کد پیگیری:* ${code}%0A💵 *مبلغ:* ${formatNumber(amount)} ${curr}%0A📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی [${agentNameText}]%0A📞 *شماره پشتیبانی مدیریت:* +989962671189%0Aبا تشکر از اعتماد شما! 🙏`;
+        let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0Aمشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید.%0A🆔 *کد پیگیری:* ${code}%0A💵 *مبلغ:* ${formatNumber(amount)} ${curr}%0A📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی [${agentNameText}]%0A📞 *شماره پشتیبانی مدیریت:* ${SUPPORT_PHONE}%0Aبا تشکر از اعتماد شما! 🙏`;
         window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
       }
     };
@@ -697,7 +695,7 @@
     let loggedRole = localStorage.getItem('edalat_logged_role');
     let loggedName = localStorage.getItem('edalat_logged_name') || '';
 
-    // کنترل دکمه‌های ویرایش و حذف مشتری بر اساس ایجادکننده یا مدیر بودن
+    // کنترل دکمه‌های ویرایش و حذف مشتری (فقط مدیر یا ایجادکننده همان مشتری)
     let canManageCustomer = (loggedRole === 'admin' || (c.createdBy && loggedName.includes(c.createdBy.split(' ')[0])));
     document.getElementById('editCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
     document.getElementById('delCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
@@ -726,7 +724,7 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptModal('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
       }
 
-      // بررسی دسترسی ویرایش و حذف حواله (فقط مدیر یا ایجادکننده همان حواله)
+      // 🔑 قوانین دسترسی: نمایندگی‌ها فقط و فقط حواله‌هایی را که خودشان ثبت کرده‌اند می‌توانند ویرایش و حذف کنند
       let canManageRem = (loggedRole === 'admin' || (r.createdBy && loggedName.includes(r.createdBy.split(' ')[0])));
       if (canManageRem) {
         actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
@@ -769,7 +767,7 @@
                `💵 مبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A` +
                `📌 وضعیت: ${r.status}%0A` +
                `----------------------------------%0A` +
-               `📞 پشتیبانی مرکزی مدیریت: +989962671189`;
+               `📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   }
 
@@ -785,13 +783,13 @@
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A📞 پشتیبانی مدیریت: +989962671189`;
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
     let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
-    let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE;
-    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A📞 پشتیبانی مدیریت: +989962671189`;
+    let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
+    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
     window.open(`https://wa.me/${destPhone}?text=${destText}`, '_blank');
 
     alert('✅ واریزی تأیید شد و پیام اطلاع‌رسانی به مشتری و مقصد ارسال گردید.');
@@ -809,7 +807,7 @@
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏%0A📞 پشتیبانی مدیریت: +989962671189`;
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
@@ -882,7 +880,7 @@
   function sendDepositNoticeWhatsApp() {
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    let text = `🏛 *موجودی کیف پول صرافی عدالت*%0Aمشتری گرامی ${c.name}، موجودی کیف پول شما: ${document.getElementById('cDepositsSummary').innerText}%0A📞 پشتیبانی مدیریت: +989962671189`;
+    let text = `🏛 *موجودی کیف پول صرافی عدالت*%0Aمشتری گرامی ${c.name}، موجودی کیف پول شما: ${document.getElementById('cDepositsSummary').innerText}%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
     depositNoticeModal.hide();
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
@@ -910,7 +908,7 @@
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let dueDate = document.getElementById('debtDueDateInput').value;
-    let text = `🏛 *یادآوری بدهی صرافی عدالت*%0Aمبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}%0Aمهلت پرداخت: ${dueDate}%0A📞 پشتیبانی مدیریت: +989962671189`;
+    let text = `🏛 *یادآوری بدهی صرافی عدالت*%0Aمبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}%0Aمهلت پرداخت: ${dueDate}%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
     debtNoticeModal.hide();
     window.open(`https://wa.me/${phoneNum}?text=${text}`, '_blank');
   }
@@ -919,8 +917,9 @@
     let val = prompt('مبلغ جدید بدهی را وارد کنید:');
     if (val !== null) {
       let numVal = getCleanNumber(val);
+      let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر';
       remittances = remittances.filter(r => !(r.custId === currentCustId && r.paymentType === 'قرض'));
-      remittances.push({ id: Date.now().toString(), code: 'DEBT-' + Math.floor(1000+Math.random()*9000), custId: currentCustId, paymentType: 'قرض', sender: 'بدهی', receiver: 'ثبت', received: numVal, currReceived: '1000000 تومان', sent: numVal, currSent: '1000000 تومان', status: '✅ تکمیل شده' });
+      remittances.push({ id: Date.now().toString(), code: 'DEBT-' + Math.floor(1000+Math.random()*9000), custId: currentCustId, paymentType: 'قرض', sender: 'بدهی', receiver: 'ثبت', received: numVal, currReceived: '1000000 تومان', sent: numVal, currSent: '1000000 تومان', status: '✅ تکمیل شده', createdBy: loggedName });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
       loadCustomerData(customers.find(x => x.id === currentCustId));
     }
@@ -1002,7 +1001,7 @@
 
     let idx = remittances.findIndex(x => x.id === id);
     if (idx > -1) {
-      obj.createdBy = remittances[idx].createdBy || loggedName; // حفظ ایجادکننده اولیه
+      obj.createdBy = remittances[idx].createdBy || loggedName;
       remittances[idx] = obj;
     } else {
       remittances.push(obj);
