@@ -537,7 +537,7 @@
     }
   }
 
-  // ثبت حواله مشتری همراه با ذخیره عکس فیش و مسیریابی به نمایندگی مبدأ
+  // ثبت حواله مشتری و مسیریابی به نمایندگی مبدأ + ارائه گزینه ارسال پیام به خود مشتری
   function submitClientRemittance() {
     let sender = document.getElementById('reqSender').value.trim();
     let phone = document.getElementById('reqPhone').value.trim();
@@ -615,8 +615,15 @@
       });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
+      // ارسال پیام به نمایندگی
       window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
-      alert(`حواله شما با کد اختصاصی ${code} با موفقیت ثبت گردید.\n\nپیام جهت بررسی به نمایندگی مبدأ [ ${agentNameText} ] ارسال شد.`);
+
+      // پرسش برای ارسال پیام تأیید ثبت سفارش به خود مشتری
+      if (confirm(`حواله شما با کد ${code} با موفقیت ثبت شد.\nآیا می‌خواهید پیام تأیید و کد پیگیری به واتساپ خودتان (${phone}) ارسال شود؟`)) {
+        let custCleanPhone = phone.replace(/[^0-9]/g, '');
+        let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0Aمشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید.%0A🆔 *کد پیگیری:* ${code}%0A💵 *مبلغ:* ${formatNumber(amount)} ${curr}%0A📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی [${agentNameText}]%0Aبا تشکر از اعتماد شما! 🙏`;
+        window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
+      }
     };
 
     if (fileInput.files && fileInput.files[0]) {
@@ -689,9 +696,9 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل</button>`;
       }
 
-      // دکمه مشاهده فیش واریزی
+      // دکمه باز کردن عکس فیش واریزی در صفحه جدید با کیفیت کامل
       if (r.receiptImage) {
-        actionButtonsHtml += `<a href="${r.receiptImage}" target="_blank" class="btn btn-sm btn-info text-white fw-bold" title="مشاهده فیش واریزی">🖼️ فیش</a>`;
+        actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptImage('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
       }
 
       actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
@@ -712,7 +719,13 @@
     });
   }
 
-  // تأیید حواله در مبدأ و ارسال پیام تأیید به مشتری و نمایندگی مقصد
+  // تابع باز کردن عکس فیش در تب جدید مرورگر جهت مشاهده کامل
+  function openReceiptImage(base64Data) {
+    let win = window.open();
+    win.document.write(`<html dir="rtl"><head><title>تصویر فیش واریزی</title></head><body style="text-align:center;background:#222;padding:20px;"><img src="${base64Data}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 0 10px rgba(255,255,255,0.3);"/></body></html>`);
+  }
+
+  // تأیید حواله در مبدأ و ارسال پیام به مشتری و نمایندگی مقصد
   function approveByOrigin(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
