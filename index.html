@@ -99,7 +99,7 @@
         <h5 class="fw-bold text-primary mb-3 text-center">📝 مشخصات حواله را با دقت وارد کنید:</h5>
         <div class="row g-2">
           <div class="col-12"><label class="small fw-bold">👤 نام و تخلص فرستنده *</label><input type="text" id="reqSender" class="form-control" placeholder="مثال: احمد احمدی"></div>
-          <div class="col-12"><label class="small fw-bold">📞 شماره تماس فرستنده (واتساپ) *</label><input type="text" id="reqPhone" class="form-control phone-input" placeholder="+358..."></div>
+          <div class="col-12"><label class="small fw-bold">📞 شماره تماس فرستنده *</label><input type="text" id="reqPhone" class="form-control phone-input" placeholder="+358..."></div>
           <div class="col-12"><label class="small fw-bold">📍 مبدأ (کشور، شهر و آدرس) *</label><input type="text" id="reqOrigin" class="form-control" placeholder="مثال: فنلاند، هلسینکی..."></div>
           <div class="col-12"><label class="small fw-bold">👥 نام و تخلص گیرنده *</label><input type="text" id="reqReceiver" class="form-control" placeholder="مثال: محمود محمودزاده"></div>
           <div class="col-12"><label class="small fw-bold">📞 شماره تماس گیرنده *</label><input type="text" id="reqRecPhone" class="form-control phone-input" placeholder="+93..."></div>
@@ -208,12 +208,12 @@
             <div class="col-md-3"><label class="small fw-bold">رمز عبور *</label><input type="text" id="branchPassword" class="form-control form-control-sm"></div>
             <div class="col-md-3"><label class="small fw-bold">نام نمایندگی *</label><input type="text" id="branchName" class="form-control form-control-sm"></div>
             <div class="col-md-3"><label class="small fw-bold">کشور / شهر *</label><input type="text" id="branchLocation" class="form-control form-control-sm"></div>
-            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره واتساپ *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+358..."></div>
+            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره تماس *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+358..."></div>
             <div class="col-12 mt-2"><button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره نمایندگی</button></div>
           </div>
           <div class="table-responsive">
             <table class="table table-sm table-bordered text-center align-middle bg-white">
-              <thead class="table-light"><tr><th>نام</th><th>شهر</th><th>واتساپ</th><th>عملیات</th></tr></thead>
+              <thead class="table-light"><tr><th>نام</th><th>شهر</th><th>شماره تماس</th><th>عملیات</th></tr></thead>
               <tbody id="branchesTableBody"></tbody>
             </table>
           </div>
@@ -346,19 +346,19 @@
 </div>
 
 <!-- سایر مدال‌ها -->
-<div class="modal fade" id="customerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">اطلاعات مشتری</h5></div><div class="modal-body"><input type="hidden" id="customerId"><div class="mb-2"><label>نام و تخلص</label><input type="text" id="custName" class="form-control"></div><div class="mb-2"><label>شماره واتساپ</label><input type="text" id="custPhone" class="form-control phone-input"></div><div class="mb-2"><label>آدرس</label><input type="text" id="custAddress" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره</button></div></div></div></div>
+<div class="modal fade" id="customerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">اطلاعات مشتری</h5></div><div class="modal-body"><input type="hidden" id="customerId"><div class="mb-2"><label>نام و تخلص</label><input type="text" id="custName" class="form-control"></div><div class="mb-2"><label>شماره تماس</label><input type="text" id="custPhone" class="form-control phone-input"></div><div class="mb-2"><label>آدرس</label><input type="text" id="custAddress" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره</button></div></div></div></div>
 
 <div class="modal fade" id="depositModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی</h5></div><div class="modal-body"><div class="mb-2"><label class="fw-bold">مبلغ *</label><input type="text" id="depAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div></div><div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت</button></div></div></div></div>
 
 <div class="modal fade" id="chequeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید</h5></div><div class="modal-body"><input type="hidden" id="editChequeId"><div class="mb-2"><label>مبلغ *</label><input type="text" id="chqAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="chqCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div><div class="mb-2"><label>شماره چک *</label><input type="text" id="chqNumber" class="form-control"></div><div class="mb-2"><label>بانک *</label><input type="text" id="chqBank" class="form-control"></div><div class="mb-2"><label>سررسید *</label><input type="text" id="chqDueDate" class="form-control" placeholder="1403/09/10"></div></div><div class="modal-footer"><button class="btn btn-warning fw-bold" onclick="saveCheque()">ذخیره چک</button></div></div></div></div>
 
-<div class="modal fade" id="depositNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-primary">📲 یادآوری کیف پول</h5></div><div class="modal-body"><label>تاریخ یا توضیحات:</label><input type="text" id="depositDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDepositNoticeWhatsApp()">ارسال به واتساپ</button></div></div></div></div>
+<div class="modal fade" id="depositNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-primary">📲 یادآوری کیف پول</h5></div><div class="modal-body"><label>تاریخ یا توضیحات:</label><input type="text" id="depositDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDepositNoticeSMS()">ارسال پیامک</button></div></div></div></div>
 
-<div class="modal fade" id="debtNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-danger">📲 یادآوری بدهی</h5></div><div class="modal-body"><label>آخرین مهلت:</label><input type="text" id="debtDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDebtNoticeWhatsApp()">ارسال به واتساپ</button></div></div></div></div>
+<div class="modal fade" id="debtNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-danger">📲 یادآوری بدهی</h5></div><div class="modal-body"><label>آخرین مهلت:</label><input type="text" id="debtDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDebtNoticeSMS()">ارسال پیامک</button></div></div></div></div>
 
-<div class="modal fade" id="balanceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div><div class="modal-body"><label>مهلت پرداخت:</label><input type="text" id="dueDateInput" class="form-control text-center fs-5 text-danger" value="1403/08/15"></div><div class="modal-footer"><button class="btn btn-primary w-100 fw-bold" onclick="sendBalanceStatementWithDate()">ارسال به واتساپ</button></div></div></div></div>
+<div class="modal fade" id="balanceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div><div class="modal-body"><label>مهلت پرداخت:</label><input type="text" id="dueDateInput" class="form-control text-center fs-5 text-danger" value="1403/08/15"></div><div class="modal-footer"><button class="btn btn-primary w-100 fw-bold" onclick="sendBalanceStatementWithDate()">ارسال پیامک</button></div></div></div></div>
 
-<div class="modal fade" id="remittanceModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="remittanceModalTitle">ثبت / ویرایش حواله</h5></div><div class="modal-body"><input type="hidden" id="remittanceId"><div class="row"><div class="col-md-6 mb-2"><label>نوع پرداخت</label><select id="remPaymentType" class="form-select"><option value="نقدی">نقدی</option><option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option><option value="قرض">قرض</option></select></div><div class="col-md-6 mb-2"><label>تاریخ</label><input type="text" id="remDate" class="form-control" value="1405/07/30"></div><div class="col-md-6 mb-2"><label>فرستنده</label><input type="text" id="remSender" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div><div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div><div class="col-md-12 mb-2"><label>تلفن واتساپ نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input"></div><div class="col-md-6 mb-2"><label>مبلغ دریافتی</label><input type="text" id="remReceived" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-6 mb-2"><label>کارمزد</label><input type="text" id="remFee" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-12 mb-2"><label>مبلغ خالص ارسالی</label><input type="text" id="remSent" class="form-control bg-light fw-bold" readonly></div><div class="col-md-12 mb-2"><label>وضعیت</label><select id="remStatus" class="form-control"><option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی</option><option value="🔄 در حال اجرای مقصد">🔄 اجرای مقصد</option><option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده</option></select></div></div></div><div class="modal-footer"><button class="btn btn-success" onclick="saveAdminRemittance()">ذخیره حواله</button></div></div></div></div>
+<div class="modal fade" id="remittanceModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="remittanceModalTitle">ثبت / ویرایش حواله</h5></div><div class="modal-body"><input type="hidden" id="remittanceId"><div class="row"><div class="col-md-6 mb-2"><label>نوع پرداخت</label><select id="remPaymentType" class="form-select"><option value="نقدی">نقدی</option><option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option><option value="قرض">قرض</option></select></div><div class="col-md-6 mb-2"><label>تاریخ</label><input type="text" id="remDate" class="form-control" value="1405/07/30"></div><div class="col-md-6 mb-2"><label>فرستنده</label><input type="text" id="remSender" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div><div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div><div class="col-md-12 mb-2"><label>تلفن نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input"></div><div class="col-md-6 mb-2"><label>مبلغ دریافتی</label><input type="text" id="remReceived" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-6 mb-2"><label>کارمزد</label><input type="text" id="remFee" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-12 mb-2"><label>مبلغ خالص ارسالی</label><input type="text" id="remSent" class="form-control bg-light fw-bold" readonly></div><div class="col-md-12 mb-2"><label>وضعیت</label><select id="remStatus" class="form-control"><option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی</option><option value="🔄 در حال اجرای مقصد">🔄 اجرای مقصد</option><option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده</option></select></div></div></div><div class="modal-footer"><button class="btn btn-success" onclick="saveAdminRemittance()">ذخیره حواله</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -601,46 +601,9 @@
       let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-      // استفاده از تگ ایزوله‌سازی LTR در واتساپ برای جلوگیری از جابجایی علامت +
-      let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
+      let agentMessage = `ثبت حواله جدید\nکد: ${code}\nفرستنده: ${sender}\nتلفن: +${cleanSenderPhone}\nمبدأ: ${origin}\nگیرنده: ${receiver}\nتلفن گیرنده: +${cleanRecPhone}\nمقصد: ${destination}\nمبلغ: ${formatNumber(amount)} ${curr}\nخالص: ${calculatedNet}`;
 
-      // پیام نمایندگی
-      let agentMessage = `🏛 *ثبت حواله جدید*%0A` +
-                         `همکار گرامی، لطفاً این حواله را بررسی و تأیید کنید.%0A` +
-                         `----------------------------------%0A` +
-                         `🆔 *کد اختصاصی حواله:* ${code}%0A` +
-                         `👤 *فرستنده:* ${sender}%0A` +
-                         `📞 *شماره فرستنده:* ${formatPhoneForWA(cleanSenderPhone)}%0A` +
-                         `📍 *مبدأ:* ${origin}%0A` +
-                         `👥 *گیرنده:* ${receiver}%0A` +
-                         `📞 *شماره گیرنده:* ${formatPhoneForWA(cleanRecPhone)}%0A` +
-                         `📍 *مقصد:* ${destination}%0A` +
-                         `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
-                         `✨ *خالص مقصد:* ${calculatedNet}%0A` +
-                         `📌 *وضعیت:* ⏳ در حال بررسی (توسط نمایندگی)%0A` +
-                         `----------------------------------%0A` +
-                         `📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
-
-      // پیام مشتری با متن منظم و اصلاح‌شده
-      let customerMessage = `🏛 *ثبت حواله صرافی عدالت*%0A` +
-                            `مشتری گرامی، تشکر از ثبت حواله تان؛ ثبت حواله در سیستم موفقانه ثبت گردید. 🙏%0A` +
-                            `----------------------------------%0A` +
-                            `🆔 *کد پیگیری:* ${code}%0A` +
-                            `👤 *فرستنده:* ${sender}%0A` +
-                            `📞 *شماره فرستنده:* ${formatPhoneForWA(cleanSenderPhone)}%0A` +
-                            `📍 *مبدأ:* ${origin}%0A` +
-                            `👥 *گیرنده:* ${receiver}%0A` +
-                            `📞 *شماره گیرنده:* ${formatPhoneForWA(cleanRecPhone)}%0A` +
-                            `📍 *مقصد:* ${destination}%0A` +
-                            `💵 *مبلغ واریزی:* ${formatNumber(amount)} ${curr}%0A` +
-                            `✨ *خالص پرداختی در مقصد:* ${calculatedNet}%0A` +
-                            `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
-                            `----------------------------------%0A` +
-                            `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
-                            `📞 *شماره تماس نمایندگی مقصد:* ${formatPhoneForWA(cleanDestAgentPhone)}%0A` +
-                            `📞 *پشتیبانی مرکزی مدیریت:* ${formatPhoneForWA(cleanSupportPhone)}%0A` +
-                            `----------------------------------%0A` +
-                            `⚠️ *نکته مهم:* جهت دریافت پول، مشتری گرامی شناسنامه خود را همراه داشته باشید و می‌توانید با نمایندگی مقصد به تماس شوید.`;
+      let customerMessage = `ثبت حواله صرافی عدالت\nکد پیگیری: ${code}\nفرستنده: ${sender}\nمبلغ: ${formatNumber(amount)} ${curr}\nخالص مقصد: ${calculatedNet}\nنمایندگی: ${destAgentName}\nپشتیبانی: +${cleanSupportPhone}`;
 
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
@@ -675,10 +638,10 @@
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
       let containerCard = document.querySelector('#clientTabContent .card');
-      let actionBox = document.getElementById('whatsappActionBox');
+      let actionBox = document.getElementById('smsActionBox');
       if (!actionBox) {
         actionBox = document.createElement('div');
-        actionBox.id = 'whatsappActionBox';
+        actionBox.id = 'smsActionBox';
         actionBox.className = 'mt-3 p-3 border border-success rounded bg-light text-center';
         containerCard.appendChild(actionBox);
       }
@@ -686,14 +649,14 @@
       let custCleanPhone = phone.replace(/[^0-9]/g, '');
       actionBox.innerHTML = `
         <h6 class="fw-bold text-success mb-2">✅ حواله با کد ${code} با موفقیت ثبت شد!</h6>
-        <p class="small text-muted mb-3">برای ارسال پیام‌ها به واتساپ روی دکمه‌های زیر کلیک کنید:</p>
+        <p class="small text-muted mb-3">برای ارسال پیامک روی دکمه‌های زیر کلیک کنید:</p>
         <div class="d-grid gap-2">
-          <a href="https://wa.me/${sendToPhone}?text=${encodeURIComponent(agentMessage)}" target="_blank" class="btn btn-primary fw-bold">📤 ارسال پیام بررسی به نمایندگی مبدأ</a>
-          <a href="https://wa.me/${custCleanPhone}?text=${encodeURIComponent(customerMessage)}" target="_blank" class="btn btn-success fw-bold">📱 ارسال تاییدیه ثبت حواله به مشتری</a>
+          <a href="sms:+${sendToPhone}?body=${encodeURIComponent(agentMessage)}" class="btn btn-primary fw-bold">📤 ارسال پیامک به نمایندگی مبدأ</a>
+          <a href="sms:+${custCleanPhone}?body=${encodeURIComponent(customerMessage)}" class="btn btn-success fw-bold">📱 ارسال پیامک تاییدیه به مشتری</a>
         </div>
       `;
 
-      alert('حواله با موفقیت در سیستم ثبت شد. دکمه‌های ارسال به واتساپ در پایین صفحه ظاهر شدند.');
+      alert('حواله ثبت شد. دکمه‌های ارسال پیامک در پایین صفحه ظاهر شدند.');
     };
 
     if (fileInput.files && fileInput.files[0]) {
@@ -782,8 +745,8 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
       }
 
-      // ارسال پیام مستقیم به شماره مدیریت مرکزی
-      actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="sendAdminManagementWhatsApp('${r.id}')">📞 مدیریت و شماره مدیریت</button>`;
+      // دکمه ارسال پیامک گزارش مستقیماً به شماره مدیریت مرکزی
+      actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="sendAdminManagementSMS('${r.id}')">📞 پیامک به مدیریت</button>`;
 
       table.innerHTML += `
         <tr>
@@ -805,27 +768,15 @@
     receiptModal.show();
   }
 
-  // تابع اصلاح‌شده برای ارسال پیام گزارش اجرای حواله مستقیماً به شماره مدیریت مرکزی
-  function sendAdminManagementWhatsApp(remId) {
+  function sendAdminManagementSMS(remId) {
     let r = remittances.find(x => x.id === remId);
     if (!r) return;
     let c = customers.find(x => x.id === r.custId);
-    let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
 
-    let text = `🏛 *گزارش تکمیل و اجرای حواله به مدیریت*%0A` +
-               `----------------------------------%0A` +
-               `🆔 کد حواله: ${r.code}%0A` +
-               `👤 فرستنده: ${r.sender} (${c ? c.phone : ''})%0A` +
-               `👥 گیرنده: ${r.receiver}%0A` +
-               `📍 مقصد: ${r.destination}%0A` +
-               `💵 مبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A` +
-               `📌 وضعیت نهایی: ${r.status}%0A` +
-               `----------------------------------%0A` +
-               `✅ پول با موفقیت به مشتری تحویل داده شد و حواله اجرا گردید.%0A` +
-               `📞 *شماره تماس مدیریت مرکزی:* ${formatPhoneForWA(cleanSupportPhone)}`;
+    let text = `گزارش تکمیل حواله به مدیریت\nکد: ${r.code}\nفرستنده: ${r.sender} (${c ? c.phone : ''})\nگیرنده: ${r.receiver}\nمبلغ: ${formatNumber(r.sent)} ${r.currSent}\nوضعیت: ${r.status}\nپول به مشتری رسید و اجرا شد.`;
 
-    window.open(`https://wa.me/${cleanSupportPhone}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`sms:+${cleanSupportPhone}?body=${encodeURIComponent(text)}`, '_blank');
   }
 
   function approveByOrigin(remId) {
@@ -840,32 +791,12 @@
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let destAgent = branches.find(b => {
-        let loc = (b.location || '').toLowerCase();
-        let name = (b.name || '').toLowerCase();
-        let dest = r.destination.toLowerCase();
-        return dest.includes(loc) || loc.includes(dest) || dest.includes(name) || name.includes(dest);
-      });
-      let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
-      let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
-
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A` +
-                     `📍 نمایندگی مقصد: ${destAgentName}%0A` +
-                     `📞 شماره تماس نمایندگی مقصد: ${formatPhoneForWA(destAgentPhone)}%0A` +
-                     `📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
-      window.open(`https://wa.me/${custPhoneNum}?text=${encodeURIComponent(custText)}`, '_blank');
+      let custText = `صرافی عدالت: مشتری گرامی ${c.name}، حواله شما با کد ${r.code} تأیید شد و جهت اجرا در مقصد ارسال گردید. پشتیبانی: +${cleanSupportPhone}`;
+      window.open(`sms:+${custPhoneNum}?body=${encodeURIComponent(custText)}`, '_blank');
     }
 
-    let destAgent = branches.find(b => r.destination.toLowerCase().includes(b.location.toLowerCase()));
-    let destPhone = destAgent && destAgent.phone ? destAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
-    let destText = `🏛 *دستور اجرای حواله*%0Aکد: ${r.code}%0Aگیرنده: ${r.receiver}%0Aمبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
-    window.open(`https://wa.me/${destPhone}?text=${encodeURIComponent(destText)}`, '_blank');
-
-    alert('✅ واریزی تأیید شد و پیام اطلاع‌رسانی به مشتری و مقصد ارسال گردید.');
+    alert('✅ واریزی تأیید شد و صفحه ارسال پیامک باز گردید.');
   }
 
   function completeByDestination(remId) {
@@ -881,12 +812,11 @@
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
       let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* با موفقیت تکمیل و وجه آن تحویل داده شد. تشکر از اعتماد شما! 🙏%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
-      window.open(`https://wa.me/${custPhoneNum}?text=${encodeURIComponent(custText)}`, '_blank');
+      let custText = `صرافی عدالت: مشتری گرامی ${c.name}، حواله شما با کد ${r.code} تکمیل و وجه آن تحویل داده شد. تشکر! پشتیبانی: +${cleanSupportPhone}`;
+      window.open(`sms:+${custPhoneNum}?body=${encodeURIComponent(custText)}`, '_blank');
     }
 
-    alert('🚀 حواله با موفقیت تکمیل شد و پیام تحویل به مشتری ارسال گردید.');
+    alert('🚀 حواله تکمیل شد و پیامک تحویل آماده ارسال گردید.');
   }
 
   function calculateCustomerDeposits(custId) {
@@ -952,14 +882,13 @@
   }
 
   function openDepositNoticeModal() { depositNoticeModal.show(); }
-  function sendDepositNoticeWhatsApp() {
+  function sendDepositNoticeSMS() {
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
-    let text = `🏛 *موجودی کیف پول صرافی عدالت*%0Aمشتری گرامی ${c.name}، موجودی کیف پول شما: ${document.getElementById('cDepositsSummary').innerText}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
+    let text = `موجودی کیف پول صرافی عدالت: ${c.name}، موجودی: ${document.getElementById('cDepositsSummary').innerText}. پشتیبانی: +${cleanSupportPhone}`;
     depositNoticeModal.hide();
-    window.open(`https://wa.me/${phoneNum}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
   }
 
   function editWalletBalance() {
@@ -981,15 +910,14 @@
   }
 
   function openDebtNoticeModal() { debtNoticeModal.show(); }
-  function sendDebtNoticeWhatsApp() {
+  function sendDebtNoticeSMS() {
     let c = customers.find(x => x.id === currentCustId);
     let phoneNum = c.phone.replace(/[^0-9]/g, '');
     let dueDate = document.getElementById('debtDueDateInput').value;
     let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-    let formatPhoneForWA = (numStr) => `\u200E+${numStr}\u200E`;
-    let text = `🏛 *یادآوری بدهی صرافی عدالت*%0Aمبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}%0Aمهلت پرداخت: ${dueDate}%0A📞 پشتیبانی مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
+    let text = `یادآوری بدهی صرافی عدالت: مبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}، مهلت: ${dueDate}. پشتیبانی: +${cleanSupportPhone}`;
     debtNoticeModal.hide();
-    window.open(`https://wa.me/${phoneNum}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
   }
 
   function editCustomerDebt() {
