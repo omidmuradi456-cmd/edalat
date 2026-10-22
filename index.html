@@ -586,6 +586,16 @@
       let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
       let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
 
+      // پیدا کردن نمایندگی مقصد جهت درج شماره تماس آن در پیام مشتری
+      let destAgent = branches.find(b => {
+        let loc = (b.location || '').toLowerCase();
+        let name = (b.name || '').toLowerCase();
+        let dest = destination.toLowerCase();
+        return dest.includes(loc) || loc.includes(dest) || dest.includes(name) || name.includes(dest);
+      });
+      let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
+      let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone : SUPPORT_PHONE;
+
       let text = `🏛 *درخواست حواله جدید*%0A` +
                  `----------------------------------%0A` +
                  `🆔 *کد اختصاصی حواله:* ${code}%0A` +
@@ -633,13 +643,24 @@
       });
       localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
 
+      // ارسال درخواست به نمایندگی مبدأ
       window.open(`https://wa.me/${sendToPhone}?text=${text}`, '_blank');
 
-      if (confirm(`حواله شما با کد ${code} با موفقیت ثبت شد.\nآیا می‌خواهید پیام تأیید و کد پیگیری به واتساپ خودتان (${phone}) ارسال شود؟`)) {
-        let custCleanPhone = phone.replace(/[^0-9]/g, '');
-        let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0Aمشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید.%0A🆔 *کد پیگیری:* ${code}%0A💵 *مبلغ:* ${formatNumber(amount)} ${curr}%0A📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی [${agentNameText}]%0A📞 *شماره پشتیبانی مدیریت:* ${SUPPORT_PHONE}%0Aبا تشکر از اعتماد شما! 🙏`;
-        window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
-      }
+      // ارسال خودکار پیام تأیید و اطلاعات نمایندگی مقصد به واتساپ مشتری
+      let custCleanPhone = phone.replace(/[^0-9]/g, '');
+      let custConfirmText = `🏛 *صرافی عدالت - ثبت موفق حواله*%0A` +
+                            `مشتری گرامی ${sender}، حواله شما با موفقیت ثبت گردید. 🙏%0A` +
+                            `----------------------------------%0A` +
+                            `🆔 *کد پیگیری:* ${code}%0A` +
+                            `💵 *مبلغ خالص مقصد:* ${calculatedNet}%0A` +
+                            `📌 *وضعیت:* ⏳ در حال بررسی توسط نمایندگی%0A` +
+                            `----------------------------------%0A` +
+                            `📍 *نمایندگی تحویل‌دهنده در مقصد:* ${destAgentName}%0A` +
+                            `📞 *شماره تماس نمایندگی مقصد:* ${destAgentPhone}%0A` +
+                            `📞 *پشتیبانی مرکزی مدیریت:* ${SUPPORT_PHONE}%0A` +
+                            `جهت دریافت پول می‌توانید با نمایندگی مقصد به تماس شوید.`;
+      
+      window.open(`https://wa.me/${custCleanPhone}?text=${custConfirmText}`, '_blank');
     };
 
     if (fileInput.files && fileInput.files[0]) {
@@ -695,7 +716,6 @@
     let loggedRole = localStorage.getItem('edalat_logged_role');
     let loggedName = localStorage.getItem('edalat_logged_name') || '';
 
-    // کنترل دکمه‌های ویرایش و حذف مشتری (فقط مدیر یا ایجادکننده همان مشتری)
     let canManageCustomer = (loggedRole === 'admin' || (c.createdBy && loggedName.includes(c.createdBy.split(' ')[0])));
     document.getElementById('editCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
     document.getElementById('delCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
@@ -724,7 +744,6 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptModal('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
       }
 
-      // 🔑 قوانین دسترسی: نمایندگی‌ها فقط و فقط حواله‌هایی را که خودشان ثبت کرده‌اند می‌توانند ویرایش و حذف کنند
       let canManageRem = (loggedRole === 'admin' || (r.createdBy && loggedName.includes(r.createdBy.split(' ')[0])));
       if (canManageRem) {
         actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
@@ -758,6 +777,16 @@
     let c = customers.find(x => x.id === r.custId);
     let phone = c && c.phone ? c.phone.replace(/[^0-9]/g, '') : '';
     if (!phone) return alert('شماره تماس مشتری یافت نشد.');
+
+    let destAgent = branches.find(b => {
+      let loc = (b.location || '').toLowerCase();
+      let name = (b.name || '').toLowerCase();
+      let dest = r.destination.toLowerCase();
+      return dest.includes(loc) || loc.includes(dest) || dest.includes(name) || name.includes(dest);
+    });
+    let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
+    let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone : SUPPORT_PHONE;
+
     let text = `🏛 *رسید حواله صرافی عدالت*%0A` +
                `----------------------------------%0A` +
                `🆔 کد حواله: ${r.code}%0A` +
@@ -767,7 +796,9 @@
                `💵 مبلغ تحویلی: ${formatNumber(r.sent)} ${r.currSent}%0A` +
                `📌 وضعیت: ${r.status}%0A` +
                `----------------------------------%0A` +
-               `📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
+               `📍 *نمایندگی مقصد:* ${destAgentName}%0A` +
+               `📞 *شماره تماس نمایندگی:* ${destAgentPhone}%0A` +
+               `📞 *پشتیبانی مدیریت:* ${SUPPORT_PHONE}`;
     window.open(`https://wa.me/${phone}?text=${text}`, '_blank');
   }
 
@@ -783,7 +814,19 @@
     let c = customers.find(x => x.id === r.custId);
     if (c && c.phone) {
       let custPhoneNum = c.phone.replace(/[^0-9]/g, '');
-      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
+      let destAgent = branches.find(b => {
+        let loc = (b.location || '').toLowerCase();
+        let name = (b.name || '').toLowerCase();
+        let dest = r.destination.toLowerCase();
+        return dest.includes(loc) || loc.includes(dest) || dest.includes(name) || name.includes(dest);
+      });
+      let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
+      let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone : SUPPORT_PHONE;
+
+      let custText = `🏛 *صرافی عدالت*%0Aمشتری گرامی ${c.name}، حواله شما با کد *${r.code}* توسط نمایندگی تأیید شد و جهت اجرا در مقصد ارسال گردید. ✅%0A` +
+                     `📍 نمایندگی مقصد: ${destAgentName}%0A` +
+                     `📞 شماره تماس نمایندگی مقصد: ${destAgentPhone}%0A` +
+                     `📞 پشتیبانی مدیریت: ${SUPPORT_PHONE}`;
       window.open(`https://wa.me/${custPhoneNum}?text=${custText}`, '_blank');
     }
 
