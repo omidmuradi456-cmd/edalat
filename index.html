@@ -258,8 +258,8 @@
                 <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="openBalanceModal()">📊 رسید باقی‌مانده حساب</button>
               </div>
               <div id="customerEditDeleteBtns">
-                <button class="btn btn-sm btn-warning" onclick="editCustomer()">ویرایش مشتری</button>
-                <button class="btn btn-sm btn-danger" onclick="deleteCustomer()">حذف مشتری</button>
+                <button class="btn btn-sm btn-warning" id="editCustBtn" onclick="editCustomer()">ویرایش مشتری</button>
+                <button class="btn btn-sm btn-danger" id="delCustBtn" onclick="deleteCustomer()">حذف مشتری</button>
               </div>
             </div>
 
@@ -448,6 +448,7 @@
       document.getElementById('currentLoggedInUser').innerText = loggedName;
       document.getElementById('currentUserRole').innerText = loggedRole === 'admin' ? 'مدیر کل' : 'نمایندگی / شریک';
 
+      // کنترل دسترسی ویرایش و حذف مشتری برای نمایندگی‌ها
       if (loggedRole === 'admin') {
         document.getElementById('cardSettingSection').style.display = 'block';
         document.getElementById('branchManagementSection').style.display = 'block';
@@ -456,6 +457,8 @@
         document.getElementById('newCustomerBtn').style.display = 'inline-block';
         document.getElementById('settingCardNum').value = cardSettings.number;
         document.getElementById('settingCardOwner').value = cardSettings.owner;
+        document.getElementById('editCustBtn').style.display = 'inline-block';
+        document.getElementById('delCustBtn').style.display = 'inline-block';
         renderBranchesList();
       } else {
         document.getElementById('cardSettingSection').style.display = 'none';
@@ -463,6 +466,7 @@
         document.getElementById('rateSettingBox').style.display = 'none';
         document.getElementById('backupBox').style.display = 'none';
         document.getElementById('newCustomerBtn').style.display = 'none';
+        // نمایندگی فقط مشتریانی که خودش ثبت کرده را می‌تواند ویرایش/حذف کند (در تابع loadCustomerData بررسی می‌شود)
       }
     } else {
       document.getElementById('adminLoginBox').style.display = 'block';
@@ -573,6 +577,7 @@
       let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
       let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
       let dateNow = new Date().toLocaleDateString('fa-IR');
+      let loggedName = localStorage.getItem('edalat_logged_name') || 'مشتری (وبسایت)';
 
       let originAgent = branches.find(b => {
         let loc = (b.location || '').toLowerCase();
@@ -601,7 +606,7 @@
       let cust = customers.find(x => x.phone === phone);
       let custId = cust ? cust.id : Date.now().toString();
       if (!cust) {
-        customers.push({ id: custId, name: sender, phone, address: origin, notes: 'ثبت خودکار مشتری' });
+        customers.push({ id: custId, name: sender, phone, address: origin, createdBy: loggedName, notes: 'ثبت خودکار مشتری' });
         localStorage.setItem('edalat_customers', JSON.stringify(customers));
       }
 
@@ -618,6 +623,7 @@
         date: dateNow,
         execTime: timeNow,
         executedBy: 'ثبت شده - در انتظار بررسی مبدأ (' + agentNameText + ')',
+        createdBy: loggedName,
         received: amount,
         currReceived: curr,
         sent: calculatedNet.replace(/[^0-9.]/g, ''),
@@ -688,6 +694,14 @@
     document.getElementById('cAddress').innerText = c.address;
     document.getElementById('customerDetailsSection').style.display = 'block';
 
+    let loggedRole = localStorage.getItem('edalat_logged_role');
+    let loggedName = localStorage.getItem('edalat_logged_name') || '';
+
+    // کنترل دکمه‌های ویرایش و حذف مشتری بر اساس ایجادکننده یا مدیر بودن
+    let canManageCustomer = (loggedRole === 'admin' || (c.createdBy && loggedName.includes(c.createdBy.split(' ')[0])));
+    document.getElementById('editCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
+    document.getElementById('delCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
+
     calculateCustomerDeposits(c.id);
     calculateCustomerDebt(c.id);
     renderCustomerCheques(c.id);
@@ -712,7 +726,12 @@
         actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptModal('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
       }
 
-      actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
+      // بررسی دسترسی ویرایش و حذف حواله (فقط مدیر یا ایجادکننده همان حواله)
+      let canManageRem = (loggedRole === 'admin' || (r.createdBy && loggedName.includes(r.createdBy.split(' ')[0])));
+      if (canManageRem) {
+        actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
+      }
+
       actionButtonsHtml += `<button class="btn btn-sm btn-outline-primary" onclick="sendWhatsAppReceipt('${r.id}')">📱 رسید</button>`;
 
       table.innerHTML += `
@@ -931,9 +950,10 @@
     let name = document.getElementById('custName').value;
     let phone = document.getElementById('custPhone').value;
     let address = document.getElementById('custAddress').value;
+    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر';
     if(!name) return;
     let idx = customers.findIndex(x => x.id === id);
-    let obj = { id, name, phone, address };
+    let obj = { id, name, phone, address, createdBy: idx > -1 ? (customers[idx].createdBy || loggedName) : loggedName };
     if(idx > -1) customers[idx] = obj; else customers.push(obj);
     localStorage.setItem('edalat_customers', JSON.stringify(customers));
     custModal.hide();
@@ -977,11 +997,16 @@
     let obj = {
       id, code, custId: currentCustId, paymentType, sender, origin, receiver, destination, destPhone,
       date, execTime: new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'}),
-      executedBy: 'ثبت توسط: ' + loggedName, received, currReceived: '1000000 تومان', sent, currSent: 'افغانی', fee, currFee: '1000000 تومان', status, receiptImage: ''
+      executedBy: 'ثبت توسط: ' + loggedName, createdBy: loggedName, received, currReceived: '1000000 تومان', sent, currSent: 'افغانی', fee, currFee: '1000000 تومان', status, receiptImage: ''
     };
 
     let idx = remittances.findIndex(x => x.id === id);
-    if (idx > -1) remittances[idx] = obj; else remittances.push(obj);
+    if (idx > -1) {
+      obj.createdBy = remittances[idx].createdBy || loggedName; // حفظ ایجادکننده اولیه
+      remittances[idx] = obj;
+    } else {
+      remittances.push(obj);
+    }
     localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
     remModal.hide();
     loadCustomerData(customers.find(x => x.id === currentCustId));
