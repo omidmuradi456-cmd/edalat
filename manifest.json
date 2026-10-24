@@ -1,25 +1,9 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
+  "name": "edalat",
+  "short_name": "edalat",
+  "start_url": "/edalat/",
+  "scope": "/edalat/",
   "display": "standalone",
-  "name": "Sarrafi Edalat",
-  "orientation": "any",
-  "scope": "/",
-  "short_name": "Edalat",
-  "start_url": "/",
-  "theme_color": "#ffffff",
-  "description": "Sarrafi Edalat Online Exchange",
-  "id": "com.edalat.app",
-  "icons": [
-    {
-      "src": "https://via.placeholder.com/192",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://via.placeholder.com/512",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
 }
