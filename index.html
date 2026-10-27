@@ -1,1147 +1,1175 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html>
+
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>صرافی و حواله‌داری عدالت</title>
-  
-  <!-- اتصال به فایل مانیفست برای شناسایی پکیج و PWA -->
-  <link rel="manifest" href="manifest.json">
-  
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSFiddle 5uqe8bcv</title>
+
   <style>
-    body { background-color: #f4f6f9; font-family: Tahoma, Arial, sans-serif; padding-bottom: 30px; }
-    .header-box { background: linear-gradient(135deg, #0d3b66, #0077b6); color: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: center; }
-    .card { border-radius: 12px; border: none; box-shadow: 0 2px 6px rgba(0,0,0,0.06); margin-bottom: 15px; }
-    .phone-input { direction: ltr !important; text-align: left !important; }
-    .rate-badge { cursor: pointer; transition: transform 0.1s; }
-    .rate-badge:hover { transform: scale(1.05); }
-
-    .nav-pills .nav-link {
-      font-weight: bold;
-      border-radius: 10px;
-      color: #0d3b66;
-      background-color: #e9ecef;
-      padding: 12px;
-    }
-    .nav-pills .nav-link.active {
-      background-color: #0d3b66;
-      color: white;
-    }
-
-    .card-box {
-      border: 2px dashed #0d3b66;
-      background-color: #ffffff;
-      border-radius: 12px;
-      padding: 15px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    .card-number {
-      font-size: 1.3rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      color: #0d3b66;
-      margin: 10px 0;
-      direction: ltr;
-    }
-
-    .custom-file-upload {
-      border: 1px solid #ced4da;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 12px;
-      border-radius: 8px;
-      background-color: #fff;
-      cursor: pointer;
-    }
-    .custom-file-upload input[type="file"] { display: none; }
-
-    #adminContentSection { display: none; }
-    .calc-box { background-color: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px; }
-    .deposit-box { background-color: #e3f2fd; border: 1px solid #90caf9; border-radius: 8px; padding: 10px; margin-top: 10px; }
-    .cheque-box { background-color: #fff3cd; border: 1px solid #ffeba1; border-radius: 8px; padding: 10px; margin-top: 10px; }
-    .debt-box { background-color: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; padding: 10px; margin-top: 10px; }
+    
   </style>
+
+  
+</head>
+<body>
+  <!DOCTYPE html>
+<html lang="fa" dir="rtl" id="htmlRoot" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Work Manager - مدیریت کار و معاش</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --surface: #1e293b;
+            --text-main: #f8fafc;
+            --text-secondary: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --border: #334155;
+            --border-light: #475569;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            --radius: 14px;
+        }
+
+        [data-theme="light"] {
+            --bg-main: #f1f5f9;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-secondary: #64748b;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --border: #cbd5e1;
+            --border-light: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+
+        nav {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .brand-logo { font-size: 1.1rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        
+        .menu-toggle-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-main);
+            padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 1.2rem; display: none;
+        }
+
+        .app-container {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 280px;
+            background-color: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            height: calc(100vh - 61px);
+            position: sticky;
+            top: 61px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        [dir="ltr"] .sidebar { border-left: none; border-right: 1px solid var(--border); }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+        [dir="ltr"] .nav-btn { text-align: left; }
+        .nav-btn.active, .nav-btn:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        main { flex: 1; padding: 24px; max-width: 900px; margin: 0 auto; width: 100%; overflow-y: auto; }
+
+        header.top-bar {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+            background: var(--surface); padding: 16px 20px; border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); }
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 14px; }
+        @media(min-width: 600px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+        .stat-title { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 4px; }
+        .stat-value { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+
+        button, .btn { background-color: var(--primary); color: white; border: none; padding: 12px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.2s; }
+        button:hover { background-color: var(--primary-hover); }
+        .btn-danger { background-color: var(--danger); width: auto; padding: 6px 14px; font-size: 0.85rem; }
+        .btn-warning { background-color: var(--warning); width: auto; padding: 6px 14px; font-size: 0.85rem; color: #fff; }
+        .btn-success { background-color: var(--success); width: auto; padding: 8px 14px; font-size: 0.85rem; color: #fff; margin-bottom: 12px; }
+
+        input, select, textarea { width: 100%; padding: 12px; background: var(--bg-main); border: 1px solid var(--border); border-radius: 10px; color: var(--text-main); margin-top: 6px; margin-bottom: 14px; font-size: 0.95rem; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); }
+        label { font-weight: 600; font-size: 0.9rem; color: var(--text-secondary); display: block; }
+
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 0.9rem; min-width: 450px; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid var(--border); }
+        [dir="ltr"] th, [dir="ltr"] td { text-align: left; }
+        th { background-color: rgba(128,128,128,0.1); color: var(--text-secondary); }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        .preview-img { max-width: 70px; max-height: 70px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; object-fit: cover; }
+        .employer-box { background: var(--bg-main); padding: 14px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
+
+        /* Responsive Mobile Styles */
+        @media (max-width: 768px) {
+            .menu-toggle-btn { display: inline-flex; align-items: center; justify-content: center; }
+            .sidebar {
+                position: fixed;
+                right: -280px;
+                top: 61px;
+                height: calc(100vh - 61px);
+                z-index: 999;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            }
+            [dir="ltr"] .sidebar { right: auto; left: -280px; }
+            .sidebar.mobile-open { right: 0; }
+            [dir="ltr"] .sidebar.mobile-open { left: 0; }
+            main { padding: 14px; }
+        }
+
+        #imgModal {
+            display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 20px;
+        }
+        #imgModal img { max-width: 100%; max-height: 90vh; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        #imgModal .close-btn {
+            position: absolute; top: 20px; left: 20px; background: #fff; color: #000; border: none;
+            width: 40px; height: 40px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;
+        }
+    </style>
 </head>
 <body>
 
-<div class="container my-2">
-
-  <!-- هدر اصلی صرافی -->
-  <div class="header-box">
-    <h4 class="fw-bold m-0">🏛 صرافی و حواله‌داری عدالت</h4>
-    <p class="mb-1 small">مدیریت: دکتر روح‌الله مرادی (مسئول حواله‌داری عمومی)</p>
-    <p class="mb-0 small">پشتیبانی مرکزی: <span dir="ltr">+989962671189</span></p>
-  </div>
-
-  <!-- تب‌های راهبری -->
-  <ul class="nav nav-pills nav-justified mb-3 gap-2" id="appTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#clientTabContent" type="button" role="tab">📱 ثبت و پیگیری حواله (مشتریان)</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#adminTabContent" type="button" role="tab">⚙️ مدیریت و اجرای حواله‌ها (ویژه مسئول)</button>
-    </li>
-  </ul>
-
-  <div class="tab-content" id="appTabsContent">
-
-    <!-- ==================== بخش اول: مشتریان ==================== -->
-    <div class="tab-pane fade show active" id="clientTabContent" role="tabpanel">
-      
-      <div class="card-box">
-        <h6 class="fw-bold text-dark mb-1">💳 شماره حساب / کارت صرافی عدالت</h6>
-        <div class="card-number" id="displayCardNum">6037 - 9979 - 0000 - 0000</div>
-        <div class="small text-muted mb-2" id="displayCardOwner">به نام: صرافی و حواله‌داری عدالت (دکتر روح‌الله مرادی)</div>
-        <button class="btn btn-sm btn-outline-primary fw-bold" onclick="copyCardNumber()">📋 کپی شماره کارت</button>
-      </div>
-
-      <div class="card p-3 mb-3">
-        <h5 class="fw-bold text-primary mb-3 text-center">📝 مشخصات حواله را با دقت وارد کنید:</h5>
-        <div class="row g-2">
-          <div class="col-12"><label class="small fw-bold">👤 نام و تخلص فرستنده *</label><input type="text" id="reqSender" class="form-control" placeholder="مثال: احمد احمدی"></div>
-          <div class="col-12"><label class="small fw-bold">📞 شماره تماس فرستنده *</label><input type="text" id="reqPhone" class="form-control phone-input" placeholder="+358..."></div>
-          <div class="col-12"><label class="small fw-bold">📍 مبدأ (کشور، شهر و آدرس) *</label><input type="text" id="reqOrigin" class="form-control" placeholder="مثال: فنلاند، هلسینکی..."></div>
-          <div class="col-12"><label class="small fw-bold">👥 نام و تخلص گیرنده *</label><input type="text" id="reqReceiver" class="form-control" placeholder="مثال: محمود محمودزاده"></div>
-          <div class="col-12"><label class="small fw-bold">📞 شماره تماس گیرنده *</label><input type="text" id="reqRecPhone" class="form-control phone-input" placeholder="+93..."></div>
-          <div class="col-12"><label class="small fw-bold">📍 مقصد (کشور / شهر گیرنده) *</label><input type="text" id="reqDestination" class="form-control" placeholder="مثال: افغانستان، کابل..."></div>
-          <div class="col-7"><label class="small fw-bold">💵 مبلغ حواله *</label><input type="text" id="reqAmount" class="form-control" placeholder="مثال: 25,000,000" oninput="formatInputNumber(this); calculateClientNet()"></div>
-          <div class="col-5">
-            <label class="small fw-bold">واحد پول (ارز) *</label>
-            <select id="reqCurr" class="form-select" onchange="calculateClientNet()">
-              <option value="1000000 تومان">1000000 تومان</option>
-              <option value="دلار ($)">دلار ($)</option>
-              <option value="یورو (€)">یورو (€)</option>
-              <option value="افغانی">افغانی</option>
-              <option value="کلدار">کلدار</option>
-              <option value="لیر">لیر (ترکیه)</option>
+    <nav>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰</button>
+            <div class="brand-logo">
+                <span>⚙️</span> My Work Manager
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="btn" style="width: auto; padding: 6px 12px; font-size: 0.9rem;" onclick="toggleTheme()" id="themeToggleBtn">☀️</button>
+            <select id="languageSelector" onchange="changeLanguage(this.value)" style="margin:0; width:95px; padding:6px; font-size:0.85rem;">
+                <option value="fa">فارسی</option>
+                <option value="fi">Suomi</option>
             </select>
-          </div>
-
-          <div class="col-12 mt-2">
-            <label class="small fw-bold text-success">🎯 ارز درخواستی برای تحویل در مقصد *</label>
-            <select id="reqDestCurr" class="form-select border-success fw-bold" onchange="calculateClientNet()">
-              <option value="افغانی">افغانی (افغانستان)</option>
-              <option value="1000000 تومان">تومان (ایران)</option>
-              <option value="دلار ($)">دلار ($)</option>
-              <option value="یورو (€)">یورو (€)</option>
-              <option value="کلدار">کلدار (پاکستان)</option>
-              <option value="لیر">لیر (ترکیه)</option>
-            </select>
-          </div>
-
-          <div class="col-12 mt-2">
-            <div class="calc-box text-center">
-              <span class="small text-muted d-block mb-1">🧮 مبلغ دریافتی خالص در مقصد (محاسبه خودکار):</span>
-              <h5 class="fw-bold text-success m-0" id="calculatedNetText">0 افغانی</h5>
-            </div>
-          </div>
-
-          <div class="col-12 mt-2">
-            <label class="small fw-bold">🧾 عکس فیش واریزی (رسید پرداخت) *</label>
-            <label class="custom-file-upload mt-1">
-              <span id="fileNameLabel" class="text-muted small">هیچ فایلی انتخاب نشده است</span>
-              <span class="btn btn-sm btn-secondary fw-bold">📁 انتخاب عکس</span>
-              <input type="file" id="reqReceiptFile" accept="image/*" onchange="updateFileName(this)">
-            </label>
-          </div>
-
-          <div class="col-12 mt-3">
-            <button class="btn btn-success w-100 fw-bold py-2 fs-5" onclick="submitClientRemittance()">🚀 ارسال و ثبت حواله</button>
-          </div>
         </div>
-      </div>
+    </nav>
 
-      <div class="card p-3 text-center">
-        <h5 class="fw-bold text-primary mb-2">🔍 پیگیری وضعیت حواله</h5>
-        <div class="input-group mb-2">
-          <input type="text" id="clientSearchCode" class="form-control text-center fs-5" placeholder="مثلاً: REM-1234">
-          <button class="btn btn-primary fw-bold" onclick="trackClientRemittance()">جستجو</button>
-        </div>
-        <div id="clientSearchResult" style="display: none;" class="text-start mt-3">
-          <div class="card p-3 bg-light border-primary">
-            <h6 class="text-primary fw-bold border-bottom pb-2">🧾 اطلاعات حواله</h6>
-            <p class="mb-1">🆔 <strong>کد حواله:</strong> <span id="trCode"></span></p>
-            <p class="mb-1">👤 <strong>فرستنده:</strong> <span id="trSender"></span></p>
-            <p class="mb-1">👤 <strong>گیرنده:</strong> <span id="trReceiver"></span></p>
-            <p class="mb-1">📍 <strong>مقصد:</strong> <span id="trDest"></span></p>
-            <p class="mb-1">💵 <strong>مبلغ تحویلی:</strong> <span id="trAmount" class="fw-bold text-success"></span></p>
-            <p class="mb-0">📌 <strong>وضعیت:</strong> <span id="trStatus" class="badge"></span></p>
-          </div>
-        </div>
-      </div>
+    <div class="app-container">
+        <!-- Sidebar Menu -->
+        <aside class="sidebar" id="appSidebar">
+            <button class="nav-btn active" onclick="switchView('dashboard', this, 'dashTitle')" data-i18n="navDashboard">📊 داشبورد</button>
+            <button class="nav-btn" onclick="switchView('companies', this, 'compListTitle')" data-i18n="navCompanies">🏢 مدیریت شرکت‌ها</button>
+            <button class="nav-btn" onclick="switchView('profile', this, 'profileTitle')" data-i18n="navProfile">👤 پروفایل شخصی</button>
+            <button class="nav-btn" onclick="switchView('shifts', this, 'shiftAddTitle')" data-i18n="navShifts">⏱️ ساعات کاری و شیفت‌ها</button>
+            <button class="nav-btn" onclick="switchView('payroll', this, 'payAddTitle')" data-i18n="navPayroll">💶 معاش و پرداخت‌ها</button>
+            <button class="nav-btn" onclick="switchView('monthlySheets', this, 'sheetTitle')" data-i18n="navMonthlySheets">📑 برگه ساعات ماهانه</button>
+            <button class="nav-btn" onclick="switchView('contracts', this, 'docAddTitle')" data-i18n="navContracts">📜 قراردادها و اسناد</button>
+            <button class="nav-btn" onclick="switchView('leave', this, 'leaveTitle')" data-i18n="navLeave">🩺 مرخصی و بیماری</button>
+            <button class="nav-btn" onclick="switchView('calendar', this, 'calendarTitle')" data-i18n="navCalendar">📅 تقویم کاری</button>
+            <button class="nav-btn" onclick="switchView('reports', this, 'reportsTitle')" data-i18n="navReports">📈 گزارش‌گیری پیشرفته</button>
+            <button class="nav-btn" onclick="switchView('settings', this, 'settingsTitle')" data-i18n="navSettings">⚙️ تنظیمات</button>
+        </aside>
 
-    </div>
+        <!-- Main Content Area -->
+        <main>
+            <header class="top-bar">
+                <h3 id="currentViewTitle" data-i18n="dashTitle">داشبورد مدیریتی</h3>
+                <select id="globalCompanyFilter" onchange="refreshAllDataViews()" style="margin:0; width:140px; padding:8px;">
+                    <option value="all" data-i18n="optAllCompanies">همه شرکت‌ها</option>
+                </select>
+            </header>
 
-    <!-- ==================== بخش دوم: مدیریت ==================== -->
-    <div class="tab-pane fade" id="adminTabContent" role="tabpanel">
-      
-      <div id="adminLoginBox" class="card p-4 text-center">
-        <h5 class="fw-bold text-primary mb-3">🔒 ورود به پنل مدیریت و نمایندگی</h5>
-        <div class="mb-2"><input type="text" id="loginUsername" class="form-control text-center fs-6" placeholder="نام کاربری"></div>
-        <div class="mb-3"><input type="password" id="loginPassword" class="form-control text-center fs-6" placeholder="رمز عبور"></div>
-        <button class="btn btn-primary w-100 fw-bold py-2" onclick="checkLogin()">ورود 🔓</button>
-      </div>
-
-      <div id="adminContentSection">
-        <div class="alert alert-warning d-flex justify-content-between align-items-center p-2 mb-3">
-          <div>
-            <span class="fw-bold">🔑 خوش آمدید: <span id="currentLoggedInUser" class="text-primary"></span></span>
-            <span class="badge bg-success ms-2" id="currentUserRole">مدیر کل</span>
-          </div>
-          <button class="btn btn-sm btn-danger fw-bold" onclick="logoutAdmin()">خروج 🔒</button>
-        </div>
-
-        <div id="cardSettingSection" class="card p-3 border-success mb-3" style="display: none;">
-          <h5 class="fw-bold text-success border-bottom pb-2">💳 مدیریت و تغییر شماره کارت صرافی</h5>
-          <div class="row g-2 align-items-center">
-            <div class="col-md-6"><label class="small fw-bold">شماره کارت:</label><input type="text" id="settingCardNum" class="form-control form-control-sm text-center"></div>
-            <div class="col-md-6"><label class="small fw-bold">نام صاحب حساب:</label><input type="text" id="settingCardOwner" class="form-control form-control-sm"></div>
-            <div class="col-12 mt-2"><button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveCardSettings()">💾 ذخیره کارت</button></div>
-          </div>
-        </div>
-
-        <div id="branchManagementSection" class="card p-3 border-primary mb-3" style="display: none;">
-          <h5 class="fw-bold text-primary border-bottom pb-2">👥 مدیریت نمایندگی‌ها</h5>
-          <div class="row g-2 mb-3">
-            <input type="hidden" id="branchId">
-            <div class="col-md-3"><label class="small fw-bold">نام کاربری *</label><input type="text" id="branchUsername" class="form-control form-control-sm"></div>
-            <div class="col-md-3"><label class="small fw-bold">رمز عبور *</label><input type="text" id="branchPassword" class="form-control form-control-sm"></div>
-            <div class="col-md-3"><label class="small fw-bold">نام نمایندگی *</label><input type="text" id="branchName" class="form-control form-control-sm"></div>
-            <div class="col-md-3"><label class="small fw-bold">کشور / شهر *</label><input type="text" id="branchLocation" class="form-control form-control-sm"></div>
-            <div class="col-md-12 mt-2"><label class="small fw-bold">شماره تماس *</label><input type="text" id="branchPhone" class="form-control form-control-sm phone-input" placeholder="+358..."></div>
-            <div class="col-12 mt-2"><button class="btn btn-success btn-sm w-100 fw-bold" onclick="saveBranchUser()">💾 ذخیره نمایندگی</button></div>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-sm table-bordered text-center align-middle bg-white">
-              <thead class="table-light"><tr><th>نام</th><th>شهر</th><th>شماره تماس</th><th>عملیات</th></tr></thead>
-              <tbody id="branchesTableBody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card p-3 mb-3">
-          <h5 class="fw-bold mb-2">📋 مدیریت و اجرای حواله‌ها</h5>
-
-          <div id="rateSettingBox" class="card p-3 border-info bg-light">
-            <h6 class="fw-bold text-info border-bottom pb-2">⚙️ تنظیم نرخ ارزها:</h6>
-            <div class="row g-2 align-items-center">
-              <div class="col-6"><select id="rateFromCurr" class="form-select form-select-sm"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option><option value="افغانی">افغانی</option></select></div>
-              <div class="col-6"><select id="rateToCurr" class="form-select form-select-sm"><option value="افغانی">افغانی</option><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="یورو (€)">یورو</option></select></div>
-              <div class="col-7 mt-2"><input type="text" id="rateValue" class="form-control form-control-sm" placeholder="نرخ" oninput="formatInputNumber(this)"></div>
-              <div class="col-5 mt-2"><button class="btn btn-primary btn-sm w-100 fw-bold" onclick="addOrUpdateRate()">ثبت نرخ</button></div>
-            </div>
-            <div id="activeRatesList" class="d-flex flex-wrap gap-1 mt-2"></div>
-          </div>
-
-          <div id="backupBox" class="d-flex justify-content-center gap-2 my-3">
-            <button class="btn btn-sm btn-outline-primary" onclick="exportBackup()">📥 پشتیبان</button>
-            <button class="btn btn-sm btn-outline-success" onclick="document.getElementById('importFile').click()">📤 بازیابی</button>
-            <input type="file" id="importFile" style="display:none;" onchange="importBackup(event)" accept=".json">
-          </div>
-
-          <div class="mt-3">
-            <h6>🔍 جستجوی مشتری یا کد حواله</h6>
-            <div class="input-group">
-              <input type="text" id="searchInput" class="form-control" placeholder="نام، شماره تلفن یا کد حواله..." onkeyup="if(event.key==='Enter') handleSearch()">
-              <button class="btn btn-primary" onclick="handleSearch()">جستجو</button>
-              <button class="btn btn-success" id="newCustomerBtn" onclick="showCustomerModal()">مشتری جدید</button>
-            </div>
-          </div>
-
-          <div id="customerDetailsSection" class="mt-3" style="display: none;">
-            
-            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-              <div class="d-flex gap-2 flex-wrap" id="adminActionButtons">
-                <button class="btn btn-sm btn-success fw-bold" onclick="showRemittanceModal()">+ افزودن حواله جدید</button>
-                <button class="btn btn-sm btn-info text-white fw-bold" onclick="showDepositModal()">💰 ثبت واریزی پیشکی (سپرده)</button>
-                <button class="btn btn-sm btn-warning text-dark fw-bold" onclick="showChequeModal()">🧾 ثبت چک جدید از مشتری</button>
-                <button class="btn btn-sm text-white fw-bold" style="background-color: #6f42c1;" onclick="openBalanceModal()">📊 رسید باقی‌مانده حساب</button>
-              </div>
-              <div id="customerEditDeleteBtns">
-                <button class="btn btn-sm btn-warning" id="editCustBtn" onclick="editCustomer()">ویرایش مشتری</button>
-                <button class="btn btn-sm btn-danger" id="delCustBtn" onclick="deleteCustomer()">حذف مشتری</button>
-              </div>
-            </div>
-
-            <div class="card p-3 bg-white mb-2">
-              <h5>نام مشتری: <span id="cName" class="text-primary"></span></h5>
-              <p class="mb-1">📱 شماره: <span id="cPhone" dir="ltr"></span> | 📍 آدرس: <span id="cAddress"></span></p>
-              
-              <div class="deposit-box">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                  <div>
-                    <h6 class="fw-bold text-dark m-0">💼 موجودی کیف پول پیشکی (سپرده):</h6>
-                    <div id="cDepositsSummary" class="fw-bold text-primary fs-5 mt-1">۰ تومان</div>
-                  </div>
-                  <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-success fw-bold" onclick="openDepositNoticeModal()">📲 یادآوری کیف پول</button>
-                    <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editWalletBalance()">✏️ ویرایش</button>
-                    <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDeposits()">🗑️ پاک کردن</button>
-                  </div>
+            <!-- 1. Dashboard -->
+            <section id="view-dashboard" class="view-section active" data-title-key="dashTitle">
+                <div class="stat-card"><span class="stat-title" data-i18n="statCompanies">شرکت‌های ثبت‌شده</span><span class="stat-value" id="dashTotalCompanies">0</span></div>
+                <div class="stat-card"><span class="stat-title" data-i18n="statHours">مجموع ساعات</span><span class="stat-value" id="dashTotalHours">0 ساعت</span></div>
+                <div class="stat-card"><span class="stat-title" data-i18n="statGross">کل درآمد (ناخالص)</span><span class="stat-value" id="dashGrossPay">0.00 €</span></div>
+                
+                <div class="card">
+                    <h4 data-i18n="dashRecentShifts" style="margin-bottom: 12px; color: var(--text-secondary);">آخرین شیفت‌های ثبت‌شده</h4>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thDate">تاریخ</th><th data-i18n="thCompany">شرکت</th><th data-i18n="thHours">ساعت</th><th data-i18n="thPay">معاش</th></tr></thead>
+                            <tbody id="dashShiftsTableBody"><tr><td colspan="4" style="text-align:center;" data-i18n="msgNoRecord">ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
                 </div>
-              </div>
+            </section>
 
-              <div class="cheque-box mt-2">
-                <h6 class="fw-bold text-dark m-0 mb-1">📑 چک‌های دریافتی امانتی از مشتری:</h6>
-                <div id="chequesTableContainer" class="table-responsive"></div>
-              </div>
+            <!-- 2. Companies -->
+            <section id="view-companies" class="view-section" data-title-key="compListTitle">
+                <div class="card">
+                    <h3 data-i18n="compAddTitle" style="margin-bottom: 14px;">افزودن / ویرایش شرکت و کارفرمایان</h3>
+                    <form onsubmit="saveCompany(event)">
+                        <input type="hidden" id="editCompanyId">
+                        <label data-i18n="lblCompanyName">نام شرکت</label>
+                        <input type="text" id="compName" required data-i18n-placeholder="phCompanyName" placeholder="نام شرکت را وارد کنید">
+                        
+                        <label data-i18n="lblHourlyRate">نرخ معاش ساعتی (€)</label>
+                        <input type="text" id="compRate" required data-i18n-placeholder="phHourlyRate" placeholder="مثال: 12.5">
 
-              <div class="debt-box mt-2">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                  <div>
-                    <h6 class="fw-bold text-danger m-0">❌ باقی‌مانده بدهی (حواله‌های قرض):</h6>
-                    <div id="cDebtSummary" class="fw-bold text-danger fs-5 mt-1">۰ تومان</div>
-                  </div>
-                  <div class="d-flex flex-wrap gap-1">
-                    <button class="btn btn-sm btn-success fw-bold" onclick="openDebtNoticeModal()">📲 یادآوری بدهی</button>
-                    <button class="btn btn-sm btn-warning fw-bold text-dark" onclick="editCustomerDebt()">✏️ ویرایش بدهی</button>
-                    <button class="btn btn-sm btn-outline-danger fw-bold" onclick="clearCustomerDebt()">🗑️ تسویه</button>
-                  </div>
+                        <hr style="margin: 20px 0; border:0; border-top:1px solid var(--border);">
+                        <h4 data-i18n="lblEmployersListTitle" style="margin-bottom: 12px;">کارفرمایان این شرکت</h4>
+                        <div id="employersContainer"></div>
+                        <button type="button" class="btn btn-success" onclick="addEmployerField()" data-i18n="btnAddEmployer">+ افزودن کارفرما</button>
+                        
+                        <button type="submit" class="btn" style="margin-top: 14px;" data-i18n="btnSaveCompany">ذخیره شرکت</button>
+                    </form>
                 </div>
-              </div>
+                <div class="card">
+                    <h3 data-i18n="compListTitle" style="margin-bottom: 14px;">فهرست شرکت‌ها</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thName">نام شرکت</th><th data-i18n="thEmployers">کارفرمایان</th><th data-i18n="thRate">نرخ</th><th data-i18n="thActions">عملیات</th></tr></thead>
+                            <tbody id="companiesTableBody"><tr><td colspan="4" style="text-align:center;" data-i18n="msgNoCompany">شرکتی ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-            </div>
+            <!-- 3. Profile -->
+            <section id="view-profile" class="view-section" data-title-key="profileTitle">
+                <div class="card">
+                    <h3 data-i18n="profileTitle" style="margin-bottom: 14px;">پروفایل شخصی کاربر</h3>
+                    <form onsubmit="saveProfile(event)">
+                        <label data-i18n="lblFullName">نام و نام خانوادگی</label>
+                        <input type="text" id="profileName" data-i18n-placeholder="phFullName" placeholder="نام خود را وارد کنید">
+                        <label data-i18n="lblEmail">ایمیل یا شماره تماس</label>
+                        <input type="text" id="profileContact" data-i18n-placeholder="phEmail" placeholder="ایمیل یا تلفن">
+                        <button type="submit" class="btn" data-i18n="btnSaveProfile">ذخیره پروفایل</button>
+                    </form>
+                </div>
+            </section>
 
-            <div class="table-responsive">
-              <table class="table table-sm table-striped text-center align-middle">
-                <thead class="table-dark">
-                  <tr>
-                    <th>کد</th>
-                    <th>نوع</th>
-                    <th>فرستنده / گیرنده</th>
-                    <th>مبلغ دریافتی</th>
-                    <th>کارمزد</th>
-                    <th>خالص مقصد</th>
-                    <th>مجری / تاریخ</th>
-                    <th>وضعیت</th>
-                    <th>عملیات</th>
-                  </tr>
-                </thead>
-                <tbody id="remittancesTable"></tbody>
-              </table>
-            </div>
-          </div>
+            <!-- 4. Shifts -->
+            <section id="view-shifts" class="view-section" data-title-key="shiftAddTitle">
+                <div class="card">
+                    <h3 data-i18n="shiftAddTitle" style="margin-bottom: 14px;">ثبت / ویرایش شیفت کاری</h3>
+                    <form onsubmit="saveShift(event)">
+                        <input type="hidden" id="editShiftId">
+                        <label data-i18n="lblSelectCompany">انتخاب شرکت</label><select id="shiftCompanyId" required></select>
+                        <label data-i18n="lblShiftDate">تاریخ کار</label><input type="date" id="shiftDate" required>
+                        <div class="grid-2">
+                            <div><label data-i18n="lblTimeStart">ساعت شروع</label><input type="time" id="shiftStart" required value=""></div>
+                            <div><label data-i18n="lblTimeEnd">ساعت پایان</label><input type="time" id="shiftEnd" required value=""></div>
+                        </div>
+                        <label data-i18n="lblBreakHours">استراحت بدون حقوق (ساعت)</label><input type="number" id="shiftBreak" step="0.25" value="0">
+                        <button type="submit" class="btn" data-i18n="btnSaveShift">ثبت شیفت کاری</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="shiftListTitle" style="margin-bottom: 14px;">فهرست شیفت‌ها</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thDate">تاریخ</th><th data-i18n="thCompany">شرکت</th><th data-i18n="thHours">ساعت</th><th data-i18n="thPay">معاش</th><th data-i18n="thActions">عملیات</th></tr></thead>
+                            <tbody id="shiftsTableBody"><tr><td colspan="5" style="text-align:center;" data-i18n="msgNoRecord">رکوردی ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
-        </div>
-      </div>
+            <!-- 5. Payroll -->
+            <section id="view-payroll" class="view-section" data-title-key="payAddTitle">
+                <div class="card">
+                    <h3 data-i18n="payAddTitle" style="margin-bottom: 14px;">ثبت / ویرایش پرداخت</h3>
+                    <form onsubmit="savePayment(event)">
+                        <input type="hidden" id="editPaymentId">
+                        <label data-i18n="lblSelectCompany">انتخاب شرکت</label><select id="paymentCompanyId" required></select>
+                        <label data-i18n="lblPayDate">تاریخ پرداخت</label><input type="date" id="paymentDate" required>
+                        <label data-i18n="lblPayAmount">مبلغ دریافتی (€)</label><input type="text" id="paymentAmount" required placeholder="0.00">
+                        <label data-i18n="lblPayMethod">روش پرداخت</label>
+                        <select id="paymentMethod" required>
+                            <option value="bank" data-i18n="optBank">پرداخت به کارت بانکی (Pankkisiirto / Kortti)</option>
+                            <option value="cash" data-i18n="optCash">پرداخت پول نقد (Käteinen)</option>
+                        </select>
+                        <button type="submit" class="btn" data-i18n="btnSavePay">ثبت پرداخت</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="payLedgerTitle" style="margin-bottom: 14px;">فهرست پرداخت‌های انجام‌شده</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thDate">تاریخ</th><th data-i18n="thCompany">شرکت</th><th data-i18n="thAmount">مبلغ</th><th data-i18n="thMethod">روش</th><th data-i18n="thActions">عملیات</th></tr></thead>
+                            <tbody id="paymentsTableBody"><tr><td colspan="5" style="text-align:center;" data-i18n="msgNoPayment">پرداختی ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="paySummaryTitle" style="margin-bottom: 14px;">دفتر مانده معاش و طلب‌ها</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thCompany">شرکت</th><th data-i18n="thGrossTotal">کل حقوق</th><th data-i18n="thReceived">دریافتی</th><th data-i18n="thRemaining">باقی‌مانده</th></tr></thead>
+                            <tbody id="payrollSummaryTableBody"><tr><td colspan="4" style="text-align:center;" data-i18n="msgNoData">اطلاعاتی موجود نیست.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
 
+            <!-- 6. Monthly Sheets -->
+            <section id="view-monthlySheets" class="view-section" data-title-key="sheetTitle">
+                <div class="card">
+                    <h3 data-i18n="sheetTitle" style="margin-bottom: 14px;">برگه ساعات ماهانه و آپلود عکس</h3>
+                    <p data-i18n="sheetDesc" style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:14px;">عکس برگه کاغذی را آپلود کنید.</p>
+                    <form onsubmit="saveMonthlySheet(event)">
+                        <input type="hidden" id="editSheetId">
+                        <label data-i18n="lblSelectCompany">انتخاب شرکت</label><select id="sheetCompanyId" required></select>
+                        <label data-i18n="lblMonthYear">ماه و سال</label><input type="month" id="sheetMonthYear" required>
+                        <label data-i18n="lblEmployerHours">ساعات روی برگه کارفرما</label><input type="number" id="sheetEmployerHours" step="0.5" placeholder="0">
+                        <label data-i18n="lblUploadPhoto">آپلود عکس برگه ساعات کاری</label>
+                        <input type="file" id="sheetPhotoInput" accept="image/*">
+                        <button type="submit" class="btn" data-i18n="btnSaveSheet">ذخیره برگه ماهانه</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="sheetListTitle" style="margin-bottom: 14px;">برگه‌های آپلود شده</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thMonth">ماه</th><th data-i18n="thCompany">شرکت</th><th data-i18n="thPhoto">عکس برگه</th><th data-i18n="thActions">عملیات</th></tr></thead>
+                            <tbody id="sheetsTableBody"><tr><td colspan="4" style="text-align:center;" data-i18n="msgNoSheet">برگه‌ای ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. Contracts -->
+            <section id="view-contracts" class="view-section" data-title-key="docAddTitle">
+                <div class="card">
+                    <h3 data-i18n="docAddTitle" style="margin-bottom: 14px;">ثبت / ویرایش قرارداد و اسناد</h3>
+                    <form onsubmit="saveDocument(event)">
+                        <input type="hidden" id="editDocId">
+                        <label data-i18n="lblSelectCompany">انتخاب شرکت</label><select id="docCompanyId" required></select>
+                        <label data-i18n="lblDocType">نوع سند</label>
+                        <select id="docType">
+                            <option value="contract" data-i18n="optContract">قرارداد کاری</option>
+                            <option value="payslip" data-i18n="optPayslip">فیش معاش</option>
+                            <option value="receipt" data-i18n="optReceipt">رسید</option>
+                            <option value="other" data-i18n="optOther">سایر</option>
+                        </select>
+                        <label data-i18n="lblDocTitle">عنوان سند</label><input type="text" id="docTitleInput" required data-i18n-placeholder="defaultDocTitle">
+                        <label data-i18n="lblUploadDocPhoto">آپلود عکس سند یا قرارداد</label>
+                        <input type="file" id="docPhotoInput" accept="image/*">
+                        <button type="submit" class="btn" data-i18n="btnSaveDoc">ذخیره سند</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="docListTitle" style="margin-bottom: 14px;">فهرست اسناد</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th data-i18n="thTitle">عنوان</th><th data-i18n="thType">نوع</th><th data-i18n="thCompany">شرکت</th><th data-i18n="thPhoto">عکس سند</th><th data-i18n="thActions">عملیات</th></tr></thead>
+                            <tbody id="documentsTableBody"><tr><td colspan="5" style="text-align:center;" data-i18n="msgNoDoc">سندی ثبت نشده است.</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 8. Leave / Sickness -->
+            <section id="view-leave" class="view-section" data-title-key="leaveTitle">
+                <div class="card">
+                    <h3 data-i18n="leaveTitle" style="margin-bottom: 14px;">مرخصی و بیماری</h3>
+                    <p data-i18n="leaveDesc" style="color:var(--text-secondary);">ثبت روزهای مرخصی استحقاقی یا استعلاجی (بیماری).</p>
+                    <form onsubmit="saveLeave(event)" style="margin-top: 14px;">
+                        <label data-i18n="lblLeaveType">نوع</label>
+                        <select id="leaveType"><option value="sick" data-i18n="optSick">بیماری (Sairausloma)</option><option value="vacation" data-i18n="optVacation">مرخصی (Loma)</option></select>
+                        <label data-i18n="lblLeaveDate">تاریخ</label><input type="date" id="leaveDate" required>
+                        <button type="submit" class="btn" data-i18n="btnSaveLeave">ثبت مرخصی</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <div class="table-responsive">
+                        <table style="margin-top:0;"><thead><tr><th data-i18n="thDate">تاریخ</th><th data-i18n="thType">نوع</th><th data-i18n="thActions">عملیات</th></tr></thead><tbody id="leaveTableBody"><tr><td colspan="3" style="text-align:center;" data-i18n="msgNoRecord">ثبت نشده است.</td></tr></tbody></table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 9. Calendar -->
+            <section id="view-calendar" class="view-section" data-title-key="calendarTitle">
+                <div class="card">
+                    <h3 data-i18n="calendarTitle" style="margin-bottom: 14px;">تقویم کاری</h3>
+                    <p data-i18n="calendarDesc" style="color:var(--text-secondary);">نمای کلی شیفت‌ها و برنامه‌های کاری شما.</p>
+                    <div id="calendarViewContainer" style="margin-top: 14px;"></div>
+                </div>
+            </section>
+
+            <!-- 10. Advanced Reports -->
+            <section id="view-reports" class="view-section" data-title-key="reportsTitle">
+                <div class="card">
+                    <h3 data-i18n="reportsTitle" style="margin-bottom: 14px;">گزارش‌گیری پیشرفته</h3>
+                    <p data-i18n="reportsDesc" style="color:var(--text-secondary);">تحلیل کلی ساعات و درآمدها بر اساس بازه زمانی.</p>
+                    <div id="reportSummaryBox" style="margin-top: 14px; font-size: 1.1rem; font-weight: bold; color: var(--primary);"></div>
+                </div>
+            </section>
+
+            <!-- 11. Settings -->
+            <section id="view-settings" class="view-section" data-title-key="settingsTitle">
+                <div class="card">
+                    <h3 data-i18n="settingsTitle" style="margin-bottom: 14px;">پشتیبان‌گیری و اطلاعات</h3>
+                    <button class="btn" style="margin-bottom: 12px;" onclick="exportData()" data-i18n="btnExport">پشتیبان‌گیری (JSON)</button>
+                    <button class="btn" style="background: var(--text-secondary);" onclick="importDataPrompt()" data-i18n="btnImport">بازیابی اطلاعات</button>
+                </div>
+            </section>
+        </main>
     </div>
 
-  </div>
-</div>
-
-<!-- مدال نمایش عکس فیش واریزی -->
-<div class="modal fade" id="receiptModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">🧾 تصویر فیش واریزی مشتری</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center bg-dark">
-        <img id="modalReceiptImg" src="" alt="فیش واریزی" style="max-width: 100%; height: auto; border-radius: 6px;">
-      </div>
+    <!-- Modal for viewing full image -->
+    <div id="imgModal">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <img id="modalImg" src="">
     </div>
-  </div>
-</div>
 
-<!-- سایر مدال‌ها -->
-<div class="modal fade" id="customerModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">اطلاعات مشتری</h5></div><div class="modal-body"><input type="hidden" id="customerId"><div class="mb-2"><label>نام و تخلص</label><input type="text" id="custName" class="form-control"></div><div class="mb-2"><label>شماره تماس</label><input type="text" id="custPhone" class="form-control phone-input"></div><div class="mb-2"><label>آدرس</label><input type="text" id="custAddress" class="form-control"></div></div><div class="modal-footer"><button class="btn btn-primary" onclick="saveCustomer()">ذخیره</button></div></div></div></div>
-
-<div class="modal fade" id="depositModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">💰 ثبت واریزی پیشکی</h5></div><div class="modal-body"><div class="mb-2"><label class="fw-bold">مبلغ *</label><input type="text" id="depAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="depCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div></div><div class="modal-footer"><button class="btn btn-success fw-bold" onclick="saveDeposit()">ثبت</button></div></div></div></div>
-
-<div class="modal fade" id="chequeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">🧾 ثبت چک جدید</h5></div><div class="modal-body"><input type="hidden" id="editChequeId"><div class="mb-2"><label>مبلغ *</label><input type="text" id="chqAmount" class="form-control fs-5 fw-bold" oninput="formatInputNumber(this)"></div><div class="mb-2"><label>واحد ارز</label><select id="chqCurr" class="form-select"><option value="1000000 تومان">1000000 تومان</option><option value="دلار ($)">دلار</option><option value="افغانی">افغانی</option></select></div><div class="mb-2"><label>شماره چک *</label><input type="text" id="chqNumber" class="form-control"></div><div class="mb-2"><label>بانک *</label><input type="text" id="chqBank" class="form-control"></div><div class="mb-2"><label>سررسید *</label><input type="text" id="chqDueDate" class="form-control" placeholder="1403/09/10"></div></div><div class="modal-footer"><button class="btn btn-warning fw-bold" onclick="saveCheque()">ذخیره چک</button></div></div></div></div>
-
-<div class="modal fade" id="depositNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-primary">📲 یادآوری کیف پول</h5></div><div class="modal-body"><label>تاریخ یا توضیحات:</label><input type="text" id="depositDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDepositNoticeSMS()">ارسال پیامک</button></div></div></div></div>
-
-<div class="modal fade" id="debtNoticeModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title text-danger">📲 یادآوری بدهی</h5></div><div class="modal-body"><label>آخرین مهلت:</label><input type="text" id="debtDueDateInput" class="form-control text-center fs-5" value="1403/09/15"></div><div class="modal-footer"><button class="btn btn-success w-100 fw-bold" onclick="sendDebtNoticeSMS()">ارسال پیامک</button></div></div></div></div>
-
-<div class="modal fade" id="balanceModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">📅 تعیین مهلت تسویه حساب</h5></div><div class="modal-body"><label>مهلت پرداخت:</label><input type="text" id="dueDateInput" class="form-control text-center fs-5 text-danger" value="1403/08/15"></div><div class="modal-footer"><button class="btn btn-primary w-100 fw-bold" onclick="sendBalanceStatementWithDate()">ارسال پیامک</button></div></div></div></div>
-
-<div class="modal fade" id="remittanceModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="remittanceModalTitle">ثبت / ویرایش حواله</h5></div><div class="modal-body"><input type="hidden" id="remittanceId"><div class="row"><div class="col-md-6 mb-2"><label>نوع پرداخت</label><select id="remPaymentType" class="form-select"><option value="نقدی">نقدی</option><option value="از پیشکی (سپرده)">از پیشکی (سپرده)</option><option value="قرض">قرض</option></select></div><div class="col-md-6 mb-2"><label>تاریخ</label><input type="text" id="remDate" class="form-control" value="1405/07/30"></div><div class="col-md-6 mb-2"><label>فرستنده</label><input type="text" id="remSender" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مبدا</label><input type="text" id="remOrigin" class="form-control"></div><div class="col-md-6 mb-2"><label>گیرنده</label><input type="text" id="remReceiver" class="form-control"></div><div class="col-md-6 mb-2"><label>شهر مقصد</label><input type="text" id="remDestination" class="form-control"></div><div class="col-md-12 mb-2"><label>تلفن نمایندگی</label><input type="text" id="remDestPhone" class="form-control phone-input"></div><div class="col-md-6 mb-2"><label>مبلغ دریافتی</label><input type="text" id="remReceived" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-6 mb-2"><label>کارمزد</label><input type="text" id="remFee" class="form-control" oninput="formatInputNumber(this); autoCalculate()"></div><div class="col-md-12 mb-2"><label>مبلغ خالص ارسالی</label><input type="text" id="remSent" class="form-control bg-light fw-bold" readonly></div><div class="col-md-12 mb-2"><label>وضعیت</label><select id="remStatus" class="form-control"><option value="⏳ در حال بررسی (توسط نمایندگی)">⏳ در حال بررسی</option><option value="🔄 در حال اجرای مقصد">🔄 اجرای مقصد</option><option value="✅ تکمیل شده (اجرا شد)">✅ تکمیل شده</option></select></div></div></div><div class="modal-footer"><button class="btn btn-success" onclick="saveAdminRemittance()">ذخیره حواله</button></div></div></div></div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  let customers = JSON.parse(localStorage.getItem('edalat_customers')) || [];
-  let remittances = JSON.parse(localStorage.getItem('edalat_remittances')) || [];
-  let deposits = JSON.parse(localStorage.getItem('edalat_deposits')) || [];
-  let cheques = JSON.parse(localStorage.getItem('edalat_cheques')) || [];
-  let branches = JSON.parse(localStorage.getItem('edalat_branches')) || [
-    { id: '1', username: 'admin', password: '456250', name: 'دکتر روح‌الله مرادی (مدیر کل)', location: 'مرکزی', phone: '+989962671189', role: 'admin' },
-    { id: '2', username: 'finland', password: '123', name: 'صرافی عدالت فنلاند', location: 'فنلاند', phone: '+358468486118', role: 'agent' }
-  ];
-  let exchangeRates = JSON.parse(localStorage.getItem('edalat_exchange_rates')) || [{ from: '1000000 تومان', to: 'افغانی', rate: 1200 }];
-  let cardSettings = JSON.parse(localStorage.getItem('edalat_card_settings')) || { number: '6037997900000000', owner: 'صرافی عدالت' };
-  const SUPPORT_PHONE = "+989962671189";
-
-  let currentCustId = null;
-  let custModal, remModal, depModal, balModal, chqModal, debtNoticeModal, depositNoticeModal, receiptModal;
-
-  document.addEventListener("DOMContentLoaded", function() {
-    custModal = new bootstrap.Modal(document.getElementById('customerModal'));
-    remModal = new bootstrap.Modal(document.getElementById('remittanceModal'));
-    depModal = new bootstrap.Modal(document.getElementById('depositModal'));
-    balModal = new bootstrap.Modal(document.getElementById('balanceModal'));
-    chqModal = new bootstrap.Modal(document.getElementById('chequeModal'));
-    debtNoticeModal = new bootstrap.Modal(document.getElementById('debtNoticeModal'));
-    depositNoticeModal = new bootstrap.Modal(document.getElementById('depositNoticeModal'));
-    receiptModal = new bootstrap.Modal(document.getElementById('receiptModal'));
-    
-    renderCardDisplay();
-    checkLoginState();
-    renderRates();
-    calculateClientNet();
-  });
-
-  function formatNumber(num) {
-    if (num === null || num === undefined || num === '') return '۰';
-    let cleanVal = String(num).replace(/,/g, '');
-    let n = Number(cleanVal);
-    if (isNaN(n)) return num;
-    return n.toLocaleString('fa-IR');
-  }
-
-  function formatInputNumber(input) {
-    let cursorPosition = input.selectionStart;
-    let originalLength = input.value.length;
-    let cleanVal = input.value.replace(/[^0-9]/g, '');
-    if (cleanVal === '') {
-      input.value = '';
-      return;
-    }
-    let formatted = Number(cleanVal).toLocaleString('en-US');
-    input.value = formatted;
-    let newLength = input.value.length;
-    cursorPosition = Math.max(0, cursorPosition + (newLength - originalLength));
-    input.setSelectionRange(cursorPosition, cursorPosition);
-  }
-
-  function getCleanNumber(val) {
-    if (!val) return 0;
-    return parseFloat(String(val).replace(/,/g, '')) || 0;
-  }
-
-  function renderCardDisplay() {
-    let formattedNum = cardSettings.number.replace(/(\d{4})(?=\d)/g, '$1 - ');
-    document.getElementById('displayCardNum').innerText = formattedNum;
-    document.getElementById('displayCardOwner').innerText = 'به نام: ' + cardSettings.owner;
-  }
-
-  function saveCardSettings() {
-    let num = document.getElementById('settingCardNum').value.trim();
-    let owner = document.getElementById('settingCardOwner').value.trim();
-    if (!num || !owner) return alert('کامل وارد کنید.');
-    cardSettings = { number: num, owner: owner };
-    localStorage.setItem('edalat_card_settings', JSON.stringify(cardSettings));
-    renderCardDisplay();
-    alert('✅ به‌روزرسانی شد.');
-  }
-
-  function checkLoginState() {
-    let loggedUser = localStorage.getItem('edalat_logged_user');
-    let loggedRole = localStorage.getItem('edalat_logged_role');
-    let loggedName = localStorage.getItem('edalat_logged_name');
-
-    if (loggedUser) {
-      document.getElementById('adminLoginBox').style.display = 'none';
-      document.getElementById('adminContentSection').style.display = 'block';
-      document.getElementById('currentLoggedInUser').innerText = loggedName;
-      document.getElementById('currentUserRole').innerText = loggedRole === 'admin' ? 'مدیر کل' : 'نمایندگی / شریک';
-
-      if (loggedRole === 'admin') {
-        document.getElementById('cardSettingSection').style.display = 'block';
-        document.getElementById('branchManagementSection').style.display = 'block';
-        document.getElementById('rateSettingBox').style.display = 'block';
-        document.getElementById('backupBox').style.display = 'flex';
-        document.getElementById('newCustomerBtn').style.display = 'inline-block';
-        document.getElementById('settingCardNum').value = cardSettings.number;
-        document.getElementById('settingCardOwner').value = cardSettings.owner;
-        document.getElementById('editCustBtn').style.display = 'inline-block';
-        document.getElementById('delCustBtn').style.display = 'inline-block';
-        renderBranchesList();
-      } else {
-        document.getElementById('cardSettingSection').style.display = 'none';
-        document.getElementById('branchManagementSection').style.display = 'none';
-        document.getElementById('rateSettingBox').style.display = 'none';
-        document.getElementById('backupBox').style.display = 'none';
-        document.getElementById('newCustomerBtn').style.display = 'none';
-      }
-    } else {
-      document.getElementById('adminLoginBox').style.display = 'block';
-      document.getElementById('adminContentSection').style.display = 'none';
-    }
-  }
-
-  function checkLogin() {
-    let u = document.getElementById('loginUsername').value.trim();
-    let p = document.getElementById('loginPassword').value.trim();
-    let found = branches.find(b => b.username === u && b.password === p);
-    if (found) {
-      localStorage.setItem('edalat_logged_user', found.username);
-      localStorage.setItem('edalat_logged_role', found.role || 'agent');
-      localStorage.setItem('edalat_logged_name', found.name + ' (' + found.location + ')');
-      checkLoginState();
-    } else {
-      alert("⛔️ نام کاربری یا رمز عبور اشتباه است!");
-    }
-  }
-
-  function logoutAdmin() {
-    localStorage.removeItem('edalat_logged_user');
-    localStorage.removeItem('edalat_logged_role');
-    localStorage.removeItem('edalat_logged_name');
-    checkLoginState();
-  }
-
-  function saveBranchUser() {
-    let id = document.getElementById('branchId').value || Date.now().toString();
-    let username = document.getElementById('branchUsername').value.trim();
-    let password = document.getElementById('branchPassword').value.trim();
-    let name = document.getElementById('branchName').value.trim();
-    let location = document.getElementById('branchLocation').value.trim();
-    let phone = document.getElementById('branchPhone').value.trim();
-    if (!username || !password || !name || !location || !phone) return alert('کامل کنید.');
-    let role = (username === 'admin') ? 'admin' : 'agent';
-    let obj = { id, username, password, name, location, phone, role };
-    let idx = branches.findIndex(b => b.id === id);
-    if (idx > -1) branches[idx] = obj; else branches.push(obj);
-    localStorage.setItem('edalat_branches', JSON.stringify(branches));
-    renderBranchesList();
-    alert('✅ ثبت شد.');
-  }
-
-  function renderBranchesList() {
-    let tbody = document.getElementById('branchesTableBody');
-    tbody.innerHTML = '';
-    branches.forEach((b) => {
-      let cleanPhone = b.phone.replace(/[^0-9]/g, '');
-      tbody.innerHTML += `<tr><td><strong>${b.name}</strong></td><td>${b.location}</td><td dir="ltr">+${cleanPhone}</td><td><button class="btn btn-sm btn-warning p-1" onclick="editBranch('${b.id}')">✏️</button></td></tr>`;
-    });
-  }
-
-  function editBranch(id) {
-    let b = branches.find(x => x.id === id);
-    if (!b) return;
-    document.getElementById('branchId').value = b.id;
-    document.getElementById('branchUsername').value = b.username;
-    document.getElementById('branchPassword').value = b.password;
-    document.getElementById('branchName').value = b.name;
-    document.getElementById('branchLocation').value = b.location;
-    document.getElementById('branchPhone').value = b.phone;
-  }
-
-  function updateFileName(input) {
-    if (input.files && input.files[0]) document.getElementById('fileNameLabel').innerText = input.files[0].name;
-  }
-
-  function copyCardNumber() {
-    navigator.clipboard.writeText(cardSettings.number);
-    alert("کپی شد!");
-  }
-
-  function calculateClientNet() {
-    let amt = getCleanNumber(document.getElementById('reqAmount').value);
-    let fromCurr = document.getElementById('reqCurr').value;
-    let toCurr = document.getElementById('reqDestCurr').value;
-    let target = document.getElementById('calculatedNetText');
-    if (amt <= 0) { target.innerText = "0 " + toCurr; return; }
-    if (fromCurr === toCurr) { target.innerText = formatNumber(amt) + ' ' + toCurr; return; }
-    let match = exchangeRates.find(r => r.from.includes(fromCurr));
-    if (match) {
-      let factor = (fromCurr.includes('1000000')) ? 1000000 : 1;
-      let converted = ((amt / factor) * match.rate).toFixed(2);
-      target.innerText = formatNumber(converted) + ' ' + toCurr;
-    } else {
-      target.innerText = "نرخ نامشخص";
-    }
-  }
-
-  function submitClientRemittance() {
-    let sender = document.getElementById('reqSender').value.trim();
-    let phone = document.getElementById('reqPhone').value.trim();
-    let origin = document.getElementById('reqOrigin').value.trim();
-    let receiver = document.getElementById('reqReceiver').value.trim();
-    let destination = document.getElementById('reqDestination').value.trim();
-    let recPhone = document.getElementById('reqRecPhone').value.trim();
-    let amount = getCleanNumber(document.getElementById('reqAmount').value);
-    let curr = document.getElementById('reqCurr').value;
-    let calculatedNet = document.getElementById('calculatedNetText').innerText;
-    let fileInput = document.getElementById('reqReceiptFile');
-
-    if (!sender || !phone || !origin || !receiver || !destination || !recPhone || !amount) {
-      return alert('لطفاً تمامی فیلدهای ستاره‌دار را تکمیل کنید.');
-    }
-
-    let processSubmission = (imageBase64) => {
-      let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
-      let timeNow = new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'});
-      let dateNow = new Date().toLocaleDateString('fa-IR');
-      let loggedName = localStorage.getItem('edalat_logged_name') || 'مشتری (وبسایت)';
-
-      let originAgent = branches.find(b => {
-        let loc = (b.location || '').toLowerCase();
-        let name = (b.name || '').toLowerCase();
-        let orig = origin.toLowerCase();
-        return orig.includes(loc) || loc.includes(orig) || orig.includes(name) || name.includes(orig);
-      });
-      let sendToPhone = originAgent && originAgent.phone ? originAgent.phone.replace(/[^0-9]/g, '') : SUPPORT_PHONE.replace(/[^0-9]/g, '');
-      let agentNameText = originAgent ? originAgent.name + ' (' + originAgent.location + ')' : 'پشتیبانی مرکزی (مدیریت)';
-
-      let destAgent = branches.find(b => {
-        let loc = (b.location || '').toLowerCase();
-        let name = (b.name || '').toLowerCase();
-        let dest = destination.toLowerCase();
-        return dest.includes(loc) || loc.includes(dest) || dest.includes(name) || name.includes(dest);
-      });
-      let destAgentName = destAgent ? destAgent.name + ' (' + destAgent.location + ')' : 'صرافی عدالت مرکزی';
-      let destAgentPhone = destAgent && destAgent.phone ? destAgent.phone : SUPPORT_PHONE;
-
-      let cleanSenderPhone = phone.replace(/[^0-9]/g, '');
-      let cleanRecPhone = recPhone.replace(/[^0-9]/g, '');
-      let cleanDestAgentPhone = destAgentPhone.replace(/[^0-9]/g, '');
-      let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-
-      let formatPhoneForWA = (numStr) => '\u200E+' + numStr + '\u200E';
-
-      let agentMessage = `🏛 *ثبت حواله جدید*%0Aهمکار گرامی، لطفاً بررسی کنید.%0Aکد: ${code}%0Aفرستنده: ${sender}%0Aتلفن: ${formatPhoneForWA(cleanSenderPhone)}%0Aمبلغ: ${formatNumber(amount)} ${curr}`;
-      let customerMessage = `🏛 *صرافی عدالت*%0Aحواله شما ثبت شد.%0Aکد پیگیری: ${code}%0Aمبلغ: ${formatNumber(amount)} ${curr}%0Aپشتیبانی: ${formatPhoneForWA(cleanSupportPhone)}`;
-
-      let agentSMS = `ثبت حواله جدید. کد: ${code}. فرستنده: ${sender}. مبلغ: ${formatNumber(amount)} ${curr}`;
-      let customerSMS = `صرافی عدالت: حواله شما با کد ${code} ثبت شد. پشتیبانی: +${cleanSupportPhone}`;
-
-      let cust = customers.find(x => x.phone === phone);
-      let custId = cust ? cust.id : Date.now().toString();
-      if (!cust) {
-        customers.push({ id: custId, name: sender, phone, address: origin, createdBy: loggedName, notes: 'ثبت خودکار مشتری' });
-        localStorage.setItem('edalat_customers', JSON.stringify(customers));
-      }
-
-      remittances.push({
-        id: Date.now().toString(),
-        code,
-        custId,
-        paymentType: 'نقدی',
-        sender,
-        origin,
-        receiver,
-        destination,
-        destPhone: recPhone,
-        date: dateNow,
-        execTime: timeNow,
-        executedBy: 'ثبت شده - در انتظار بررسی مبدأ (' + agentNameText + ')',
-        createdBy: loggedName,
-        received: amount,
-        currReceived: curr,
-        sent: calculatedNet.replace(/[^0-9.]/g, ''),
-        currSent: document.getElementById('reqDestCurr').value,
-        fee: 0,
-        currFee: curr,
-        status: '⏳ در حال بررسی (توسط نمایندگی)',
-        receiptImage: imageBase64 || ''
-      });
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-
-      let containerCard = document.querySelector('#clientTabContent .card');
-      let actionBox = document.getElementById('multiActionBox');
-      if (!actionBox) {
-        actionBox = document.createElement('div');
-        actionBox.id = 'multiActionBox';
-        actionBox.className = 'mt-3 p-3 border border-success rounded bg-light text-center';
-        containerCard.appendChild(actionBox);
-      }
-
-      let custCleanPhone = phone.replace(/[^0-9]/g, '');
-      actionBox.innerHTML = `
-        <h6 class="fw-bold text-success mb-2">✅ حواله با کد ${code} با موفقیت ثبت شد!</h6>
-        <p class="small text-muted mb-3">از طریق دکمه‌های زیر می‌توانید پیامک یا واتساپ ارسال کنید:</p>
-        <div class="d-grid gap-2">
-          <a href="https://wa.me/${sendToPhone}?text=${encodeURIComponent(agentMessage)}" target="_blank" class="btn btn-success fw-bold">💬 واتساپ به نمایندگی مبدأ</a>
-          <a href="sms:+${sendToPhone}?body=${encodeURIComponent(agentSMS)}" class="btn btn-outline-success fw-bold">📱 پیامک به نمایندگی مبدأ</a>
-          <a href="https://wa.me/${custCleanPhone}?text=${encodeURIComponent(customerMessage)}" target="_blank" class="btn btn-primary fw-bold">💬 واتساپ تاییدیه به مشتری</a>
-          <a href="sms:+${custCleanPhone}?body=${encodeURIComponent(customerSMS)}" class="btn btn-outline-primary fw-bold">📱 پیامک تاییدیه به مشتری</a>
-        </div>
-      `;
-
-      alert('حواله ثبت شد. گزینه‌های ارسال پیامک و واتساپ در پایین صفحه ظاهر شدند.');
-    };
-
-    if (fileInput.files && fileInput.files[0]) {
-      let reader = new FileReader();
-      reader.onload = function(e) {
-        processSubmission(e.target.result);
-      };
-      reader.readAsDataURL(fileInput.files[0]);
-    } else {
-      processSubmission('');
-    }
-  }
-
-  function trackClientRemittance() {
-    let code = document.getElementById('clientSearchCode').value.trim().toUpperCase();
-    let r = remittances.find(x => x.code.toUpperCase() === code);
-    if(r) {
-      document.getElementById('trCode').innerText = r.code;
-      document.getElementById('trSender').innerText = r.sender;
-      document.getElementById('trReceiver').innerText = r.receiver;
-      document.getElementById('trDest').innerText = r.destination;
-      document.getElementById('trAmount').innerText = formatNumber(r.sent) + ' ' + r.currSent;
-      document.getElementById('trStatus').innerText = r.status;
-      document.getElementById('clientSearchResult').style.display = 'block';
-    } else { alert('یافت نشد!'); }
-  }
-
-  function autoCalculate() {
-    let recVal = getCleanNumber(document.getElementById('remReceived').value);
-    let feeVal = getCleanNumber(document.getElementById('remFee').value);
-    let net = (recVal - feeVal > 0) ? recVal - feeVal : 0;
-    document.getElementById('remSent').value = formatNumber(net);
-  }
-
-  function handleSearch() {
-    let q = document.getElementById('searchInput').value.trim().toLowerCase();
-    if(!q) return alert('کد یا نام وارد کنید');
-    let foundRem = remittances.find(r => (r.code || '').toLowerCase() === q);
-    if (foundRem) {
-      let c = customers.find(x => x.id === foundRem.custId);
-      if (c) { currentCustId = c.id; loadCustomerData(c); return; }
-    }
-    let c = customers.find(x => (x.name || '').toLowerCase().includes(q) || (x.phone || '').includes(q));
-    if(c) { currentCustId = c.id; loadCustomerData(c); } else { alert('یافت نشد!'); }
-  }
-
-  function loadCustomerData(c) {
-    document.getElementById('cName').innerText = c.name;
-    document.getElementById('cPhone').innerText = c.phone;
-    document.getElementById('cAddress').innerText = c.address;
-    document.getElementById('customerDetailsSection').style.display = 'block';
-
-    let loggedRole = localStorage.getItem('edalat_logged_role');
-    let loggedName = localStorage.getItem('edalat_logged_name') || '';
-
-    let canManageCustomer = (loggedRole === 'admin' || (c.createdBy && loggedName.includes(c.createdBy.split(' ')[0])));
-    document.getElementById('editCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
-    document.getElementById('delCustBtn').style.display = canManageCustomer ? 'inline-block' : 'none';
-
-    calculateCustomerDeposits(c.id);
-    calculateCustomerDebt(c.id);
-    renderCustomerCheques(c.id);
-
-    let list = remittances.filter(r => r.custId === c.id);
-    let table = document.getElementById('remittancesTable');
-    table.innerHTML = '';
-
-    list.forEach(r => {
-      let isUnderReview = r.status.includes('بررسی');
-      let isDestinationExec = r.status.includes('اجرای مقصد');
-      let isCompleted = r.status.includes('تکمیل شده');
-
-      let actionButtonsHtml = '';
-      if (isUnderReview) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-primary fw-bold" onclick="approveByOrigin('${r.id}')">✅ تأیید</button>`;
-      } else if (isDestinationExec) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-success fw-bold" onclick="completeByDestination('${r.id}')">🚀 تحویل</button>`;
-      }
-
-      if (r.receiptImage) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-info text-white fw-bold" onclick="openReceiptModal('${r.receiptImage}')" title="مشاهده فیش واریزی">🖼️ فیش</button>`;
-      }
-
-      let canManageRem = (loggedRole === 'admin' || (r.createdBy && loggedName.includes(r.createdBy.split(' ')[0])));
-      if (canManageRem) {
-        actionButtonsHtml += `<button class="btn btn-sm btn-warning" onclick="editRemittance('${r.id}')">✏️</button><button class="btn btn-sm btn-danger" onclick="deleteRemittance('${r.id}')">🗑</button>`;
-      }
-
-      // دکمه‌های گزارش مدیریت هم با واتساپ و هم با پیامک
-      actionButtonsHtml += `
-        <button class="btn btn-sm btn-success fw-bold" onclick="sendAdminManagementWhatsApp('${r.id}')">💬 واتساپ به مدیریت</button>
-        <button class="btn btn-sm btn-outline-success fw-bold" onclick="sendAdminManagementSMS('${r.id}')">📱 پیامک به مدیریت</button>
-      `;
-
-      table.innerHTML += `
-        <tr>
-          <td><small>${r.code}</small></td>
-          <td><span class="badge bg-primary">${r.paymentType}</span></td>
-          <td>${r.sender} ➔ ${r.receiver}</td>
-          <td>${formatNumber(r.received)} ${r.currReceived}</td>
-          <td>${formatNumber(r.fee)} ${r.currFee}</td>
-          <td class="fw-bold text-success">${formatNumber(r.sent)} ${r.currSent}</td>
-          <td><small class="text-muted">${r.executedBy || ''}<br>${r.date}</small></td>
-          <td><span class="badge ${isCompleted ? 'bg-success' : 'bg-warning text-dark'}">${r.status}</span></td>
-          <td><div class="d-flex gap-1 justify-content-center flex-wrap">${actionButtonsHtml}</div></td>
-        </tr>`;
-    });
-  }
-
-  function openReceiptModal(base64Data) {
-    document.getElementById('modalReceiptImg').src = base64Data;
-    receiptModal.show();
-  }
-
-  function sendAdminManagementWhatsApp(remId) {
-    let r = remittances.find(x => x.id === remId);
-    if (!r) return;
-    let c = customers.find(x => x.id === r.custId);
-    let formatPhoneForWA = (numStr) => '\u200E+' + numStr + '\u200E';
-    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-
-    let text = `🏛 *گزارش تکمیل و اجرای حواله به مدیریت*%0Aکد: ${r.code}%0Aفرستنده: ${r.sender} (${c ? c.phone : ''})%0Aگیرنده: ${r.receiver}%0Aمبلغ: ${formatNumber(r.sent)} ${r.currSent}%0Aوضعیت: ${r.status}%0A✅ پول به مشتری رسید و اجرا شد.%0A📞 مدیریت: ${formatPhoneForWA(cleanSupportPhone)}`;
-
-    window.open(`https://wa.me/${cleanSupportPhone}?text=${encodeURIComponent(text)}`, '_blank');
-  }
-
-  function sendAdminManagementSMS(remId) {
-    let r = remittances.find(x => x.id === remId);
-    if (!r) return;
-    let c = customers.find(x => x.id === r.custId);
-    let cleanSupportPhone = SUPPORT_PHONE.replace(/[^0-9]/g, '');
-
-    let text = `گزارش تکمیل حواله به مدیریت\nکد: ${r.code}\nفرستنده: ${r.sender} (${c ? c.phone : ''})\nگیرنده: ${r.receiver}\nمبلغ: ${formatNumber(r.sent)} ${r.currSent}\nوضعیت: ${r.status}\nپول به مشتری رسید و اجرا شد.`;
-
-    window.open(`sms:+${cleanSupportPhone}?body=${encodeURIComponent(text)}`, '_blank');
-  }
-
-  function approveByOrigin(remId) {
-    let r = remittances.find(x => x.id === remId);
-    if (!r) return;
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی';
-    r.status = '🔄 در حال اجرای مقصد';
-    r.executedBy = 'تأیید مبدأ: ' + loggedName;
-    localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    loadCustomerData(customers.find(x => x.id === r.custId));
-    alert('✅ واریزی تأیید شد.');
-  }
-
-  function completeByDestination(remId) {
-    let r = remittances.find(x => x.id === remId);
-    if (!r) return;
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'نمایندگی مقصد';
-    r.status = '✅ تکمیل شده (اجرا شد)';
-    r.executedBy += ' | تحویل: ' + loggedName;
-    localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    loadCustomerData(customers.find(x => x.id === r.custId));
-    alert('🚀 حواله با موفقیت تکمیل شد.');
-  }
-
-  function calculateCustomerDeposits(custId) {
-    let custDeps = deposits.filter(d => d.custId === custId);
-    let custRems = remittances.filter(r => r.custId === custId && r.paymentType === 'از پیشکی (سپرده)');
-    let balances = {};
-    custDeps.forEach(d => { balances[d.curr] = (balances[d.curr] || 0) + getCleanNumber(d.amount); });
-    custRems.forEach(r => { balances[r.currReceived] = (balances[r.currReceived] || 0) - getCleanNumber(r.received); });
-    let textArr = [];
-    for (let curr in balances) textArr.push(`${formatNumber(balances[curr])} ${curr}`);
-    document.getElementById('cDepositsSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
-  }
-
-  function calculateCustomerDebt(custId) {
-    let debtRems = remittances.filter(r => r.custId === custId && r.paymentType === 'قرض');
-    let debts = {};
-    debtRems.forEach(r => { debts[r.currReceived] = (debts[r.currReceived] || 0) + getCleanNumber(r.received); });
-    let textArr = [];
-    for (let curr in debts) if (debts[curr] > 0) textArr.push(`${formatNumber(debts[curr])} ${curr}`);
-    document.getElementById('cDebtSummary').innerText = textArr.length > 0 ? textArr.join(' | ') : '۰ تومان';
-  }
-
-  function renderCustomerCheques(custId) {
-    let container = document.getElementById('chequesTableContainer');
-    let list = cheques.filter(x => x.custId === custId);
-    if (list.length === 0) { container.innerHTML = '<span class="text-muted small">چکی ثبت نشده است.</span>'; return; }
-    let html = `<table class="table table-sm table-bordered text-center align-middle bg-white mb-0 mt-1"><thead class="table-warning"><tr><th>چک</th><th>مبلغ</th><th>سررسید</th><th>عملیات</th></tr></thead><tbody>`;
-    list.forEach(ch => {
-      html += `<tr><td>${ch.number}</td><td class="text-success">${formatNumber(ch.amount)} ${ch.curr}</td><td>${ch.dueDate}</td><td><button class="btn btn-sm btn-danger p-1" onclick="deleteCheque('${ch.id}')">🗑️</button></td></tr>`;
-    });
-    html += `</tbody></table>`;
-    container.innerHTML = html;
-  }
-
-  function showDepositModal() { document.getElementById('depAmount').value = ''; depModal.show(); }
-  function saveDeposit() {
-    let amt = getCleanNumber(document.getElementById('depAmount').value);
-    let curr = document.getElementById('depCurr').value;
-    if (!amt) return;
-    deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: amt, curr, date: new Date().toLocaleDateString('fa-IR') });
-    localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
-    depModal.hide();
-    loadCustomerData(customers.find(x => x.id === currentCustId));
-  }
-
-  function showChequeModal() { chqModal.show(); }
-  function saveCheque() {
-    let amt = getCleanNumber(document.getElementById('chqAmount').value);
-    let curr = document.getElementById('chqCurr').value;
-    let number = document.getElementById('chqNumber').value;
-    let bank = document.getElementById('chqBank').value;
-    let dueDate = document.getElementById('chqDueDate').value;
-    if (!amt || !number) return;
-    cheques.push({ id: Date.now().toString(), custId: currentCustId, amount: amt, curr, number, bank, dueDate, status: 'در انتظار' });
-    localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
-    chqModal.hide();
-    loadCustomerData(customers.find(x => x.id === currentCustId));
-  }
-  function deleteCheque(id) {
-    cheques = cheques.filter(x => x.id !== id);
-    localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
-    loadCustomerData(customers.find(x => x.id === currentCustId));
-  }
-
-  function openDepositNoticeModal() { depositNoticeModal.show(); }
-  function sendDepositNoticeSMS() {
-    let c = customers.find(x => x.id === currentCustId);
-    let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    let text = `موجودی کیف پول صرافی عدالت: ${c.name}، موجودی: ${document.getElementById('cDepositsSummary').innerText}.`;
-    depositNoticeModal.hide();
-    window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
-  }
-
-  function editWalletBalance() {
-    let val = prompt('مبلغ جدید کیف پول را وارد کنید:');
-    if (val !== null) {
-      deposits = deposits.filter(d => d.custId !== currentCustId);
-      deposits.push({ id: Date.now().toString(), custId: currentCustId, amount: getCleanNumber(val), curr: '1000000 تومان' });
-      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function clearCustomerDeposits() {
-    if(confirm('پاک شود؟')) {
-      deposits = deposits.filter(d => d.custId !== currentCustId);
-      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function openDebtNoticeModal() { debtNoticeModal.show(); }
-  function sendDebtNoticeSMS() {
-    let c = customers.find(x => x.id === currentCustId);
-    let phoneNum = c.phone.replace(/[^0-9]/g, '');
-    let dueDate = document.getElementById('debtDueDateInput').value;
-    let text = `یادآوری بدهی صرافی عدالت: مبلغ بدهی: ${document.getElementById('cDebtSummary').innerText}، مهلت: ${dueDate}.`;
-    debtNoticeModal.hide();
-    window.open(`sms:+${phoneNum}?body=${encodeURIComponent(text)}`, '_blank');
-  }
-
-  function editCustomerDebt() {
-    let val = prompt('مبلغ جدید بدهی را وارد کنید:');
-    if (val !== null) {
-      let numVal = getCleanNumber(val);
-      let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر';
-      remittances = remittances.filter(r => !(r.custId === currentCustId && r.paymentType === 'قرض'));
-      remittances.push({ id: Date.now().toString(), code: 'DEBT-' + Math.floor(1000+Math.random()*9000), custId: currentCustId, paymentType: 'قرض', sender: 'بدهی', receiver: 'ثبت', received: numVal, currReceived: '1000000 تومان', sent: numVal, currSent: '1000000 تومان', status: '✅ تکمیل شده', createdBy: loggedName });
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function clearCustomerDebt() {
-    if(confirm('تسویه شود؟')) {
-      remittances = remittances.filter(r => !(r.custId === currentCustId && r.paymentType === 'قرض'));
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function openBalanceModal() { balModal.show(); }
-  function sendBalanceStatementWithDate() { balModal.hide(); alert('ارسال شد.'); }
-
-  function showCustomerModal() {
-    document.getElementById('customerId').value = '';
-    document.getElementById('custName').value = '';
-    document.getElementById('custPhone').value = '';
-    document.getElementById('custAddress').value = '';
-    custModal.show();
-  }
-
-  function saveCustomer() {
-    let id = document.getElementById('customerId').value || Date.now().toString();
-    let name = document.getElementById('custName').value;
-    let phone = document.getElementById('custPhone').value;
-    let address = document.getElementById('custAddress').value;
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر';
-    if(!name) return;
-    let idx = customers.findIndex(x => x.id === id);
-    let obj = { id, name, phone, address, createdBy: idx > -1 ? (customers[idx].createdBy || loggedName) : loggedName };
-    if(idx > -1) customers[idx] = obj; else customers.push(obj);
-    localStorage.setItem('edalat_customers', JSON.stringify(customers));
-    custModal.hide();
-    currentCustId = obj.id;
-    loadCustomerData(obj);
-  }
-
-  function showRemittanceModal() {
-    let c = customers.find(x => x.id === currentCustId);
-    if (!c) return alert('ابتدا مشتری را انتخاب کنید.');
-    document.getElementById('remittanceId').value = '';
-    document.getElementById('remSender').value = c.name;
-    document.getElementById('remOrigin').value = c.address || '';
-    document.getElementById('remReceiver').value = '';
-    document.getElementById('remDestination').value = '';
-    document.getElementById('remDestPhone').value = '';
-    document.getElementById('remReceived').value = '';
-    document.getElementById('remFee').value = '';
-    document.getElementById('remSent').value = '';
-    remModal.show();
-  }
-
-  function saveAdminRemittance() {
-    let id = document.getElementById('remittanceId').value || Date.now().toString();
-    let paymentType = document.getElementById('remPaymentType').value;
-    let date = document.getElementById('remDate').value;
-    let sender = document.getElementById('remSender').value;
-    let origin = document.getElementById('remOrigin').value;
-    let receiver = document.getElementById('remReceiver').value;
-    let destination = document.getElementById('remDestination').value;
-    let destPhone = document.getElementById('remDestPhone').value;
-    let received = getCleanNumber(document.getElementById('remReceived').value);
-    let fee = getCleanNumber(document.getElementById('remFee').value);
-    let sent = getCleanNumber(document.getElementById('remSent').value);
-    let status = document.getElementById('remStatus').value;
-    let loggedName = localStorage.getItem('edalat_logged_name') || 'مدیر';
-
-    if (!sender || !receiver || !received) return alert('اطلاعات ناقص است.');
-
-    let code = 'REM-' + Math.floor(1000 + Math.random() * 9000);
-    let obj = {
-      id, code, custId: currentCustId, paymentType, sender, origin, receiver, destination, destPhone,
-      date, execTime: new Date().toLocaleTimeString('fa-IR', {hour: '2-digit', minute:'2-digit'}),
-      executedBy: 'ثبت توسط: ' + loggedName, createdBy: loggedName, received, currReceived: '1000000 تومان', sent, currSent: 'افغانی', fee, currFee: '1000000 تومان', status, receiptImage: ''
-    };
-
-    let idx = remittances.findIndex(x => x.id === id);
-    if (idx > -1) {
-      obj.createdBy = remittances[idx].createdBy || loggedName;
-      remittances[idx] = obj;
-    } else {
-      remittances.push(obj);
-    }
-    localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-    remModal.hide();
-    loadCustomerData(customers.find(x => x.id === currentCustId));
-    alert('✅ حواله با موفقیت ثبت شد.');
-  }
-
-  function editRemittance(id) {
-    let r = remittances.find(x => x.id === id);
-    if (!r) return;
-    document.getElementById('remittanceId').value = r.id;
-    document.getElementById('remPaymentType').value = r.paymentType;
-    document.getElementById('remDate').value = r.date;
-    document.getElementById('remSender').value = r.sender;
-    document.getElementById('remOrigin').value = r.origin;
-    document.getElementById('remReceiver').value = r.receiver;
-    document.getElementById('remDestination').value = r.destination;
-    document.getElementById('remDestPhone').value = r.destPhone || '';
-    document.getElementById('remReceived').value = formatNumber(r.received);
-    document.getElementById('remFee').value = formatNumber(r.fee);
-    document.getElementById('remSent').value = formatNumber(r.sent);
-    document.getElementById('remStatus').value = r.status;
-    remModal.show();
-  }
-
-  function deleteRemittance(id) {
-    if(confirm('حذف شود؟')) {
-      remittances = remittances.filter(x => x.id !== id);
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      loadCustomerData(customers.find(x => x.id === currentCustId));
-    }
-  }
-
-  function editCustomer() {
-    let c = customers.find(x => x.id === currentCustId);
-    if (!c) return;
-    document.getElementById('customerId').value = c.id;
-    document.getElementById('custName').value = c.name;
-    document.getElementById('custPhone').value = c.phone;
-    document.getElementById('custAddress').value = c.address;
-    custModal.show();
-  }
-
-  function deleteCustomer() {
-    if (confirm('آیا از حذف کامل این مشتری و تمام سوابق، حواله‌ها و چک‌های آن اطمینان دارید؟')) {
-      customers = customers.filter(x => x.id !== currentCustId);
-      remittances = remittances.filter(x => x.custId !== currentCustId);
-      deposits = deposits.filter(x => x.custId !== currentCustId);
-      cheques = cheques.filter(x => x.custId !== currentCustId);
-
-      localStorage.setItem('edalat_customers', JSON.stringify(customers));
-      localStorage.setItem('edalat_remittances', JSON.stringify(remittances));
-      localStorage.setItem('edalat_deposits', JSON.stringify(deposits));
-      localStorage.setItem('edalat_cheques', JSON.stringify(cheques));
-
-      document.getElementById('customerDetailsSection').style.display = 'none';
-      currentCustId = null;
-      document.getElementById('searchInput').value = '';
-      alert('✅ مشتری و تمام اطلاعات وابسته به آن به طور کامل از سیستم پاک شد.');
-    }
-  }
-
-  function addOrUpdateRate() {
-    let from = document.getElementById('rateFromCurr').value;
-    let to = document.getElementById('rateToCurr').value;
-    let val = getCleanNumber(document.getElementById('rateValue').value);
-    if (!val || val <= 0) return alert('نرخ نامعتبر است');
-    let idx = exchangeRates.findIndex(r => r.from === from && r.to === to);
-    if (idx > -1) exchangeRates[idx].rate = val; else exchangeRates.push({ from, to, rate: val });
-    localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
-    renderRates();
-    calculateClientNet();
-    document.getElementById('rateValue').value = '';
-    alert('✅ نرخ با موفقیت ثبت شد.');
-  }
-
-  function deleteRate(index) {
-    if (confirm('حذف شود؟')) {
-      exchangeRates.splice(index, 1);
-      localStorage.setItem('edalat_exchange_rates', JSON.stringify(exchangeRates));
-      renderRates();
-      calculateClientNet();
-    }
-  }
-
-  function renderRates() {
-    let box = document.getElementById('activeRatesList');
-    if(!box) return;
-    box.innerHTML = '';
-    exchangeRates.forEach((r, i) => {
-      box.innerHTML += `<span class="badge bg-info text-dark p-2 rate-badge" onclick="deleteRate(${i})">${r.from} = ${formatNumber(r.rate)} ${r.to} ✖</span>`;
-    });
-  }
-
-  function exportBackup() {
-    let data = { customers, remittances, exchangeRates, deposits, cheques, branches, cardSettings };
-    let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    let a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `Edalat_Backup_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-  }
-
-  function importBackup(e) {
-    let file = e.target.files[0];
-    if (!file) return;
-    let reader = new FileReader();
-    reader.onload = function(event) {
-      try {
-        let imported = JSON.parse(event.target.result);
-        if (imported.customers && imported.remittances) {
-          localStorage.setItem('edalat_customers', JSON.stringify(imported.customers));
-          localStorage.setItem('edalat_remittances', JSON.stringify(imported.remittances));
-          if(imported.exchangeRates) localStorage.setItem('edalat_exchange_rates', JSON.stringify(imported.exchangeRates));
-          if(imported.deposits) localStorage.setItem('edalat_deposits', JSON.stringify(imported.deposits));
-          if(imported.cheques) localStorage.setItem('edalat_cheques', JSON.stringify(imported.cheques));
-          if(imported.branches) localStorage.setItem('edalat_branches', JSON.stringify(imported.branches));
-          if(imported.cardSettings) localStorage.setItem('edalat_card_settings', JSON.stringify(imported.cardSettings));
-          alert('بازیابی موفقیت‌آمیز بود!');
-          location.reload();
+    <script>
+        const DB_KEY = "MyWorkManager_Full_v21";
+        function getAppData() {
+            try { return JSON.parse(localStorage.getItem(DB_KEY)) || { companies: [], shifts: [], payments: [], sheets: [], documents: [], profile: {}, leaves: [] }; }
+            catch(e) { return { companies: [], shifts: [], payments: [], sheets: [], documents: [], profile: {}, leaves: [] }; }
         }
-      } catch (err) { alert('فایل نامعتبر است!'); }
-    };
-    reader.readAsText(file);
-  }
-</script>
+        function saveAppData(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+
+        const i18n = {
+            fa: {
+                navDashboard: "📊 داشبورد",
+                navCompanies: "🏢 مدیریت شرکت‌ها",
+                navProfile: "👤 پروفایل شخصی",
+                navShifts: "⏱️ ساعات کاری و شیفت‌ها",
+                navPayroll: "💶 معاش و پرداخت‌ها",
+                navMonthlySheets: "📑 برگه ساعات ماهانه",
+                navContracts: "📜 قراردادها و اسناد",
+                navLeave: "🩺 مرخصی و بیماری",
+                navCalendar: "📅 تقویم کاری",
+                navReports: "📈 گزارش‌گیری پیشرفته",
+                navSettings: "⚙️ تنظیمات",
+                dashTitle: "داشبورد مدیریتی",
+                optAllCompanies: "همه شرکت‌ها",
+                statCompanies: "شرکت‌های ثبت‌شده",
+                statHours: "مجموع ساعات",
+                statGross: "کل درآمد (ناخالص)",
+                dashRecentShifts: "آخرین شیفت‌های ثبت‌شده",
+                thDate: "تاریخ",
+                thCompany: "شرکت",
+                thHours: "ساعت",
+                thPay: "معاش",
+                thActions: "عملیات",
+                compAddTitle: "افزودن / ویرایش شرکت و کارفرمایان",
+                lblCompanyName: "نام شرکت",
+                lblHourlyRate: "نرخ معاش ساعتی (€)",
+                phCompanyName: "نام شرکت را وارد کنید",
+                phHourlyRate: "مثال: 12.5",
+                lblEmployersListTitle: "کارفرمایان این شرکت",
+                btnAddEmployer: "+ افزودن کارفرما",
+                lblEmpTitle: "مشخصات کارفرما",
+                lblEmpName: "نام",
+                lblEmpLastName: "تخلص (نام خانوادگی)",
+                lblEmpPhone: "شماره تماس",
+                btnSaveCompany: "ذخیره شرکت",
+                compListTitle: "فهرست شرکت‌ها",
+                thName: "نام شرکت",
+                thEmployers: "کارفرمایان",
+                thRate: "نرخ",
+                profileTitle: "پروفایل شخصی کاربر",
+                lblFullName: "نام و نام خانوادگی",
+                lblEmail: "ایمیل یا شماره تماس",
+                phFullName: "نام خود را وارد کنید",
+                phEmail: "ایمیل یا تلفن",
+                btnSaveProfile: "ذخیره پروفایل",
+                shiftAddTitle: "ثبت / ویرایش شیفت کاری",
+                lblSelectCompany: "انتخاب شرکت",
+                lblShiftDate: "تاریخ کار",
+                lblTimeStart: "ساعت شروع",
+                lblTimeEnd: "ساعت پایان",
+                lblBreakHours: "استراحت بدون حقوق (ساعت)",
+                btnSaveShift: "ثبت شیفت کاری",
+                shiftListTitle: "فهرست شیفت‌ها",
+                payAddTitle: "ثبت / ویرایش پرداخت",
+                lblPayDate: "تاریخ پرداخت",
+                lblPayAmount: "مبلغ دریافتی (€)",
+                lblPayMethod: "روش پرداخت",
+                optBank: "پرداخت به کارت بانکی",
+                optCash: "پرداخت پول نقد",
+                btnSavePay: "ثبت پرداخت",
+                payLedgerTitle: "فهرست پرداخت‌های انجام‌شده",
+                paySummaryTitle: "دفتر مانده معاش و طلب‌ها",
+                thGrossTotal: "کل حقوق",
+                thReceived: "دریافتی",
+                thRemaining: "باقی‌مانده",
+                thAmount: "مبلغ",
+                thMethod: "روش",
+                sheetTitle: "برگه ساعات ماهانه و آپلود عکس",
+                sheetDesc: "عکس برگه کاغذی را آپلود کنید تا همیشه ذخیره بماند.",
+                lblMonthYear: "ماه و سال",
+                lblEmployerHours: "ساعات روی برگه کارفرما",
+                lblUploadPhoto: "آپلود عکس برگه ساعات کاری",
+                btnSaveSheet: "ذخیره برگه ماهانه",
+                sheetListTitle: "برگه‌های آپلود شده",
+                thMonth: "ماه",
+                thPhoto: "عکس برگه",
+                docAddTitle: "ثبت / ویرایش قرارداد و اسناد",
+                lblDocType: "نوع سند",
+                lblDocTitle: "عنوان سند",
+                lblUploadDocPhoto: "آپلود عکس سند یا قرارداد",
+                defaultDocTitle: "قرارداد کار",
+                optContract: "قرارداد کاری",
+                optPayslip: "فیش معاش",
+                optReceipt: "رسید",
+                optOther: "سایر",
+                btnSaveDoc: "ذخیره سند",
+                docListTitle: "فهرست اسناد",
+                thTitle: "عنوان",
+                thType: "نوع",
+                leaveTitle: "مرخصی و بیماری",
+                leaveDesc: "ثبت روزهای مرخصی استحقاقی یا استعلاجی (بیماری).",
+                lblLeaveType: "نوع",
+                lblLeaveDate: "تاریخ مرخصی/بیماری",
+                optSick: "بیماری",
+                optVacation: "مرخصی",
+                btnSaveLeave: "ثبت مرخصی",
+                calendarTitle: "تقویم کاری",
+                calendarDesc: "برنامه کامل شیفت‌های شما.",
+                reportsTitle: "گزارش‌گیری پیشرفته",
+                reportsDesc: "آمار جامع ساعات و درآمد شما.",
+                settingsTitle: "پشتیبان‌گیری و اطلاعات",
+                btnExport: "پشتیبان‌گیری (JSON)",
+                btnImport: "بازیابی اطلاعات",
+                msgNoRecord: "ثبت نشده است.",
+                msgNoCompany: "شرکتی ثبت نشده است.",
+                msgNoPayment: "پرداختی ثبت نشده است.",
+                msgNoData: "اطلاعاتی موجود نیست.",
+                msgNoSheet: "برگه‌ای ثبت نشده است.",
+                msgNoDoc: "سندی ثبت نشده است.",
+                btnEdit: "ویرایش",
+                btnDelete: "حذف"
+            },
+            fi: {
+                navDashboard: "📊 Koontinäyttö",
+                navCompanies: "🏢 Yritykset",
+                navProfile: "👤 Profiili",
+                navShifts: "⏱️ Työtunnit",
+                navPayroll: "💶 Palkat",
+                navMonthlySheets: "📑 Kuukausiraportti",
+                navContracts: "📜 Sopimukset",
+                navLeave: "🩺 Sairaus / Loma",
+                navCalendar: "📅 Kalenteri",
+                navReports: "📈 Raportit",
+                navSettings: "⚙️ Asetukset",
+                dashTitle: "Koontinäyttö",
+                optAllCompanies: "Kaikki yritykset",
+                statCompanies: "Rekisteröidyt yritykset",
+                statHours: "Tunnit yhteensä",
+                statGross: "Bruttotulot yhteensä",
+                dashRecentShifts: "Viimeisimmät vuorot",
+                thDate: "Pvm",
+                thCompany: "Yritys",
+                thHours: "Tunnit",
+                thPay: "Palkka",
+                thActions: "Toiminnot",
+                compAddTitle: "Lisää / Muokkaa yritystä ja työnantajia",
+                lblCompanyName: "Yrityksen nimi",
+                lblHourlyRate: "Tuntipalkka (€)",
+                phCompanyName: "Kirjoita yrityksen nimi",
+                phHourlyRate: "Esim. 12.5",
+                lblEmployersListTitle: "Työnantajat",
+                btnAddEmployer: "+ Lisää työnantaja",
+                lblEmpTitle: "Työnantajan tiedot",
+                lblEmpName: "Etunimi",
+                lblEmpLastName: "Sukunimi",
+                lblEmpPhone: "Puhelinnumero",
+                btnSaveCompany: "Tallenna yritys",
+                compListTitle: "Yrityslista",
+                thName: "Yritys",
+                thEmployers: "Työnantajat",
+                thRate: "Palkka",
+                profileTitle: "Henkilötiedot",
+                lblFullName: "Koko nimi",
+                lblEmail: "Sähköposti / Puhelin",
+                phFullName: "Kirjoita nimesi",
+                phEmail: "Sähköposti tai puhelin",
+                btnSaveProfile: "Tallenna profiili",
+                shiftAddTitle: "Kirjaa / Muokkaa työtunteja",
+                lblSelectCompany: "Valitse yritys",
+                lblShiftDate: "Päivämäärä",
+                lblTimeStart: "Alku",
+                lblTimeEnd: "Loppu",
+                lblBreakHours: "Tauko (h)",
+                btnSaveShift: "Tallenna vuoro",
+                shiftListTitle: "Työtuntilista",
+                payAddTitle: "Kirjaa / Muokkaa maksua",
+                lblPayDate: "Maksupäivä",
+                lblPayAmount: "Summa (€)",
+                lblPayMethod: "Maksutapa",
+                optBank: "Pankkisiirto / Kortti",
+                optCash: "Käteinen",
+                btnSavePay: "Tallenna maksu",
+                payLedgerTitle: "Maksetut suoritukset",
+                paySummaryTitle: "Palkkakirjanpito",
+                thGrossTotal: "Koko palkka",
+                thReceived: "Saatu",
+                thRemaining: "Jäljellä",
+                thAmount: "Summa",
+                thMethod: "Tapa",
+                sheetTitle: "Kuukausittainen työaikaraportti ja kuva",
+                sheetDesc: "Lataa kuva paperisesta työaikalapusta.",
+                lblMonthYear: "Kuukausi",
+                lblEmployerHours: "Tunnit paperilla",
+                lblUploadPhoto: "Lataa kuva työaikalapusta",
+                btnSaveSheet: "Tallenna raportti",
+                sheetListTitle: "Tallennetut raportit",
+                thMonth: "KK",
+                thPhoto: "Kuva",
+                docAddTitle: "Lisää / Muokkaa asiakirjaa",
+                lblDocType: "Tyyppi",
+                lblDocTitle: "Otsikko",
+                lblUploadDocPhoto: "Lataa kuva sopimuksesta",
+                defaultDocTitle: "Työsopimus",
+                optContract: "Työsopimus",
+                optPayslip: "Palkkalaskelma",
+                optReceipt: "Kuitti",
+                optOther: "Muu",
+                btnSaveDoc: "Tallenna",
+                docListTitle: "Asiakirjat",
+                thTitle: "Otsikko",
+                thType: "Tyyppi",
+                leaveTitle: "Sairausloma ja lomat",
+                leaveDesc: "Kirjaa sairauspoissaolot tai lomat.",
+                lblLeaveType: "Tyyppi",
+                lblLeaveDate: "Päivämäärä",
+                optSick: "Sairausloma",
+                optVacation: "Loma",
+                btnSaveLeave: "Tallenna",
+                calendarTitle: "Työkalenteri",
+                calendarDesc: "Yhteenveto vuoroistasi.",
+                reportsTitle: "Edistyneet raportit",
+                reportsDesc: "Laaja analyysi tunneista ja tuloista.",
+                settingsTitle: "Varmuuskopiointi",
+                btnExport: "Varmuuskopioi (JSON)",
+                btnImport: "Palauta tiedot",
+                msgNoRecord: "Ei merkintöjä.",
+                msgNoCompany: "Ei rekisteröityjä yrityksiä.",
+                msgNoPayment: "Ei maksuja.",
+                msgNoData: "Ei tietoja.",
+                msgNoSheet: "Ei raportteja.",
+                msgNoDoc: "Ei asiakirjoja.",
+                btnEdit: "Muokkaa",
+                btnDelete: "Poista"
+            }
+        };
+
+        function toggleTheme() {
+            const root = document.getElementById('htmlRoot');
+            const newTheme = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeToggleBtn').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('appSidebar').classList.toggle('mobile-open');
+        }
+
+        function changeLanguage(lang) {
+            document.getElementById('htmlRoot').setAttribute('lang', lang);
+            document.getElementById('htmlRoot').setAttribute('dir', lang === 'fa' ? 'rtl' : 'ltr');
+            document.getElementById('languageSelector').value = lang;
+            localStorage.setItem('lang', lang);
+            
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if(i18n[lang] && i18n[lang][k]) el.textContent = i18n[lang][k];
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const k = el.getAttribute('data-i18n-placeholder');
+                if(i18n[lang] && i18n[lang][k]) el.placeholder = i18n[lang][k];
+            });
+
+            const activeSec = document.querySelector('.view-section.active');
+            if(activeSec) {
+                const titleKey = activeSec.getAttribute('data-title-key');
+                if(titleKey && i18n[lang][titleKey]) {
+                    document.getElementById('currentViewTitle').textContent = i18n[lang][titleKey];
+                }
+            }
+
+            const docTitleInp = document.getElementById('docTitleInput');
+            if(docTitleInp && !document.getElementById('editDocId').value) {
+                docTitleInp.value = i18n[lang].defaultDocTitle;
+            }
+
+            document.querySelectorAll('.employer-box').forEach(box => {
+                const titleSpan = box.querySelector('.emp-box-title');
+                if(titleSpan) titleSpan.textContent = i18n[lang].lblEmpTitle;
+                const delBtn = box.querySelector('.emp-del-btn');
+                if(delBtn) delBtn.textContent = i18n[lang].btnDelete;
+                
+                const nameInp = box.querySelector('.emp-name');
+                if(nameInp) nameInp.placeholder = i18n[lang].lblEmpName;
+                const lastInp = box.querySelector('.emp-lastname');
+                if(lastInp) lastInp.placeholder = i18n[lang].lblEmpLastName;
+                const phoneInp = box.querySelector('.emp-phone');
+                if(phoneInp) phoneInp.placeholder = i18n[lang].lblEmpPhone;
+            });
+
+            refreshAllDataViews();
+        }
+
+        function switchView(viewName, btn, titleKey) {
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            const targetSec = document.getElementById('view-' + viewName);
+            targetSec.classList.add('active');
+            if(btn) btn.classList.add('active');
+
+            // Close mobile menu on selection
+            document.getElementById('appSidebar').classList.remove('mobile-open');
+
+            const lang = localStorage.getItem('lang') || 'fa';
+            if(titleKey && i18n[lang][titleKey]) {
+                document.getElementById('currentViewTitle').textContent = i18n[lang][titleKey];
+            }
+            refreshAllDataViews();
+        }
+
+        function showModal(src) {
+            document.getElementById('modalImg').src = src;
+            document.getElementById('imgModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('imgModal').style.display = 'none';
+        }
+
+        function addEmployerField(name = '', lastname = '', phone = '') {
+            const lang = localStorage.getItem('lang') || 'fa';
+            const container = document.getElementById('employersContainer');
+            const div = document.createElement('div');
+            div.className = 'employer-box';
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span class="emp-box-title" style="font-size:0.85rem; font-weight:bold; color:var(--primary);">${i18n[lang].lblEmpTitle}</span>
+                    <button type="button" class="btn-danger emp-del-btn" style="padding:3px 8px; font-size:0.75rem;" onclick="this.parentElement.parentElement.remove()">${i18n[lang].btnDelete}</button>
+                </div>
+                <input type="text" class="emp-name" placeholder="${i18n[lang].lblEmpName}" value="${name}" required>
+                <input type="text" class="emp-lastname" placeholder="${i18n[lang].lblEmpLastName}" value="${lastname}">
+                <input type="text" class="emp-phone" placeholder="${i18n[lang].lblEmpPhone}" value="${phone}">
+            `;
+            container.appendChild(div);
+        }
+
+        function saveCompany(e) {
+            e.preventDefault();
+            const data = getAppData();
+            const editId = document.getElementById('editCompanyId').value;
+            const employers = [];
+            document.querySelectorAll('.employer-box').forEach(box => {
+                const name = box.querySelector('.emp-name').value;
+                const lastname = box.querySelector('.emp-lastname').value;
+                const phone = box.querySelector('.emp-phone').value;
+                if(name) employers.push({ name, lastname, phone });
+            });
+
+            const compObj = {
+                id: editId ? parseInt(editId) : Date.now(),
+                name: document.getElementById('compName').value,
+                rate: parseFloat(document.getElementById('compRate').value.replace(',', '.')) || 0,
+                employers: employers
+            };
+
+            if(editId) {
+                data.companies = data.companies.map(c => c.id == editId ? compObj : c);
+                document.getElementById('editCompanyId').value = '';
+            } else {
+                data.companies.push(compObj);
+            }
+            saveAppData(data);
+            e.target.reset();
+            document.getElementById('employersContainer').innerHTML = '';
+            addEmployerField();
+            refreshAllDataViews();
+            alert('OK');
+        }
+
+        function editCompany(id) {
+            const data = getAppData();
+            const c = data.companies.find(x => x.id == id);
+            if(!c) return;
+            document.getElementById('editCompanyId').value = c.id;
+            document.getElementById('compName').value = c.name;
+            document.getElementById('compRate').value = c.rate;
+            const container = document.getElementById('employersContainer');
+            container.innerHTML = '';
+            if(c.employers && c.employers.length > 0) {
+                c.employers.forEach(emp => addEmployerField(emp.name, emp.lastname, emp.phone));
+            } else {
+                addEmployerField();
+            }
+            switchView('companies', document.querySelector('button[onclick*="companies"]'), 'compListTitle');
+        }
+
+        function saveProfile(e) {
+            e.preventDefault();
+            const data = getAppData();
+            data.profile = {
+                name: document.getElementById('profileName').value,
+                contact: document.getElementById('profileContact').value
+            };
+            saveAppData(data);
+            alert('OK');
+        }
+
+        function saveShift(e) {
+            e.preventDefault();
+            const data = getAppData();
+            const editId = document.getElementById('editShiftId').value;
+            const start = document.getElementById('shiftStart').value;
+            const end = document.getElementById('shiftEnd').value;
+            const breakH = parseFloat(document.getElementById('shiftBreak').value) || 0;
+            const [sH, sM] = start.split(':').map(Number);
+            const [eH, eM] = end.split(':').map(Number);
+            let sMin = sH * 60 + sM, eMin = eH * 60 + eM;
+            if (eMin <= sMin) eMin += 1440;
+            let payable = Math.max(0, (eMin - sMin - breakH * 60) / 60);
+
+            const shiftObj = {
+                id: editId ? parseInt(editId) : Date.now(),
+                companyId: parseInt(document.getElementById('shiftCompanyId').value),
+                date: document.getElementById('shiftDate').value,
+                start, end, breakHours: breakH, payableHours: payable
+            };
+            if(editId) {
+                data.shifts = data.shifts.map(s => s.id == editId ? shiftObj : s);
+                document.getElementById('editShiftId').value = '';
+            } else {
+                data.shifts.push(shiftObj);
+            }
+            saveAppData(data);
+            e.target.reset();
+            refreshAllDataViews();
+            alert('OK');
+        }
+
+        function editShift(id) {
+            const data = getAppData();
+            const s = data.shifts.find(x => x.id == id);
+            if(!s) return;
+            document.getElementById('editShiftId').value = s.id;
+            document.getElementById('shiftCompanyId').value = s.companyId;
+            document.getElementById('shiftDate').value = s.date;
+            document.getElementById('shiftStart').value = s.start;
+            document.getElementById('shiftEnd').value = s.end;
+            document.getElementById('shiftBreak').value = s.breakHours;
+            switchView('shifts', document.querySelector('button[onclick*="shifts"]'), 'shiftAddTitle');
+        }
+
+        function savePayment(e) {
+            e.preventDefault();
+            const data = getAppData();
+            const editId = document.getElementById('editPaymentId').value;
+            const payObj = {
+                id: editId ? parseInt(editId) : Date.now(),
+                companyId: parseInt(document.getElementById('paymentCompanyId').value),
+                date: document.getElementById('paymentDate').value,
+                amount: parseFloat(document.getElementById('paymentAmount').value.replace(',', '.')) || 0,
+                method: document.getElementById('paymentMethod').value
+            };
+            if(editId) {
+                data.payments = data.payments.map(p => p.id == editId ? payObj : p);
+                document.getElementById('editPaymentId').value = '';
+            } else {
+                data.payments.push(payObj);
+            }
+            saveAppData(data);
+            e.target.reset();
+            refreshAllDataViews();
+            alert('OK');
+        }
+
+        function editPayment(id) {
+            const data = getAppData();
+            const p = data.payments.find(x => x.id == id);
+            if(!p) return;
+            document.getElementById('editPaymentId').value = p.id;
+            document.getElementById('paymentCompanyId').value = p.companyId;
+            document.getElementById('paymentDate').value = p.date;
+            document.getElementById('paymentAmount').value = p.amount;
+            document.getElementById('paymentMethod').value = p.method || 'bank';
+            switchView('payroll', document.querySelector('button[onclick*="payroll"]'), 'payAddTitle');
+        }
+
+        function saveMonthlySheet(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('sheetPhotoInput');
+            const editId = document.getElementById('editSheetId').value;
+            const processSave = (photoBase64) => {
+                const data = getAppData();
+                const sheetObj = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    companyId: parseInt(document.getElementById('sheetCompanyId').value),
+                    monthYear: document.getElementById('sheetMonthYear').value,
+                    employerHours: parseFloat(document.getElementById('sheetEmployerHours').value) || 0,
+                    photo: photoBase64 || (editId ? data.sheets.find(x => x.id == editId)?.photo : '')
+                };
+                if(editId) {
+                    data.sheets = data.sheets.map(sh => sh.id == editId ? sheetObj : sh);
+                    document.getElementById('editSheetId').value = '';
+                } else {
+                    data.sheets.push(sheetObj);
+                }
+                saveAppData(data);
+                e.target.reset();
+                refreshAllDataViews();
+                alert('OK');
+            };
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = ev => processSave(ev.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { processSave(null); }
+        }
+
+        function editSheet(id) {
+            const data = getAppData();
+            const sh = data.sheets.find(x => x.id == id);
+            if(!sh) return;
+            document.getElementById('editSheetId').value = sh.id;
+            document.getElementById('sheetCompanyId').value = sh.companyId;
+            document.getElementById('sheetMonthYear').value = sh.monthYear;
+            document.getElementById('sheetEmployerHours').value = sh.employerHours;
+            switchView('monthlySheets', document.querySelector('button[onclick*="monthlySheets"]'), 'sheetTitle');
+        }
+
+        function saveDocument(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('docPhotoInput');
+            const editId = document.getElementById('editDocId').value;
+            const processSave = (photoBase64) => {
+                const data = getAppData();
+                const docObj = {
+                    id: editId ? parseInt(editId) : Date.now(),
+                    companyId: parseInt(document.getElementById('docCompanyId').value),
+                    type: document.getElementById('docType').value,
+                    title: document.getElementById('docTitleInput').value,
+                    date: new Date().toISOString().split('T')[0],
+                    photo: photoBase64 || (editId ? data.documents.find(x => x.id == editId)?.photo : '')
+                };
+                if(editId) {
+                    data.documents = data.documents.map(d => d.id == editId ? docObj : d);
+                    document.getElementById('editDocId').value = '';
+                } else {
+                    data.documents.push(docObj);
+                }
+                saveAppData(data);
+                e.target.reset();
+                const lang = localStorage.getItem('lang') || 'fa';
+                document.getElementById('docTitleInput').value = i18n[lang].defaultDocTitle;
+                refreshAllDataViews();
+                alert('OK');
+            };
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = ev => processSave(ev.target.result);
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { processSave(null); }
+        }
+
+        function editDocument(id) {
+            const data = getAppData();
+            const d = data.documents.find(x => x.id == id);
+            if(!d) return;
+            document.getElementById('editDocId').value = d.id;
+            document.getElementById('docCompanyId').value = d.companyId;
+            document.getElementById('docType').value = d.type;
+            document.getElementById('docTitleInput').value = d.title;
+            switchView('contracts', document.querySelector('button[onclick*="contracts"]'), 'docAddTitle');
+        }
+
+        function saveLeave(e) {
+            e.preventDefault();
+            const data = getAppData();
+            data.leaves.push({
+                id: Date.now(),
+                type: document.getElementById('leaveType').value,
+                date: document.getElementById('leaveDate').value
+            });
+            saveAppData(data);
+            e.target.reset();
+            refreshAllDataViews();
+            alert('OK');
+        }
+
+        function deleteRecord(store, id) {
+            if (confirm('Delete?')) {
+                const data = getAppData();
+                data[store] = data[store].filter(i => i.id !== id);
+                saveAppData(data);
+                refreshAllDataViews();
+            }
+        }
+
+        function exportData() {
+            const blob = new Blob([localStorage.getItem(DB_KEY)], { type: 'json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'work-backup.json';
+            a.click();
+        }
+
+        function importDataPrompt() {
+            const inp = document.createElement('input');
+            inp.type = 'file';
+            inp.accept = '.json';
+            inp.onchange = async e => {
+                try {
+                    const text = await e.target.files[0].text();
+                    JSON.parse(text);
+                    localStorage.setItem(DB_KEY, text);
+                    refreshAllDataViews();
+                    alert('OK');
+                } catch(err) { alert('Error'); }
+            };
+            inp.click();
+        }
+
+        function refreshAllDataViews() {
+            const data = getAppData();
+            const filterVal = document.getElementById('globalCompanyFilter').value;
+            const lang = localStorage.getItem('lang') || 'fa';
+
+            if(data.profile) {
+                document.getElementById('profileName').value = data.profile.name || '';
+                document.getElementById('profileContact').value = data.profile.contact || '';
+            }
+
+            ['shiftCompanyId', 'paymentCompanyId', 'sheetCompanyId', 'docCompanyId', 'globalCompanyFilter'].forEach(sId => {
+                const sel = document.getElementById(sId);
+                if(!sel) return;
+                const cur = sel.value;
+                let h = sId === 'globalCompanyFilter' ? `<option value="all">${i18n[lang].optAllCompanies}</option>` : '';
+                data.companies.forEach(c => { h += `<option value="${c.id}">${c.name} (${c.rate} €)</option>`; });
+                sel.innerHTML = h;
+                sel.value = cur;
+            });
+
+            const fShifts = filterVal === 'all' ? data.shifts : data.shifts.filter(s => s.companyId == filterVal);
+            const fPayments = filterVal === 'all' ? data.payments : data.payments.filter(p => p.companyId == filterVal);
+
+            document.getElementById('dashTotalCompanies').textContent = data.companies.length;
+            let totalH = fShifts.reduce((a, s) => a + s.payableHours, 0);
+            document.getElementById('dashTotalHours').textContent = totalH.toFixed(2) + (lang === 'fi' ? ' h' : ' ساعت');
+
+            let gross = 0;
+            fShifts.forEach(s => {
+                const c = data.companies.find(x => x.id == s.companyId);
+                gross += s.payableHours * (c ? c.rate : 0);
+            });
+            document.getElementById('dashGrossPay').textContent = gross.toFixed(2) + ' €';
+
+            document.getElementById('companiesTableBody').innerHTML = data.companies.length ? data.companies.map(c => {
+                let empsHtml = c.employers && c.employers.length ? c.employers.map(e => `${e.name} ${e.lastname || ''} (${e.phone || '-'})`).join('<br>') : '-';
+                return `<tr><td>${c.name}</td><td><div style="font-size:0.85rem;">${empsHtml}</div></td><td>${c.rate} €</td><td><button class="btn-warning" onclick="editCompany(${c.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('companies', ${c.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoCompany}</td></tr>`;
+            
+            const shiftRows = fShifts.length ? fShifts.map(s => {
+                const c = data.companies.find(x => x.id == s.companyId);
+                const pay = s.payableHours * (c ? c.rate : 0);
+                return `<tr><td>${s.date}</td><td>${c?c.name:'-'}</td><td>${s.payableHours.toFixed(2)}h</td><td>${pay.toFixed(2)} €</td><td><button class="btn-warning" onclick="editShift(${s.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('shifts', ${s.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoRecord}</td></tr>`;
+            document.getElementById('shiftsTableBody').innerHTML = shiftRows;
+            document.getElementById('dashShiftsTableBody').innerHTML = shiftRows;
+
+            document.getElementById('paymentsTableBody').innerHTML = fPayments.length ? fPayments.map(p => {
+                const c = data.companies.find(x => x.id == p.companyId);
+                const methodText = p.method === 'cash' ? (lang === 'fa' ? 'پول نقد' : 'Käteinen') : (lang === 'fa' ? 'کارت بانکی' : 'Pankkisiirto / Kortti');
+                return `<tr><td>${p.date}</td><td>${c?c.name:'-'}</td><td>${p.amount.toFixed(2)} €</td><td>${methodText}</td><td><button class="btn-warning" onclick="editPayment(${p.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('payments', ${p.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoPayment}</td></tr>`;
+
+            document.getElementById('payrollSummaryTableBody').innerHTML = data.companies.length ? data.companies.map(c => {
+                const sSum = data.shifts.filter(s => s.companyId == c.id).reduce((a,s)=>a+s.payableHours,0)*c.rate;
+                const rec = data.payments.filter(p => p.companyId == c.id).reduce((a,p)=>a+p.amount,0);
+                const rem = sSum - rec;
+                return `<tr><td>${c.name}</td><td>${sSum.toFixed(2)} €</td><td>${rec.toFixed(2)} €</td><td><b>${rem.toFixed(2)} €</b></td></tr>`;
+            }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoData}</td></tr>`;
+
+            document.getElementById('sheetsTableBody').innerHTML = data.sheets.length ? data.sheets.map(sh => {
+                const c = data.companies.find(x => x.id == sh.companyId);
+                const imgTag = sh.photo ? `<img src="${sh.photo}" class="preview-img" onclick="showModal('${sh.photo}')">` : '-';
+                return `<tr><td>${sh.monthYear}</td><td>${c?c.name:'-'}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editSheet(${sh.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('sheets', ${sh.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoSheet}</td></tr>`;
+
+            document.getElementById('documentsTableBody').innerHTML = data.documents.length ? data.documents.map(d => {
+                const c = data.companies.find(x => x.id == d.companyId);
+                const imgTag = d.photo ? `<img src="${d.photo}" class="preview-img" onclick="showModal('${d.photo}')">` : '-';
+                return `<tr><td>${d.title}</td><td>${d.type}</td><td>${c?c.name:'-'}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editDocument(${d.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('documents', ${d.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoDoc}</td></tr>`;
+
+            document.getElementById('leaveTableBody').innerHTML = data.leaves.length ? data.leaves.map(l => {
+                return `<tr><td>${l.date}</td><td>${l.type}</td><td><button class="btn-danger" onclick="deleteRecord('leaves', ${l.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+            }).join('') : `<tr><td colspan="3" style="text-align:center;">${i18n[lang].msgNoRecord}</td></tr>`;
+
+            document.getElementById('reportSummaryBox').innerHTML = (lang === 'fi' ? 'Yhteensä tunnit: ' : 'مجموع ساعات: ') + totalH.toFixed(2) + ' | ' + (lang === 'fi' ? 'Brutto yhteensä: ' : 'کل درآمد: ') + gross.toFixed(2) + ' €';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.getElementById('htmlRoot').setAttribute('data-theme', savedTheme);
+            document.getElementById('themeToggleBtn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            
+            const currentLang = localStorage.getItem('lang') || 'fa';
+            changeLanguage(currentLang);
+            document.getElementById('docTitleInput').value = i18n[currentLang].defaultDocTitle;
+
+            if(document.getElementById('employersContainer').children.length === 0) {
+                addEmployerField();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+  <script>
+    
+  </script>
 </body>
 </html>
