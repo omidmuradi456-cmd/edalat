@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>JSFiddle 5uqe8bcv</title>
+  <title>JSFiddle q7wtLhyv</title>
 
   <style>
     
@@ -154,7 +154,6 @@
         .preview-img { max-width: 70px; max-height: 70px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; object-fit: cover; }
         .employer-box { background: var(--bg-main); padding: 14px; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border); }
 
-        /* Responsive Mobile Styles */
         @media (max-width: 768px) {
             .menu-toggle-btn { display: inline-flex; align-items: center; justify-content: center; }
             .sidebar {
@@ -463,12 +462,33 @@
     </div>
 
     <script>
-        const DB_KEY = "MyWorkManager_Full_v21";
+        const DB_KEY = "MyWorkManager_Full_v22";
         function getAppData() {
             try { return JSON.parse(localStorage.getItem(DB_KEY)) || { companies: [], shifts: [], payments: [], sheets: [], documents: [], profile: {}, leaves: [] }; }
             catch(e) { return { companies: [], shifts: [], payments: [], sheets: [], documents: [], profile: {}, leaves: [] }; }
         }
         function saveAppData(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+
+        // Smart translation mapping for company names across languages
+        const companyTranslations = {
+            "رستوران و پیتزا فروشی سولی": "Ravintola ja Pizzeria Soli",
+            "Ravintola ja Pizzeria Soli": "رستوران و پیتزا فروشی سولی",
+            "Restaurant Soli": "Ravintola Soli",
+            "Ravintola Soli": "Restaurant Soli"
+        };
+
+        function getLocalizedCompanyName(name, targetLang) {
+            if (!name) return "";
+            if (targetLang === 'fi') {
+                return companyTranslations[name] || name;
+            } else {
+                // Find Persian equivalent if switching to fa
+                for (let fa in companyTranslations) {
+                    if (companyTranslations[fa] === name) return fa;
+                }
+                return name;
+            }
+        }
 
         const i18n = {
             fa: {
@@ -762,7 +782,6 @@
             targetSec.classList.add('active');
             if(btn) btn.classList.add('active');
 
-            // Close mobile menu on selection
             document.getElementById('appSidebar').classList.remove('mobile-open');
 
             const lang = localStorage.getItem('lang') || 'fa';
@@ -1086,7 +1105,10 @@
                 if(!sel) return;
                 const cur = sel.value;
                 let h = sId === 'globalCompanyFilter' ? `<option value="all">${i18n[lang].optAllCompanies}</option>` : '';
-                data.companies.forEach(c => { h += `<option value="${c.id}">${c.name} (${c.rate} €)</option>`; });
+                data.companies.forEach(c => { 
+                    const localizedName = getLocalizedCompanyName(c.name, lang);
+                    h += `<option value="${c.id}">${localizedName} (${c.rate} €)</option>`; 
+                });
                 sel.innerHTML = h;
                 sel.value = cur;
             });
@@ -1106,41 +1128,47 @@
             document.getElementById('dashGrossPay').textContent = gross.toFixed(2) + ' €';
 
             document.getElementById('companiesTableBody').innerHTML = data.companies.length ? data.companies.map(c => {
+                let localizedName = getLocalizedCompanyName(c.name, lang);
                 let empsHtml = c.employers && c.employers.length ? c.employers.map(e => `${e.name} ${e.lastname || ''} (${e.phone || '-'})`).join('<br>') : '-';
-                return `<tr><td>${c.name}</td><td><div style="font-size:0.85rem;">${empsHtml}</div></td><td>${c.rate} €</td><td><button class="btn-warning" onclick="editCompany(${c.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('companies', ${c.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+                return `<tr><td>${localizedName}</td><td><div style="font-size:0.85rem;">${empsHtml}</div></td><td>${c.rate} €</td><td><button class="btn-warning" onclick="editCompany(${c.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('companies', ${c.id})">${i18n[lang].btnDelete}</button></td></tr>`;
             }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoCompany}</td></tr>`;
             
             const shiftRows = fShifts.length ? fShifts.map(s => {
                 const c = data.companies.find(x => x.id == s.companyId);
+                const localizedName = c ? getLocalizedCompanyName(c.name, lang) : '-';
                 const pay = s.payableHours * (c ? c.rate : 0);
-                return `<tr><td>${s.date}</td><td>${c?c.name:'-'}</td><td>${s.payableHours.toFixed(2)}h</td><td>${pay.toFixed(2)} €</td><td><button class="btn-warning" onclick="editShift(${s.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('shifts', ${s.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+                return `<tr><td>${s.date}</td><td>${localizedName}</td><td>${s.payableHours.toFixed(2)}h</td><td>${pay.toFixed(2)} €</td><td><button class="btn-warning" onclick="editShift(${s.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('shifts', ${s.id})">${i18n[lang].btnDelete}</button></td></tr>`;
             }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoRecord}</td></tr>`;
             document.getElementById('shiftsTableBody').innerHTML = shiftRows;
             document.getElementById('dashShiftsTableBody').innerHTML = shiftRows;
 
             document.getElementById('paymentsTableBody').innerHTML = fPayments.length ? fPayments.map(p => {
                 const c = data.companies.find(x => x.id == p.companyId);
+                const localizedName = c ? getLocalizedCompanyName(c.name, lang) : '-';
                 const methodText = p.method === 'cash' ? (lang === 'fa' ? 'پول نقد' : 'Käteinen') : (lang === 'fa' ? 'کارت بانکی' : 'Pankkisiirto / Kortti');
-                return `<tr><td>${p.date}</td><td>${c?c.name:'-'}</td><td>${p.amount.toFixed(2)} €</td><td>${methodText}</td><td><button class="btn-warning" onclick="editPayment(${p.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('payments', ${p.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+                return `<tr><td>${p.date}</td><td>${localizedName}</td><td>${p.amount.toFixed(2)} €</td><td>${methodText}</td><td><button class="btn-warning" onclick="editPayment(${p.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('payments', ${p.id})">${i18n[lang].btnDelete}</button></td></tr>`;
             }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoPayment}</td></tr>`;
 
             document.getElementById('payrollSummaryTableBody').innerHTML = data.companies.length ? data.companies.map(c => {
+                const localizedName = getLocalizedCompanyName(c.name, lang);
                 const sSum = data.shifts.filter(s => s.companyId == c.id).reduce((a,s)=>a+s.payableHours,0)*c.rate;
                 const rec = data.payments.filter(p => p.companyId == c.id).reduce((a,p)=>a+p.amount,0);
                 const rem = sSum - rec;
-                return `<tr><td>${c.name}</td><td>${sSum.toFixed(2)} €</td><td>${rec.toFixed(2)} €</td><td><b>${rem.toFixed(2)} €</b></td></tr>`;
+                return `<tr><td>${localizedName}</td><td>${sSum.toFixed(2)} €</td><td>${rec.toFixed(2)} €</td><td><b>${rem.toFixed(2)} €</b></td></tr>`;
             }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoData}</td></tr>`;
 
             document.getElementById('sheetsTableBody').innerHTML = data.sheets.length ? data.sheets.map(sh => {
                 const c = data.companies.find(x => x.id == sh.companyId);
+                const localizedName = c ? getLocalizedCompanyName(c.name, lang) : '-';
                 const imgTag = sh.photo ? `<img src="${sh.photo}" class="preview-img" onclick="showModal('${sh.photo}')">` : '-';
-                return `<tr><td>${sh.monthYear}</td><td>${c?c.name:'-'}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editSheet(${sh.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('sheets', ${sh.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+                return `<tr><td>${sh.monthYear}</td><td>${localizedName}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editSheet(${sh.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('sheets', ${sh.id})">${i18n[lang].btnDelete}</button></td></tr>`;
             }).join('') : `<tr><td colspan="4" style="text-align:center;">${i18n[lang].msgNoSheet}</td></tr>`;
 
             document.getElementById('documentsTableBody').innerHTML = data.documents.length ? data.documents.map(d => {
                 const c = data.companies.find(x => x.id == d.companyId);
+                const localizedName = c ? getLocalizedCompanyName(c.name, lang) : '-';
                 const imgTag = d.photo ? `<img src="${d.photo}" class="preview-img" onclick="showModal('${d.photo}')">` : '-';
-                return `<tr><td>${d.title}</td><td>${d.type}</td><td>${c?c.name:'-'}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editDocument(${d.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('documents', ${d.id})">${i18n[lang].btnDelete}</button></td></tr>`;
+                return `<tr><td>${d.title}</td><td>${d.type}</td><td>${localizedName}</td><td>${imgTag}</td><td><button class="btn-warning" onclick="editDocument(${d.id})">${i18n[lang].btnEdit}</button> <button class="btn-danger" onclick="deleteRecord('documents', ${d.id})">${i18n[lang].btnDelete}</button></td></tr>`;
             }).join('') : `<tr><td colspan="5" style="text-align:center;">${i18n[lang].msgNoDoc}</td></tr>`;
 
             document.getElementById('leaveTableBody').innerHTML = data.leaves.length ? data.leaves.map(l => {
